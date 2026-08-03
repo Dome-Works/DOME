@@ -1,0 +1,70 @@
+﻿@page "/"
+@rendermode @(new InteractiveServerRenderMode(prerender: false))
+@using HomelabDocs.Web.Components.Diagram
+@using HomelabDocs.Web.Models
+
+<PageTitle>HomelabDocs</PageTitle>
+
+<div class="app-page">
+    <header class="app-bar">
+        <div class="app-bar-brand">
+            <h1 class="app-bar-title">HomelabDocs</h1>
+            <p class="app-bar-subtitle">Infrastructure visualization</p>
+        </div>
+        <div class="app-bar-actions">
+            @if (!string.IsNullOrWhiteSpace(_selectedNodeLabel))
+            {
+                <span class="selection-label">Selected: @_selectedNodeLabel</span>
+            }
+        </div>
+    </header>
+
+    <main class="diagram-canvas">
+        <CytoscapeDiagram Graph="_graph"
+                          OnNodeSelected="HandleNodeSelectedAsync" />
+    </main>
+</div>
+
+@code {
+    private string? _selectedNodeLabel;
+    private readonly DiagramGraph _graph = CreateExampleGraph();
+
+    private Task HandleNodeSelectedAsync(string? nodeId)
+    {
+        if (string.IsNullOrWhiteSpace(nodeId))
+        {
+            _selectedNodeLabel = null;
+            return Task.CompletedTask;
+        }
+
+        var node = _graph.Nodes.FirstOrDefault(n => n.Id == nodeId);
+        _selectedNodeLabel = node?.Label ?? nodeId;
+        return Task.CompletedTask;
+    }
+
+    private static DiagramGraph CreateExampleGraph()
+    {
+        DiagramNode[] nodes =
+        [
+            new("docker-host", "Docker Host", "host", "running"),
+            new("traefik", "traefik", "container", "running"),
+            new("uptime-kuma", "uptime-kuma", "container", "running"),
+            new("homepage", "homepage", "container", "unhealthy"),
+            new("proxy-network", "proxy-network", "network"),
+            new("uptime-data", "uptime-data", "volume")
+        ];
+
+        DiagramEdge[] edges =
+        [
+            new("e-host-traefik", "docker-host", "traefik"),
+            new("e-host-uptime", "docker-host", "uptime-kuma"),
+            new("e-host-homepage", "docker-host", "homepage"),
+            new("e-traefik-net", "traefik", "proxy-network"),
+            new("e-uptime-net", "uptime-kuma", "proxy-network"),
+            new("e-homepage-net", "homepage", "proxy-network"),
+            new("e-uptime-vol", "uptime-kuma", "uptime-data", "mount")
+        ];
+
+        return new DiagramGraph(nodes, edges);
+    }
+}

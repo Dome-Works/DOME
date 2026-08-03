@@ -1,2 +1,5 @@
 <Solution>
+  <Folder Name="/src/">
+    <Project Path="src/HomelabDocs.Web/HomelabDocs.Web.csproj" />
+  </Folder>
 </Solution>
