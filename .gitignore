@@ -1,0 +1,18 @@
+## Ignore JetBrains Rider specific files
+.idea/
+
+## Ignore .NET build artifacts
+bin/
+obj/
+
+## Ignore User-specific files
+*.user
+*.userosscache
+*.sln.docstates
+
+## Ignore OS-specific files
+.DS_Store
+Thumbs.db
+
+## Ignore VS Code files (if any)
+.vscode/
