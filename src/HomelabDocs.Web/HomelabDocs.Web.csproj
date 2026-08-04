@@ -4,6 +4,15 @@
     <BlazorDisableThrowNavigationException>true</BlazorDisableThrowNavigationException>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Refit.HttpClientFactory" />
+    <PackageReference Include="Refit.Reflection" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\HomelabDocs.Shared\HomelabDocs.Shared.csproj" />
+  </ItemGroup>
+
   <Target Name="CopyCytoscapeAssets" BeforeTargets="Build">
     <PropertyGroup>
       <_CytoscapeSource>$(MSBuildProjectDirectory)/node_modules/cytoscape/dist/cytoscape.esm.min.mjs</_CytoscapeSource>

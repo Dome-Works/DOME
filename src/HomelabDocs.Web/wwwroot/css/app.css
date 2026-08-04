@@ -79,13 +79,48 @@ body {
     flex-shrink: 0;
 }
 
-.selection-label {
+.refresh-button {
+    appearance: none;
+    border: 1px solid var(--border);
+    background: var(--bg-elevated);
+    color: var(--text);
+    font: inherit;
     font-size: 0.8rem;
+    padding: 0.4rem 0.75rem;
+    cursor: pointer;
+}
+
+.refresh-button:hover:not(:disabled) {
+    border-color: #5a9fff;
+}
+
+.refresh-button:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+}
+
+.refresh-button-inline {
+    margin-left: 0.75rem;
+}
+
+.status-banner {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+    gap: 0.5rem;
+    padding: 0.55rem 1.25rem;
+    font-size: 0.85rem;
+    border-bottom: 1px solid var(--border);
+}
+
+.status-banner-info {
+    background: #152033;
     color: var(--text-muted);
-    white-space: nowrap;
-    max-width: 16rem;
-    overflow: hidden;
-    text-overflow: ellipsis;
+}
+
+.status-banner-error {
+    background: #2a1616;
+    color: #f0b4b4;
 }
 
 .diagram-canvas {

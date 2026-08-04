@@ -1,7 +1,6 @@
 import cytoscape from '../lib/cytoscape/cytoscape.esm.min.js';
 
 let cy = null;
-let dotNetRef = null;
 
 const stylesheet = [
   {
@@ -88,13 +87,6 @@ const stylesheet = [
     }
   },
   {
-    selector: 'node:selected',
-    style: {
-      'border-color': '#ffffff',
-      'border-width': 3
-    }
-  },
-  {
     selector: 'edge',
     style: {
       'width': 1.5,
@@ -136,7 +128,7 @@ function toElements(graph) {
   return [...nodes, ...edges];
 }
 
-export function initialize(element, graph, dotNetHelper) {
+export function initialize(element, graph) {
   if (cy) {
     return;
   }
@@ -144,8 +136,6 @@ export function initialize(element, graph, dotNetHelper) {
   if (!element) {
     throw new Error('Cytoscape container element is required.');
   }
-
-  dotNetRef = dotNetHelper;
 
   cy = cytoscape({
     container: element,
@@ -160,21 +150,26 @@ export function initialize(element, graph, dotNetHelper) {
     },
     minZoom: 0.2,
     maxZoom: 3,
-    wheelSensitivity: 0.25
+    wheelSensitivity: 0.25,
+    autounselectify: true
   });
+}
 
-  cy.on('tap', 'node', (event) => {
-    const nodeId = event.target.id();
-    if (dotNetRef) {
-      dotNetRef.invokeMethodAsync('NotifyNodeSelectedAsync', nodeId);
-    }
-  });
+export function updateGraph(graph) {
+  if (!cy) {
+    return;
+  }
 
-  cy.on('tap', (event) => {
-    if (event.target === cy && dotNetRef) {
-      dotNetRef.invokeMethodAsync('NotifyNodeSelectedAsync', null);
-    }
-  });
+  cy.elements().remove();
+  cy.add(toElements(graph));
+  cy.layout({
+    name: 'cose',
+    animate: false,
+    padding: 40,
+    nodeRepulsion: 8000,
+    idealEdgeLength: 120
+  }).run();
+  cy.fit(undefined, 40);
 }
 
 export function dispose() {
@@ -182,6 +177,4 @@ export function dispose() {
     cy.destroy();
     cy = null;
   }
-
-  dotNetRef = null;
 }

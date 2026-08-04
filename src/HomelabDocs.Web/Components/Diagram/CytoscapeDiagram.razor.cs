@@ -8,9 +8,9 @@ public partial class CytoscapeDiagram : IAsyncDisposable
 {
     private ElementReference _container;
     private IJSObjectReference? _module;
-    private DotNetObjectReference<CytoscapeDiagram>? _dotNetRef;
     private bool _initialized;
     private bool _disposed;
+    private DiagramGraph? _renderedGraph;
 
     [Inject]
     private IJSRuntime JS { get; set; } = default!;
@@ -18,19 +18,29 @@ public partial class CytoscapeDiagram : IAsyncDisposable
     [Parameter]
     public DiagramGraph Graph { get; set; } = new([], []);
 
-    [Parameter]
-    public EventCallback<string?> OnNodeSelected { get; set; }
-
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (_initialized || _disposed)
+        if (_disposed)
         {
             return;
         }
 
+        if (!_initialized)
+        {
+            await InitializeAsync();
+            return;
+        }
+
+        if (!ReferenceEquals(_renderedGraph, Graph))
+        {
+            await UpdateGraphAsync();
+        }
+    }
+
+    private async Task InitializeAsync()
+    {
         try
         {
-            _dotNetRef = DotNetObjectReference.Create(this);
             _module = await JS.InvokeAsync<IJSObjectReference>(
                 "import",
                 "./js/cytoscapeDiagram.js");
@@ -38,23 +48,18 @@ public partial class CytoscapeDiagram : IAsyncDisposable
             await _module.InvokeVoidAsync(
                 "initialize",
                 _container,
-                ToJsGraph(Graph),
-                _dotNetRef);
+                ToJsGraph(Graph));
 
             _initialized = true;
+            _renderedGraph = Graph;
         }
         catch (InvalidOperationException)
         {
             // JS interop is unavailable during static prerender; retry after the circuit connects.
-            _dotNetRef?.Dispose();
-            _dotNetRef = null;
             _module = null;
         }
         catch (JSException)
         {
-            _dotNetRef?.Dispose();
-            _dotNetRef = null;
-
             if (_module is not null)
             {
                 await _module.DisposeAsync();
@@ -65,10 +70,22 @@ public partial class CytoscapeDiagram : IAsyncDisposable
         }
     }
 
-    [JSInvokable]
-    public Task NotifyNodeSelectedAsync(string? nodeId)
+    private async Task UpdateGraphAsync()
     {
-        return OnNodeSelected.InvokeAsync(nodeId);
+        if (_module is null || _disposed)
+        {
+            return;
+        }
+
+        try
+        {
+            await _module.InvokeVoidAsync("updateGraph", ToJsGraph(Graph));
+            _renderedGraph = Graph;
+        }
+        catch (JSDisconnectedException)
+        {
+            // Circuit already disconnected.
+        }
     }
 
     public async ValueTask DisposeAsync()
@@ -95,8 +112,6 @@ public partial class CytoscapeDiagram : IAsyncDisposable
         finally
         {
             _module = null;
-            _dotNetRef?.Dispose();
-            _dotNetRef = null;
         }
     }
 

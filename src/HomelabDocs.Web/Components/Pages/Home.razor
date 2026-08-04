@@ -1,7 +1,10 @@
 ﻿@page "/"
 @rendermode @(new InteractiveServerRenderMode(prerender: false))
+@using HomelabDocs.Shared.Api
+@using HomelabDocs.Shared.Containers
 @using HomelabDocs.Web.Components.Diagram
 @using HomelabDocs.Web.Models
+@inject IHomelabDocsApi HomelabDocsApi
 
 <PageTitle>HomelabDocs</PageTitle>
 
@@ -12,59 +15,103 @@
             <p class="app-bar-subtitle">Infrastructure visualization</p>
         </div>
         <div class="app-bar-actions">
-            @if (!string.IsNullOrWhiteSpace(_selectedNodeLabel))
-            {
-                <span class="selection-label">Selected: @_selectedNodeLabel</span>
-            }
+            <button type="button"
+                    class="refresh-button"
+                    disabled="@_isLoading"
+                    @onclick="RefreshContainersAsync">
+                Refresh containers
+            </button>
         </div>
     </header>
 
+    @if (!string.IsNullOrWhiteSpace(_statusMessage))
+    {
+        <div class="status-banner @_statusBannerClass" role="status">
+            <span>@_statusMessage</span>
+            @if (_hasError)
+            {
+                <button type="button"
+                        class="refresh-button refresh-button-inline"
+                        disabled="@_isLoading"
+                        @onclick="RefreshContainersAsync">
+                    Retry
+                </button>
+            }
+        </div>
+    }
+
     <main class="diagram-canvas">
-        <CytoscapeDiagram Graph="_graph"
-                          OnNodeSelected="HandleNodeSelectedAsync" />
+        @if (_graph is not null)
+        {
+            <CytoscapeDiagram Graph="_graph" />
+        }
     </main>
 </div>
 
 @code {
-    private string? _selectedNodeLabel;
-    private readonly DiagramGraph _graph = CreateExampleGraph();
+    private DiagramGraph? _graph;
+    private string? _statusMessage;
+    private string _statusBannerClass = "status-banner-info";
+    private bool _isLoading;
+    private bool _hasError;
 
-    private Task HandleNodeSelectedAsync(string? nodeId)
+    protected override async Task OnInitializedAsync()
     {
-        if (string.IsNullOrWhiteSpace(nodeId))
-        {
-            _selectedNodeLabel = null;
-            return Task.CompletedTask;
-        }
-
-        var node = _graph.Nodes.FirstOrDefault(n => n.Id == nodeId);
-        _selectedNodeLabel = node?.Label ?? nodeId;
-        return Task.CompletedTask;
+        await LoadContainersAsync();
     }
 
-    private static DiagramGraph CreateExampleGraph()
+    private async Task RefreshContainersAsync()
     {
-        DiagramNode[] nodes =
-        [
-            new("docker-host", "Docker Host", "host", "running"),
-            new("traefik", "traefik", "container", "running"),
-            new("uptime-kuma", "uptime-kuma", "container", "running"),
-            new("homepage", "homepage", "container", "unhealthy"),
-            new("proxy-network", "proxy-network", "network"),
-            new("uptime-data", "uptime-data", "volume")
-        ];
+        await LoadContainersAsync();
+    }
 
-        DiagramEdge[] edges =
-        [
-            new("e-host-traefik", "docker-host", "traefik"),
-            new("e-host-uptime", "docker-host", "uptime-kuma"),
-            new("e-host-homepage", "docker-host", "homepage"),
-            new("e-traefik-net", "traefik", "proxy-network"),
-            new("e-uptime-net", "uptime-kuma", "proxy-network"),
-            new("e-homepage-net", "homepage", "proxy-network"),
-            new("e-uptime-vol", "uptime-kuma", "uptime-data", "mount")
-        ];
+    private async Task LoadContainersAsync()
+    {
+        _isLoading = true;
+        _hasError = false;
+        _statusMessage = "Loading containers…";
+        _statusBannerClass = "status-banner-info";
 
-        return new DiagramGraph(nodes, edges);
+        try
+        {
+            var response = await HomelabDocsApi.GetRunningContainersAsync();
+            var containers = response.Containers.ToList();
+            _graph = ToDiagramGraph(containers);
+
+            if (containers.Count == 0)
+            {
+                _statusMessage = "No running containers were found.";
+                _statusBannerClass = "status-banner-info";
+            }
+            else
+            {
+                _statusMessage = null;
+            }
+        }
+        catch (Exception)
+        {
+            _hasError = true;
+            _statusMessage =
+                "Unable to load containers. Confirm that Docker is running and that the API can access the Docker socket.";
+            _statusBannerClass = "status-banner-error";
+            _graph ??= new DiagramGraph([], []);
+        }
+        finally
+        {
+            _isLoading = false;
+        }
+    }
+
+    private static DiagramGraph ToDiagramGraph(IReadOnlyList<ContainerResponse> containers)
+    {
+        var nodes = containers
+            .Select(container => new DiagramNode(
+                container.Id,
+                container.Name,
+                "container",
+                container.State))
+            .ToArray();
+
+        return new DiagramGraph(nodes, []);
     }
 }

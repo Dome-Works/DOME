@@ -1,13 +1,24 @@
 # HomelabDocs
 
-Infrastructure visualization for Docker environments, built as a .NET Blazor Web App with Cytoscape.js.
-
-This initial version is a standalone interactive diagram foundation. It renders a hardcoded example graph and does not yet connect to Docker or load external configuration.
+Infrastructure visualization for Docker environments. A Blazor Web App renders a Cytoscape.js diagram of running containers loaded from a local Docker Engine through a read-only ASP.NET Core API.
 
 ## Prerequisites
 
-- [.NET 10 SDK](https://dotnet.microsoft.com/download/dotnet/10.0)
-- [Node.js](https://nodejs.org/) and npm (required only to install and copy frontend assets)
+- [.NET 10 SDK](https://dotnet.microsoft.com/download/dotnet/10.0) (see `global.json`)
+- [Node.js](https://nodejs.org/) and npm (only to install and copy Cytoscape.js assets for the Web project)
+- A running [Docker Engine](https://docs.docker.com/engine/) that exposes the local Unix socket
+
+## Docker socket
+
+The API connects to a hardcoded Docker endpoint:
+
+```text
+unix:///var/run/docker.sock
+```
+
+Defined in `HomelabDocs.Business` as `DockerConnectionOptions.DefaultDockerSocket`.
+
+Linux and macOS commonly use this path. Docker Desktop environments can differ, and socket permissions may prevent access. Windows named-pipe support is not included in this phase.
 
 ## Installation
 
@@ -19,31 +30,45 @@ cd src/HomelabDocs.Web
 npm install
 ```
 
-`npm install` installs Cytoscape.js and copies its ESM build into `wwwroot/lib/cytoscape/` via the `postinstall` script.
-
-## How Cytoscape.js is included
-
-- Cytoscape.js is installed from npm (`cytoscape`), not loaded from a CDN.
-- After install, `node_modules/cytoscape/dist/cytoscape.esm.min.mjs` is copied to `wwwroot/lib/cytoscape/cytoscape.esm.min.js`.
-- The Blazor project also copies that file before `dotnet build` as a safety net. If `npm install` has not been run, the build fails with a clear error.
-- The browser loads the diagram through the ES module at `wwwroot/js/cytoscapeDiagram.js`, which imports the local Cytoscape build.
-- At runtime only ASP.NET Core / Blazor is required. Node is not needed to run the app.
+`npm install` installs Cytoscape.js and copies its ESM build into `wwwroot/lib/cytoscape/`.
 
 ## Run
 
+Start the API and Web projects separately.
+
+### API
+
 ```bash
-cd src/HomelabDocs.Web
-dotnet run
+dotnet run --project src/HomelabDocs.Api --launch-profile http
 ```
 
-Open the URL printed by `dotnet run` (typically `https://localhost:7xxx`).
+- API base URL: `http://localhost:5100`
+- HTTPS profile also available: `https://localhost:7100` (and `http://localhost:5100`)
+- Swagger UI: [http://localhost:5100/swagger](http://localhost:5100/swagger)
+- Containers endpoint: `GET /api/containers`
+
+### Web
+
+```bash
+dotnet run --project src/HomelabDocs.Web
+```
+
+Typical Web URLs:
+
+- `https://localhost:7193`
+- `http://localhost:5172`
+
+The Blazor server calls the API over HTTP at `http://localhost:5100` through the shared Refit interface. Only the API process accesses the Docker socket.
+
+You can also start both projects from Rider or Visual Studio by selecting multiple startup projects.
 
 ## Current limitations
 
-- Example graph data is hardcoded in C#
-- No Docker daemon or Compose integration
-- No configuration screens
-- No authentication, database, or persistence
-- No API endpoints beyond what Blazor needs
+- Hardcoded Docker socket and API base URL
+- No Docker Compose configuration
+- No background synchronization or Docker events
+- No persistence, database, authentication, or configuration UI
+- Diagram shows container nodes only (no hosts, networks, volumes, or edges)
+- No Windows named-pipe support
 
-Docker integration and configuration via Docker Compose environment variables will be added later.
+Configuration is expected to move into Docker Compose environment variables in a later phase.
