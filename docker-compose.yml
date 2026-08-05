@@ -1,0 +1,22 @@
+services:
+  api:
+    build:
+      context: ./src/HomelabDocs.Server
+      dockerfile: HomelabDocs.Api/Dockerfile
+    ports:
+      - "5100:8080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+    restart: unless-stopped
+
+  client:
+    build:
+      context: ./src/HomelabDocs.Client
+      dockerfile: Dockerfile
+    ports:
+      - "5200:80"
+    depends_on:
+      - api
+    restart: unless-stopped
