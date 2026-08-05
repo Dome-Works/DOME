@@ -16,7 +16,7 @@ services:
       context: ./src/HomelabDocs.Client
       dockerfile: Dockerfile
     ports:
-      - "8080:80"
+      - "5200:80"
     depends_on:
       - api
     restart: unless-stopped
