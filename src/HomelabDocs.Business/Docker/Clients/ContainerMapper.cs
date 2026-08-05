@@ -18,10 +18,7 @@ internal static class ContainerMapper
         {
             Id = id,
             Name = name,
-            Image = container.Image ?? string.Empty,
-            State = container.State ?? string.Empty,
-            Status = container.Status ?? string.Empty,
-            Ports = MapPorts(container.Ports)
+            State = container.State ?? string.Empty
         };
     }
 
@@ -41,24 +38,6 @@ internal static class ContainerMapper
         }
 
         return ShortenId(containerId);
-    }
-
-    public static IReadOnlyCollection<ContainerPortResponse> MapPorts(IList<Port>? ports)
-    {
-        if (ports is null || ports.Count == 0)
-        {
-            return Array.Empty<ContainerPortResponse>();
-        }
-
-        return ports
-            .Select(port => new ContainerPortResponse
-            {
-                Type = port.Type ?? string.Empty,
-                PrivatePort = port.PrivatePort,
-                PublicPort = port.PublicPort == 0 ? null : port.PublicPort,
-                IpAddress = string.IsNullOrWhiteSpace(port.IP) ? null : port.IP
-            })
-            .ToArray();
     }
 
     public static string ShortenId(string containerId)
