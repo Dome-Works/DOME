@@ -14,19 +14,27 @@ src/
 
 - [.NET 10 SDK](https://dotnet.microsoft.com/download/dotnet/10.0) (see `src/HomelabDocs.Server/global.json`)
 - [Node.js](https://nodejs.org/) 22+ and npm
-- A running [Docker Engine](https://docs.docker.com/engine/) that exposes the local Unix socket
+- A running [Docker Engine](https://docs.docker.com/engine/) reachable via Unix socket or TCP
 
-## Docker socket
+## Docker endpoint
 
-The API connects to a hardcoded Docker endpoint:
+The API reads the Docker Engine URI from configuration (`Docker:Endpoint`).
+
+Default:
 
 ```text
 unix:///var/run/docker.sock
 ```
 
-Defined in `HomelabDocs.Business` as `DockerConnectionOptions.DefaultDockerSocket`.
+Override with `appsettings`, environment variables, or Compose:
 
-Linux and macOS commonly use this path. Docker Desktop environments can differ, and socket permissions may prevent access. Windows named-pipe support is not included in this phase.
+| Source | Example |
+| --- | --- |
+| `appsettings.json` | `"Docker": { "Endpoint": "tcp://192.168.1.10:2375" }` |
+| Environment | `Docker__Endpoint=tcp://192.168.1.10:2375` |
+| Compose / `.env` | `DOCKER_ENDPOINT=tcp://192.168.1.10:2375` |
+
+Linux and macOS commonly use the default Unix socket. Docker Desktop environments can differ, and socket permissions may prevent access. Windows named-pipe support is not included in this phase. TLS-protected remote endpoints are not configured yet (plain `tcp://` only).
 
 ## Installation
 
@@ -79,16 +87,24 @@ This starts two containers:
 | `api` | ASP.NET Core API | [http://localhost:5100](http://localhost:5100) (Swagger at `/swagger`) |
 | `client` | Nginx static UI + `/api` reverse proxy | [http://localhost:8080](http://localhost:8080) |
 
-The API mounts the host Docker socket read-only at `/var/run/docker.sock`. The client container proxies browser `/api` requests to the `api` service on the Compose network, so the UI keeps using relative `/api` paths.
+The API connects to Docker using `Docker__Endpoint` (default `unix:///var/run/docker.sock`) and mounts the host socket read-only when using that local path. The client container proxies browser `/api` requests to the `api` service on the Compose network, so the UI keeps using relative `/api` paths.
 
-If the API cannot list containers, check socket permissions on the host (the container process must be able to read the mounted socket).
+### Remote Docker Engine
+
+Point Compose at a remote Engine over TCP (for example an exposed Docker API on another host):
+
+```bash
+DOCKER_ENDPOINT=tcp://192.168.1.10:2375 docker compose up --build
+```
+
+Or set `DOCKER_ENDPOINT` in a `.env` file next to `docker-compose.yml`. When using a remote `tcp://` endpoint, you can remove the `api` service socket volume mount from `docker-compose.yml` (it is unused).
+
+If the API cannot list containers with the local socket, check socket permissions on the host (the container process must be able to read the mounted socket).
 
 ## Current limitations
 
-- Hardcoded Docker socket and API base URL
+- No TLS support for remote Docker TCP endpoints
 - No background synchronization or Docker events
 - No persistence, database, authentication, or configuration UI
 - Diagram shows container nodes only (no hosts, networks, volumes, or edges)
 - No Windows named-pipe support
-
-Configuration is expected to move into Docker Compose environment variables in a later phase.

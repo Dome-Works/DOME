@@ -16,7 +16,7 @@ builder.Services.AddCors(options =>
 
 builder.Services.AddFastEndpoints();
 builder.Services.SwaggerDocument();
-builder.Services.AddHomelabDocsBusiness();
+builder.Services.AddHomelabDocsBusiness(builder.Configuration);
 
 var app = builder.Build();
 

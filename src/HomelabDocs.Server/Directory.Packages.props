@@ -5,8 +5,10 @@
 
   <ItemGroup>
     <PackageVersion Include="Docker.DotNet" Version="3.125.15" />
+    <PackageVersion Include="Microsoft.Extensions.Configuration.Abstractions" Version="10.0.10" />
     <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.10" />
     <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.10" />
+    <PackageVersion Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="10.0.10" />
 
     <PackageVersion Include="FastEndpoints" Version="8.2.0" />
     <PackageVersion Include="FastEndpoints.Swagger" Version="8.2.0" />
