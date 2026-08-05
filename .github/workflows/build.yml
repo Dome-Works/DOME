@@ -1,0 +1,44 @@
+name: Build Full Repository
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: src/HomelabDocs.Web/package-lock.json
+
+      - name: Install frontend dependencies
+        working-directory: src/HomelabDocs.Web
+        run: npm ci
+
+      - name: Restore .NET dependencies
+        run: dotnet restore HomelabDocs.slnx
+
+      - name: Build
+        run: dotnet build HomelabDocs.slnx --configuration Release --no-restore
