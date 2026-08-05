@@ -1,0 +1,28 @@
+:root {
+  --bg-base: #0f1419;
+  --bg-panel: #161b22;
+  --bg-elevated: #1c2330;
+  --border: #2a3340;
+  --text: #e6edf3;
+  --text-muted: #8b9bb0;
+  --canvas: #0b0f14;
+  --accent: #5a9fff;
+  --node-running: #3dd68c;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+  background: var(--bg-base);
+  color: var(--text);
+  font-family: 'IBM Plex Sans', 'Segoe UI', system-ui, sans-serif;
+}

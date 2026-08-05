@@ -1,11 +1,19 @@
 # HomelabDocs
 
-Infrastructure visualization for Docker environments. A Blazor Web App renders a Cytoscape.js diagram of running containers loaded from a local Docker Engine through a read-only ASP.NET Core API.
+Infrastructure visualization for Docker environments. A Vite + React client renders a [React Flow](https://reactflow.dev/) diagram of running containers loaded from a local Docker Engine through a read-only ASP.NET Core API.
+
+## Repository layout
+
+```text
+src/
+  HomelabDocs.Server/   .NET solution root (API, Business, Shared)
+  HomelabDocs.Client/   Vite + React + React Flow frontend
+```
 
 ## Prerequisites
 
-- [.NET 10 SDK](https://dotnet.microsoft.com/download/dotnet/10.0) (see `global.json`)
-- [Node.js](https://nodejs.org/) and npm (only to install and copy Cytoscape.js assets for the Web project)
+- [.NET 10 SDK](https://dotnet.microsoft.com/download/dotnet/10.0) (see `src/HomelabDocs.Server/global.json`)
+- [Node.js](https://nodejs.org/) 22+ and npm
 - A running [Docker Engine](https://docs.docker.com/engine/) that exposes the local Unix socket
 
 ## Docker socket
@@ -25,21 +33,19 @@ Linux and macOS commonly use this path. Docker Desktop environments can differ, 
 From the repository root:
 
 ```bash
-dotnet restore
-cd src/HomelabDocs.Web
+dotnet restore src/HomelabDocs.Server/HomelabDocs.slnx
+cd src/HomelabDocs.Client
 npm install
 ```
 
-`npm install` installs Cytoscape.js and copies its ESM build into `wwwroot/lib/cytoscape/`.
-
 ## Run
 
-Start the API and Web projects separately.
+Start the API and Client separately.
 
 ### API
 
 ```bash
-dotnet run --project src/HomelabDocs.Api --launch-profile http
+dotnet run --project src/HomelabDocs.Server/HomelabDocs.Api --launch-profile http
 ```
 
 - API base URL: `http://localhost:5100`
@@ -47,20 +53,16 @@ dotnet run --project src/HomelabDocs.Api --launch-profile http
 - Swagger UI: [http://localhost:5100/swagger](http://localhost:5100/swagger)
 - Containers endpoint: `GET /api/containers`
 
-### Web
+### Client
 
 ```bash
-dotnet run --project src/HomelabDocs.Web
+cd src/HomelabDocs.Client
+npm run dev
 ```
 
-Typical Web URLs:
+Typical Client URL: [http://localhost:5173](http://localhost:5173)
 
-- `https://localhost:7193`
-- `http://localhost:5172`
-
-The Blazor server calls the API over HTTP at `http://localhost:5100` through the shared Refit interface. Only the API process accesses the Docker socket.
-
-You can also start both projects from Rider or Visual Studio by selecting multiple startup projects.
+The Vite dev server proxies `/api` to `http://localhost:5100`. Only the API process accesses the Docker socket.
 
 ## Current limitations
 

@@ -1,0 +1,11 @@
+<Solution>
+  <Folder Name="/Solution/">
+    <File Path="Directory.Build.props" />
+    <File Path="Directory.Packages.props" />
+  </Folder>
+  <Folder Name="/src/">
+    <Project Path="HomelabDocs.Api/HomelabDocs.Api.csproj" />
+    <Project Path="HomelabDocs.Business/HomelabDocs.Business.csproj" />
+    <Project Path="HomelabDocs.Shared/HomelabDocs.Shared.csproj" />
+  </Folder>
+</Solution>

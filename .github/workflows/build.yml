@@ -14,7 +14,8 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  build:
+  dotnet:
+    name: Build .NET
     runs-on: ubuntu-latest
 
     steps:
@@ -24,21 +25,33 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
-          global-json-file: global.json
+          global-json-file: src/HomelabDocs.Server/global.json
+
+      - name: Restore
+        run: dotnet restore src/HomelabDocs.Server/HomelabDocs.slnx
+
+      - name: Build
+        run: dotnet build src/HomelabDocs.Server/HomelabDocs.slnx --configuration Release --no-restore
+
+  javascript:
+    name: Build JavaScript
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: "22"
           cache: npm
-          cache-dependency-path: src/HomelabDocs.Web/package-lock.json
+          cache-dependency-path: src/HomelabDocs.Client/package-lock.json
 
-      - name: Install frontend dependencies
-        working-directory: src/HomelabDocs.Web
+      - name: Install
+        working-directory: src/HomelabDocs.Client
         run: npm ci
 
-      - name: Restore .NET dependencies
-        run: dotnet restore HomelabDocs.slnx
-
       - name: Build
-        run: dotnet build HomelabDocs.slnx --configuration Release --no-restore
+        working-directory: src/HomelabDocs.Client
+        run: npm run build

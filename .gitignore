@@ -17,5 +17,6 @@ Thumbs.db
 ## Ignore VS Code files (if any)
 .vscode/
 
-## Ignore Node.js dependencies
+## Ignore Node.js dependencies and build output
 node_modules/
+dist/
