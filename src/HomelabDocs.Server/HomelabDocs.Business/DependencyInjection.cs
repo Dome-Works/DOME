@@ -19,8 +19,8 @@ public static class DependencyInjection
         services.AddSingleton<IDockerClient>(sp =>
         {
             var options = sp.GetRequiredService<IOptions<DockerConnectionOptions>>().Value;
-            return new DockerClientConfiguration(new Uri(options.Endpoint))
-                .CreateClient();
+            using var configuration = new DockerClientConfiguration(new Uri(options.Endpoint));
+            return configuration.CreateClient();
         });
 
         services.AddSingleton<IDockerContainerClient, DockerContainerClient>();
