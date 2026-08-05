@@ -38,7 +38,7 @@ cd src/HomelabDocs.Client
 npm install
 ```
 
-## Run
+## Run locally
 
 Start the API and Client separately.
 
@@ -64,10 +64,28 @@ Typical Client URL: [http://localhost:5173](http://localhost:5173)
 
 The Vite dev server proxies `/api` to `http://localhost:5100`. Only the API process accesses the Docker socket.
 
+## Run with Docker Compose
+
+From the repository root:
+
+```bash
+docker compose up --build
+```
+
+This starts two containers:
+
+| Service | Image role | Host URL |
+| --- | --- | --- |
+| `api` | ASP.NET Core API | [http://localhost:5100](http://localhost:5100) (Swagger at `/swagger`) |
+| `client` | Nginx static UI + `/api` reverse proxy | [http://localhost:8080](http://localhost:8080) |
+
+The API mounts the host Docker socket read-only at `/var/run/docker.sock`. The client container proxies browser `/api` requests to the `api` service on the Compose network, so the UI keeps using relative `/api` paths.
+
+If the API cannot list containers, check socket permissions on the host (the container process must be able to read the mounted socket).
+
 ## Current limitations
 
 - Hardcoded Docker socket and API base URL
-- No Docker Compose configuration
 - No background synchronization or Docker events
 - No persistence, database, authentication, or configuration UI
 - Diagram shows container nodes only (no hosts, networks, volumes, or edges)
