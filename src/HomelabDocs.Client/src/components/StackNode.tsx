@@ -13,7 +13,7 @@ export function StackNode({ data }: NodeProps<StackNodeType>) {
         <span className="stack-node-kind">Stack</span>
         <span className="stack-node-name">{data.name}</span>
       </div>
-      <Handle type="source" position={Position.Right} className="container-node-handle" />
+      <Handle type="source" position={Position.Bottom} className="container-node-handle" />
     </div>
   )
 }

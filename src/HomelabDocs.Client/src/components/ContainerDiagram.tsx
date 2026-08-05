@@ -25,12 +25,12 @@ const nodeTypes: NodeTypes = {
 const NODE_WIDTH = 220
 const NODE_HEIGHT = 72
 const STACK_NODE_WIDTH = 200
-const GAP_X = 64
+const STACK_NODE_HEIGHT = 72
 const GAP_Y = 40
-const STACK_GAP_Y = 56
+const STACK_GAP_X = 80
 const ORIGIN_X = 40
 const ORIGIN_Y = 40
-const STANDALONE_COLUMN_COUNT = 4
+const GROUP_WIDTH = Math.max(NODE_WIDTH, STACK_NODE_WIDTH)
 
 type DiagramNode = ContainerNodeType | StackNodeType
 
@@ -57,7 +57,7 @@ function toGraph(containers: Container[]): {
 
   const nodes: DiagramNode[] = []
   const edges: Edge[] = []
-  let cursorY = ORIGIN_Y
+  let cursorX = ORIGIN_X
 
   const sortedStacks = [...stacks.entries()].sort(([left], [right]) =>
     left.localeCompare(right),
@@ -65,14 +65,15 @@ function toGraph(containers: Container[]): {
 
   for (const [stack, members] of sortedStacks) {
     const stackId = stackNodeId(stack)
-    const groupHeight = Math.max(members.length, 1) * (NODE_HEIGHT + GAP_Y) - GAP_Y
+    const stackX = cursorX + (GROUP_WIDTH - STACK_NODE_WIDTH) / 2
+    const containerX = cursorX + (GROUP_WIDTH - NODE_WIDTH) / 2
 
     nodes.push({
       id: stackId,
       type: 'stack',
       position: {
-        x: ORIGIN_X,
-        y: cursorY + Math.max((groupHeight - NODE_HEIGHT) / 2, 0),
+        x: stackX,
+        y: ORIGIN_Y,
       },
       data: {
         name: stack,
@@ -84,8 +85,8 @@ function toGraph(containers: Container[]): {
         id: container.id,
         type: 'container',
         position: {
-          x: ORIGIN_X + STACK_NODE_WIDTH + GAP_X,
-          y: cursorY + index * (NODE_HEIGHT + GAP_Y),
+          x: containerX,
+          y: ORIGIN_Y + STACK_NODE_HEIGHT + GAP_Y + index * (NODE_HEIGHT + GAP_Y),
         },
         data: {
           name: container.name,
@@ -101,33 +102,23 @@ function toGraph(containers: Container[]): {
       })
     })
 
-    cursorY += groupHeight + STACK_GAP_Y
+    cursorX += GROUP_WIDTH + STACK_GAP_X
   }
 
-  if (standalone.length > 0) {
-    const standaloneOriginX =
-      stacks.size > 0
-        ? ORIGIN_X + STACK_NODE_WIDTH + GAP_X + NODE_WIDTH + GAP_X
-        : ORIGIN_X
-
-    standalone.forEach((container, index) => {
-      const column = index % STANDALONE_COLUMN_COUNT
-      const row = Math.floor(index / STANDALONE_COLUMN_COUNT)
-
-      nodes.push({
-        id: container.id,
-        type: 'container',
-        position: {
-          x: standaloneOriginX + column * (NODE_WIDTH + GAP_X),
-          y: ORIGIN_Y + row * (NODE_HEIGHT + GAP_Y),
-        },
-        data: {
-          name: container.name,
-          state: container.state,
-        },
-      })
+  standalone.forEach((container, index) => {
+    nodes.push({
+      id: container.id,
+      type: 'container',
+      position: {
+        x: cursorX + index * (GROUP_WIDTH + STACK_GAP_X),
+        y: ORIGIN_Y,
+      },
+      data: {
+        name: container.name,
+        state: container.state,
+      },
     })
-  }
+  })
 
   return { nodes, edges }
 }
