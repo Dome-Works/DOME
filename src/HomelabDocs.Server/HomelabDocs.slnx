@@ -8,4 +8,7 @@
     <Project Path="HomelabDocs.Business/HomelabDocs.Business.csproj" />
     <Project Path="HomelabDocs.Shared/HomelabDocs.Shared.csproj" />
   </Folder>
+  <Folder Name="/Workflows/">
+    <File Path="..\..\.github\workflows\build.yml" />
+  </Folder>
 </Solution>

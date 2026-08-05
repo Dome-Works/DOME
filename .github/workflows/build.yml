@@ -50,7 +50,7 @@ jobs:
 
       - name: Install
         working-directory: src/HomelabDocs.Client
-        run: npm ci
+        run: npm ci --ignore-scripts
 
       - name: Build
         working-directory: src/HomelabDocs.Client
