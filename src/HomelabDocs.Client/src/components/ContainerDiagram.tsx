@@ -23,19 +23,27 @@ const nodeTypes: NodeTypes = {
 }
 
 const NODE_WIDTH = 220
-const NODE_HEIGHT = 72
 const STACK_NODE_WIDTH = 200
 const STACK_NODE_HEIGHT = 72
+const GAP_X = 48
 const GAP_Y = 40
 const STACK_GAP_X = 80
 const ORIGIN_X = 40
 const ORIGIN_Y = 40
-const GROUP_WIDTH = Math.max(NODE_WIDTH, STACK_NODE_WIDTH)
 
 type DiagramNode = ContainerNodeType | StackNodeType
 
 function stackNodeId(stack: string): string {
   return `stack:${stack}`
+}
+
+function groupWidth(memberCount: number): number {
+  if (memberCount <= 0) {
+    return STACK_NODE_WIDTH
+  }
+
+  const membersWidth = memberCount * NODE_WIDTH + (memberCount - 1) * GAP_X
+  return Math.max(STACK_NODE_WIDTH, membersWidth)
 }
 
 function toGraph(containers: Container[]): {
@@ -65,8 +73,13 @@ function toGraph(containers: Container[]): {
 
   for (const [stack, members] of sortedStacks) {
     const stackId = stackNodeId(stack)
-    const stackX = cursorX + (GROUP_WIDTH - STACK_NODE_WIDTH) / 2
-    const containerX = cursorX + (GROUP_WIDTH - NODE_WIDTH) / 2
+    const width = groupWidth(members.length)
+    const stackX = cursorX + (width - STACK_NODE_WIDTH) / 2
+    const membersWidth =
+      members.length > 0
+        ? members.length * NODE_WIDTH + (members.length - 1) * GAP_X
+        : 0
+    const membersOriginX = cursorX + (width - membersWidth) / 2
 
     nodes.push({
       id: stackId,
@@ -85,8 +98,8 @@ function toGraph(containers: Container[]): {
         id: container.id,
         type: 'container',
         position: {
-          x: containerX,
-          y: ORIGIN_Y + STACK_NODE_HEIGHT + GAP_Y + index * (NODE_HEIGHT + GAP_Y),
+          x: membersOriginX + index * (NODE_WIDTH + GAP_X),
+          y: ORIGIN_Y + STACK_NODE_HEIGHT + GAP_Y,
         },
         data: {
           name: container.name,
@@ -102,7 +115,7 @@ function toGraph(containers: Container[]): {
       })
     })
 
-    cursorX += GROUP_WIDTH + STACK_GAP_X
+    cursorX += width + STACK_GAP_X
   }
 
   standalone.forEach((container, index) => {
@@ -110,7 +123,7 @@ function toGraph(containers: Container[]): {
       id: container.id,
       type: 'container',
       position: {
-        x: cursorX + index * (GROUP_WIDTH + STACK_GAP_X),
+        x: cursorX + index * (NODE_WIDTH + STACK_GAP_X),
         y: ORIGIN_Y,
       },
       data: {
