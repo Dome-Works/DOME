@@ -50,6 +50,8 @@ jobs:
           tags: homelabdocs-client:scan
 
       - name: Scan Server Image
+        id: scan-server
+        continue-on-error: true
         uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
         with:
           image-ref: homelabdocs-server:scan
@@ -57,14 +59,18 @@ jobs:
           output: trivy-server.sarif
           severity: CRITICAL,HIGH
           ignore-unfixed: true
+          exit-code: "1"
 
       - name: Upload Server Scan
+        if: always() && hashFiles('trivy-server.sarif') != ''
         uses: github/codeql-action/upload-sarif@5595ccaf912efad79be6eef63a5619ff05969be3 # v4
         with:
           sarif_file: trivy-server.sarif
           category: trivy-server
 
       - name: Scan Client Image
+        id: scan-client
+        continue-on-error: true
         uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
         with:
           image-ref: homelabdocs-client:scan
@@ -72,10 +78,18 @@ jobs:
           output: trivy-client.sarif
           severity: CRITICAL,HIGH
           ignore-unfixed: true
+          exit-code: "1"
 
       - name: Upload Client Scan
+        if: always() && hashFiles('trivy-client.sarif') != ''
         uses: github/codeql-action/upload-sarif@5595ccaf912efad79be6eef63a5619ff05969be3 # v4
         with:
           sarif_file: trivy-client.sarif
           category: trivy-client
+
+      - name: Fail on CRITICAL/HIGH vulnerabilities
+        if: always() && (steps.scan-server.outcome == 'failure' || steps.scan-client.outcome == 'failure')
+        run: |
+          echo "Trivy found unfixed CRITICAL/HIGH vulnerabilities."
+          exit 1
 
