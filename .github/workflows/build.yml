@@ -55,3 +55,29 @@ jobs:
       - name: Build
         working-directory: src/HomelabDocs.Client
         run: npm run build
+
+  docker:
+    name: Docker Dry-Run
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Server Image
+        uses: docker/build-push-action@v6
+        with:
+          context: src/HomelabDocs.Server
+          file: src/HomelabDocs.Server/HomelabDocs.Api/Dockerfile
+          push: false
+          tags: homelabdocs-server:latest
+
+      - name: Build Client Image
+        uses: docker/build-push-action@v6
+        with:
+          context: src/HomelabDocs.Client
+          file: src/HomelabDocs.Client/Dockerfile
+          push: false
+          tags: homelabdocs-client:latest
