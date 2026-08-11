@@ -1,5 +1,6 @@
 <Solution>
   <Folder Name="/Solution/">
+    <File Path="..\..\docker-compose.yml" />
     <File Path="Directory.Build.props" />
     <File Path="Directory.Packages.props" />
   </Folder>
