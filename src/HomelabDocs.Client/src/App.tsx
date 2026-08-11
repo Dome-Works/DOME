@@ -60,7 +60,7 @@ export default function App() {
       case 'empty':
         return {
           className: 'status-banner status-banner-info',
-          text: 'No running containers were found.',
+          text: 'No containers were found.',
           showRetry: false,
         }
       case 'error':

@@ -8,6 +8,10 @@
   --canvas: #0b0f14;
   --accent: #5a9fff;
   --node-running: #3dd68c;
+  --node-paused: #e3b341;
+  --node-restarting: #58a6ff;
+  --node-created: #8b9bb0;
+  --node-stopped: #f85149;
 }
 
 *,
