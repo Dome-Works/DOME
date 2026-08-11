@@ -4,10 +4,13 @@ on:
   push:
     branches:
       - main
+    paths:
+      - ".github/workflows/**"
+      - ".github/actions/**"
   pull_request:
-  schedule:
-    - cron: "15 7 * * 1"
-  workflow_dispatch:
+    paths:
+      - ".github/workflows/**"
+      - ".github/actions/**"
 
 permissions: {}
 
