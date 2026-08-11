@@ -157,8 +157,28 @@
 
 .container-node-state {
   font-size: 0.75rem;
-  color: var(--node-running);
+  color: var(--text-muted);
   text-transform: lowercase;
+}
+
+.container-node-state-running {
+  color: var(--node-running);
+}
+
+.container-node-state-paused {
+  color: var(--node-paused);
+}
+
+.container-node-state-restarting {
+  color: var(--node-restarting);
+}
+
+.container-node-state-created {
+  color: var(--node-created);
+}
+
+.container-node-state-stopped {
+  color: var(--node-stopped);
 }
 
 .container-node-handle {

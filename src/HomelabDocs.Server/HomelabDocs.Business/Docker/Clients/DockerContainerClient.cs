@@ -26,7 +26,7 @@ public sealed class DockerContainerClient : IDockerContainerClient
             var containers = await _dockerClient.Containers.ListContainersAsync(
                 new ContainersListParameters
                 {
-                    All = false
+                    All = true
                 },
                 cancellationToken);
 
@@ -43,7 +43,7 @@ public sealed class DockerContainerClient : IDockerContainerClient
         {
             _logger.LogError(
                 ex,
-                "Failed to list running Docker containers from the configured Docker Engine.");
+                "Failed to list Docker containers from the configured Docker Engine.");
             throw;
         }
     }

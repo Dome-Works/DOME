@@ -1,6 +1,6 @@
 # HomelabDocs
 
-Infrastructure visualization for Docker environments. A Vite + React client renders a [React Flow](https://reactflow.dev/) diagram of running containers loaded from a local Docker Engine through a read-only ASP.NET Core API.
+Infrastructure visualization for Docker environments. A Vite + React client renders a [React Flow](https://reactflow.dev/) diagram of containers (with status) loaded from a local Docker Engine through a read-only ASP.NET Core API.
 
 ## Repository layout
 
