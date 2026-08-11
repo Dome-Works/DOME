@@ -10,5 +10,6 @@
   </Folder>
   <Folder Name="/Workflows/">
     <File Path="..\..\.github\workflows\build.yml" />
+    <File Path="..\..\.github\workflows\dependency-review.yml" />
   </Folder>
 </Solution>
