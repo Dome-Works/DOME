@@ -1,73 +1,176 @@
 import { useCallback, useEffect, useState } from 'react'
-import { fetchRunningContainers } from './api/containers'
+import { fetchDeviceContainers } from './api/containers'
+import { fetchDevices } from './api/devices'
 import { ContainerDiagram } from './components/ContainerDiagram'
+import { DeviceTabs } from './components/DeviceTabs'
 import type { Container } from './types/containers'
+import type { Device } from './types/devices'
 import './App.css'
 
-type LoadState =
+type DevicesState =
+  | { status: 'loading' }
+  | { status: 'ready'; devices: Device[] }
+  | { status: 'empty' }
+  | { status: 'error'; message: string }
+
+type ContainersState =
+  | { status: 'idle' }
   | { status: 'loading' }
   | { status: 'ready'; containers: Container[] }
   | { status: 'empty' }
   | { status: 'error'; message: string }
 
 export default function App() {
-  const [loadState, setLoadState] = useState<LoadState>({ status: 'loading' })
+  const [devicesState, setDevicesState] = useState<DevicesState>({
+    status: 'loading',
+  })
+  const [selectedDeviceName, setSelectedDeviceName] = useState<string | null>(
+    null,
+  )
+  const [containersState, setContainersState] = useState<ContainersState>({
+    status: 'idle',
+  })
   const [isRefreshing, setIsRefreshing] = useState(false)
 
-  const loadContainers = useCallback(async (signal?: AbortSignal) => {
-    setIsRefreshing(true)
+  const loadDevices = useCallback(async (signal?: AbortSignal) => {
+    setDevicesState({ status: 'loading' })
 
     try {
-      const response = await fetchRunningContainers(signal)
-      const containers = response.containers ?? []
+      const response = await fetchDevices(signal)
+      const devices = response.devices ?? []
 
-      if (containers.length === 0) {
-        setLoadState({ status: 'empty' })
-      } else {
-        setLoadState({ status: 'ready', containers })
+      if (devices.length === 0) {
+        setSelectedDeviceName(null)
+        setDevicesState({ status: 'empty' })
+        return
       }
+
+      setDevicesState({ status: 'ready', devices })
+      setSelectedDeviceName((current) => {
+        if (current && devices.some((device) => device.name === current)) {
+          return current
+        }
+
+        return devices[0].name
+      })
     } catch (error) {
       if (signal?.aborted) {
         return
       }
 
-      setLoadState({
+      setSelectedDeviceName(null)
+      setDevicesState({
         status: 'error',
-        message:
-          'Unable to load containers. Confirm that Docker is running and that the API can access the Docker socket.',
+        message: 'Unable to load devices. Confirm that the API is running.',
       })
-    } finally {
-      if (!signal?.aborted) {
-        setIsRefreshing(false)
-      }
     }
   }, [])
 
+  const loadContainers = useCallback(
+    async (deviceName: string, signal?: AbortSignal) => {
+      setIsRefreshing(true)
+      setContainersState({ status: 'loading' })
+
+      try {
+        const response = await fetchDeviceContainers(deviceName, signal)
+        const containers = response.containers ?? []
+
+        if (signal?.aborted) {
+          return
+        }
+
+        if (containers.length === 0) {
+          setContainersState({ status: 'empty' })
+        } else {
+          setContainersState({ status: 'ready', containers })
+        }
+      } catch (error) {
+        if (signal?.aborted) {
+          return
+        }
+
+        setContainersState({
+          status: 'error',
+          message:
+            'Unable to load containers. Confirm that Docker is reachable for this device.',
+        })
+      } finally {
+        if (!signal?.aborted) {
+          setIsRefreshing(false)
+        }
+      }
+    },
+    [],
+  )
+
   useEffect(() => {
     const controller = new AbortController()
-    void loadContainers(controller.signal)
+    void loadDevices(controller.signal)
     return () => controller.abort()
-  }, [loadContainers])
+  }, [loadDevices])
+
+  useEffect(() => {
+    if (!selectedDeviceName) {
+      setContainersState({ status: 'idle' })
+      return
+    }
+
+    const controller = new AbortController()
+    void loadContainers(selectedDeviceName, controller.signal)
+    return () => controller.abort()
+  }, [selectedDeviceName, loadContainers])
 
   const statusBanner = (() => {
-    switch (loadState.status) {
+    if (devicesState.status === 'loading') {
+      return {
+        className: 'status-banner status-banner-info',
+        text: 'Loading devices…',
+        showRetry: false,
+        onRetry: undefined as (() => void) | undefined,
+      }
+    }
+
+    if (devicesState.status === 'empty') {
+      return {
+        className: 'status-banner status-banner-info',
+        text: 'No devices are configured.',
+        showRetry: false,
+        onRetry: undefined as (() => void) | undefined,
+      }
+    }
+
+    if (devicesState.status === 'error') {
+      return {
+        className: 'status-banner status-banner-error',
+        text: devicesState.message,
+        showRetry: true,
+        onRetry: () => void loadDevices(),
+      }
+    }
+
+    switch (containersState.status) {
       case 'loading':
         return {
           className: 'status-banner status-banner-info',
           text: 'Loading containers…',
           showRetry: false,
+          onRetry: undefined as (() => void) | undefined,
         }
       case 'empty':
         return {
           className: 'status-banner status-banner-info',
-          text: 'No containers were found.',
+          text: 'No containers were found on this device.',
           showRetry: false,
+          onRetry: undefined as (() => void) | undefined,
         }
       case 'error':
         return {
           className: 'status-banner status-banner-error',
-          text: loadState.message,
+          text: containersState.message,
           showRetry: true,
+          onRetry: selectedDeviceName
+            ? () => void loadContainers(selectedDeviceName)
+            : undefined,
         }
       default:
         return null
@@ -75,7 +178,11 @@ export default function App() {
   })()
 
   const containers =
-    loadState.status === 'ready' ? loadState.containers : []
+    containersState.status === 'ready' ? containersState.containers : []
+  const devices =
+    devicesState.status === 'ready' ? devicesState.devices : []
+  const canRefresh =
+    selectedDeviceName !== null && devicesState.status === 'ready'
 
   return (
     <div className="app-page">
@@ -88,23 +195,35 @@ export default function App() {
           <button
             type="button"
             className="refresh-button"
-            disabled={isRefreshing}
-            onClick={() => void loadContainers()}
+            disabled={!canRefresh || isRefreshing}
+            onClick={() => {
+              if (selectedDeviceName) {
+                void loadContainers(selectedDeviceName)
+              }
+            }}
           >
             Refresh containers
           </button>
         </div>
       </header>
 
+      {devices.length > 0 && selectedDeviceName ? (
+        <DeviceTabs
+          devices={devices}
+          selectedDeviceName={selectedDeviceName}
+          onSelect={setSelectedDeviceName}
+        />
+      ) : null}
+
       {statusBanner ? (
         <div className={statusBanner.className} role="status">
           <span>{statusBanner.text}</span>
-          {statusBanner.showRetry ? (
+          {statusBanner.showRetry && statusBanner.onRetry ? (
             <button
               type="button"
               className="refresh-button refresh-button-inline"
               disabled={isRefreshing}
-              onClick={() => void loadContainers()}
+              onClick={statusBanner.onRetry}
             >
               Retry
             </button>
@@ -113,7 +232,12 @@ export default function App() {
       ) : null}
 
       <main className="diagram-canvas">
-        <ContainerDiagram containers={containers} />
+        {selectedDeviceName ? (
+          <ContainerDiagram
+            key={selectedDeviceName}
+            containers={containers}
+          />
+        ) : null}
       </main>
     </div>
   )

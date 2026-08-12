@@ -45,6 +45,39 @@
   flex-shrink: 0;
 }
 
+.device-tabs {
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+  flex-shrink: 0;
+  overflow-x: auto;
+  padding: 0 1.25rem;
+  background: var(--bg-panel);
+  border-bottom: 1px solid var(--border);
+}
+
+.device-tab {
+  appearance: none;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  background: transparent;
+  color: var(--text-muted);
+  font: inherit;
+  font-size: 0.85rem;
+  padding: 0.65rem 0.9rem;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.device-tab:hover {
+  color: var(--text);
+}
+
+.device-tab-selected {
+  color: var(--text);
+  border-bottom-color: var(--accent);
+}
+
 .refresh-button {
   appearance: none;
   border: 1px solid var(--border);
