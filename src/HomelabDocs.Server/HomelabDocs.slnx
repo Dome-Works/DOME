@@ -13,6 +13,7 @@
     <File Path="..\..\.github\workflows\build.yml" />
     <File Path="..\..\.github\workflows\dependency-review.yml" />
     <File Path="..\..\.github\workflows\docker.yml" />
+    <File Path="..\..\.github\workflows\scorecard.yml" />
     <File Path="..\..\.github\workflows\zizmor.yml" />
   </Folder>
 </Solution>
