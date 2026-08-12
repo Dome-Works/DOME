@@ -6,13 +6,16 @@ services:
     ports:
       - "5100:8080"
     volumes:
-      # Only needed for a local unix socket. Remove when using a remote tcp:// endpoint.
+      # Only needed when a connection uses the local unix socket.
       - ${DOCKER_SOCKET_PATH:-/var/run/docker.sock}:/var/run/docker.sock:ro
     environment:
       ASPNETCORE_ENVIRONMENT: Production
-      # Local: unix:///var/run/docker.sock (default)
-      # Remote: tcp://host.example:2375
-      Docker__Endpoint: ${DOCKER_ENDPOINT:-unix:///var/run/docker.sock}
+      # Devices come from appsettings.json. Uncomment to override or add here;
+      # each index replaces the matching appsettings entry.
+      # Docker__Connections__0__Name: Local
+      # Docker__Connections__0__Endpoint: unix:///var/run/docker.sock
+      # Docker__Connections__1__Name: ${DOCKER_DEVICE_1_NAME}
+      # Docker__Connections__1__Endpoint: ${DOCKER_DEVICE_1_ENDPOINT}
     restart: unless-stopped
 
   client:

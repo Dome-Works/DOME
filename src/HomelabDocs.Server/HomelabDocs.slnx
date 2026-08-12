@@ -1,5 +1,6 @@
 <Solution>
   <Folder Name="/Solution/">
+    <File Path="..\..\docker-compose.yml" />
     <File Path="Directory.Build.props" />
     <File Path="Directory.Packages.props" />
   </Folder>
@@ -12,6 +13,7 @@
     <File Path="..\..\.github\workflows\build.yml" />
     <File Path="..\..\.github\workflows\dependency-review.yml" />
     <File Path="..\..\.github\workflows\docker.yml" />
+    <File Path="..\..\.github\workflows\scorecard.yml" />
     <File Path="..\..\.github\workflows\zizmor.yml" />
   </Folder>
 </Solution>

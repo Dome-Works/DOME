@@ -1,4 +1,3 @@
-using Docker.DotNet;
 using Docker.DotNet.Models;
 using HomelabDocs.Shared.Containers;
 using Microsoft.Extensions.Logging;
@@ -7,23 +6,31 @@ namespace HomelabDocs.Business.Docker.Clients;
 
 public sealed class DockerContainerClient : IDockerContainerClient
 {
-    private readonly IDockerClient _dockerClient;
+    private readonly IDockerClientRegistry _dockerClientRegistry;
     private readonly ILogger<DockerContainerClient> _logger;
 
     public DockerContainerClient(
-        IDockerClient dockerClient,
+        IDockerClientRegistry dockerClientRegistry,
         ILogger<DockerContainerClient> logger)
     {
-        _dockerClient = dockerClient;
+        _dockerClientRegistry = dockerClientRegistry;
         _logger = logger;
     }
 
     public async Task<IReadOnlyCollection<ContainerResponse>> GetRunningContainersAsync(
+        string deviceName,
         CancellationToken cancellationToken = default)
     {
+        ArgumentException.ThrowIfNullOrWhiteSpace(deviceName);
+
+        if (!_dockerClientRegistry.TryGetClient(deviceName, out var dockerClient))
+        {
+            throw new KeyNotFoundException($"Docker device '{deviceName}' was not found.");
+        }
+
         try
         {
-            var containers = await _dockerClient.Containers.ListContainersAsync(
+            var containers = await dockerClient.Containers.ListContainersAsync(
                 new ContainersListParameters
                 {
                     All = true
@@ -43,7 +50,8 @@ public sealed class DockerContainerClient : IDockerContainerClient
         {
             _logger.LogError(
                 ex,
-                "Failed to list Docker containers from the configured Docker Engine.");
+                "Failed to list Docker containers from device '{DeviceName}'.",
+                deviceName);
             throw;
         }
     }
