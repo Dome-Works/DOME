@@ -99,7 +99,7 @@ jobs:
       - name: Build JavaScript
         working-directory: src/HomelabDocs.Client
         run: npm run build
-        
+
       - name: End analysis
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
