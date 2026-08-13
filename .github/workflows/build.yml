@@ -6,7 +6,8 @@ on:
   pull_request:
     branches: [main]
 
-permissions: {}
+permissions:
+  contents: read
 
 concurrency:
   group: ci-${{ github.workflow }}-${{ github.ref }}
@@ -14,7 +15,7 @@ concurrency:
 
 jobs:
   dotnet:
-    name: Build .NET
+    name: Build .NET and analyze
     runs-on: ubuntu-latest
 
     permissions:
@@ -26,27 +27,77 @@ jobs:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
+          fetch-depth: 0
           persist-credentials: false
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@c1e323688fd81a25caa38c78aa6df2d33d3e20d9 # v4.8.0
+        with:
+          java-version: 17
+          distribution: zulu
 
       - name: Setup .NET
         uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6
         with:
           global-json-file: src/HomelabDocs.Server/global.json
 
-      - name: Restore
+      - name: Setup Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: src/HomelabDocs.Client/package-lock.json
+
+      - name: Cache SonarQube Cloud packages
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        with:
+          path: ~/.sonar/cache
+          key: ${{ runner.os }}-sonar
+          restore-keys: ${{ runner.os }}-sonar
+
+      - name: Cache SonarQube Cloud scanner
+        id: cache-sonar-scanner
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        with:
+          path: ${{ runner.temp }}/scanner
+          key: ${{ runner.os }}-sonar-scanner
+          restore-keys: ${{ runner.os }}-sonar-scanner
+
+      - name: Install SonarQube Cloud scanner
+        if: steps.cache-sonar-scanner.outputs.cache-hit != 'true'
+        run: |
+          mkdir -p "${{ runner.temp }}/scanner"
+          dotnet tool update dotnet-sonarscanner --tool-path "${{ runner.temp }}/scanner"
+
+      - name: Start analysis
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          "${{ runner.temp }}/scanner/dotnet-sonarscanner" begin \
+            /k:"HomelabDocs_HomelabDocs" \
+            /o:"homelabdocs" \
+            /d:sonar.token="$SONAR_TOKEN" \
+            /d:sonar.host.url="https://sonarcloud.io" \
+            /d:sonar.projectBaseDir="${{ github.workspace }}" \
+            /d:sonar.exclusions="**/node_modules/**,**/dist/**" \
+            /d:sonar.cs.opencover.reportsPaths="${{ github.workspace }}/**/coverage.opencover.xml"
+
+      - name: .NET Restore
         run: dotnet restore src/HomelabDocs.Server/HomelabDocs.slnx
 
-      - name: Build
+      - name: Build .NET
         run: dotnet build src/HomelabDocs.Server/HomelabDocs.slnx --configuration Release --no-restore
 
-      - name: Test
-        run: >
-          dotnet test src/HomelabDocs.Server/HomelabDocs.slnx
-          --configuration Release
-          --no-build
-          --verbosity normal
-          --logger "trx;LogFileName=test-results.trx"
-          --results-directory TestResults
+      - name: Test .NET
+        run: |
+          dotnet test src/HomelabDocs.Server/HomelabDocs.slnx \
+            --configuration Release \
+            --no-build \
+            --verbosity normal \
+            --logger "trx;LogFileName=test-results.trx" \
+            --collect:"XPlat Code Coverage" \
+            --results-directory "${{ github.workspace }}/TestResults" \
+            -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
 
       - name: Test report
         uses: dorny/test-reporter@a43b3a5f7366b97d083190328d2c652e1a8b6aa2 # v3.0.0
@@ -56,30 +107,17 @@ jobs:
           path: TestResults/**/*.trx
           reporter: dotnet-trx
 
-  javascript:
-    name: Build JavaScript
-    runs-on: ubuntu-latest
-
-    permissions:
-      contents: read
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
-        with:
-          persist-credentials: false
-
-      - name: Setup Node.js
-        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
-        with:
-          node-version: "22"
-          cache: npm
-          cache-dependency-path: src/HomelabDocs.Client/package-lock.json
-
-      - name: Install
+      - name: Install JavaScript dependencies
         working-directory: src/HomelabDocs.Client
         run: npm ci --ignore-scripts
 
-      - name: Build
+      - name: Build JavaScript
         working-directory: src/HomelabDocs.Client
         run: npm run build
+
+      - name: End analysis
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          "${{ runner.temp }}/scanner/dotnet-sonarscanner" end \
+            /d:sonar.token="$SONAR_TOKEN"
