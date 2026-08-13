@@ -103,4 +103,6 @@ jobs:
       - name: End analysis
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: "${{ runner.temp }}/scanner/dotnet-sonarscanner" end /d:sonar.token="$SONAR_TOKEN"
+        run: |
+          "${{ runner.temp }}/scanner/dotnet-sonarscanner" end \
+            /d:sonar.token="$SONAR_TOKEN"
