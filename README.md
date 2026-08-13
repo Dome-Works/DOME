@@ -2,6 +2,13 @@
 
 Infrastructure visualization for Docker environments. A Vite + React client renders a [React Flow](https://reactflow.dev/) diagram of containers (with status) loaded from one or more Docker Engines through a read-only ASP.NET Core API.
 
+> [!CAUTION]
+> This application is intended to be used in secure and private homelab-networks. There is no authentication (yet), the communication to the Docker socket is not covered by TLS (for now), and the application is prone to vulnerabilities as the development is still in it's early stages.
+
+> [!NOTE]
+> Don't be afraid to give feedback or make feature requests by creating [Issues](https://github.com/HomelabDocs/HomelabDocs/issues). I am a solo-engineer with a wild idea, and would love to tailor this idea into an application that is beginner friendly and usable by everyone (with beginner docker knowledge).
+
+
 ## Repository layout
 
 ```text
