@@ -92,11 +92,24 @@ The Vite dev server proxies `/api` to `http://localhost:5100`. Only the API proc
 
 ## Run with Docker Compose
 
-From the repository root:
+Published images are built and pushed to the GitHub Container Registry when a [GitHub Release](https://github.com/HomelabDocs/HomelabDocs/releases) is created:
+
+| Service | Image |
+| --- | --- |
+| `api` | [`ghcr.io/homelabdocs/server`](https://ghcr.io/homelabdocs/server) |
+| `client` | [`ghcr.io/homelabdocs/client`](https://ghcr.io/homelabdocs/client) |
+
+Stable releases also publish `latest`, `MAJOR.MINOR`, and `MAJOR` tags. Pre-releases publish only the exact version tag (for example `0.1.0-beta.1`).
+
+From the repository root, pull and start the published images:
 
 ```bash
-docker compose up --build
+docker compose up
 ```
+
+Pin a specific release by setting the image tags in `docker-compose.yml`, for example `ghcr.io/homelabdocs/server:0.1.0` and `ghcr.io/homelabdocs/client:0.1.0`.
+
+To build images locally instead of pulling, use the Dockerfiles under `src/` (see `.github/workflows/docker.yml` for the build contexts).
 
 This starts two containers:
 
@@ -114,7 +127,7 @@ Compose adds no devices of its own. Either edit `Docker:Connections` in `appsett
 ```bash
 DOCKER_DEVICE_1_NAME=Remote \
 DOCKER_DEVICE_1_ENDPOINT=tcp://192.168.1.10:2375 \
-docker compose up --build
+docker compose up
 ```
 
 When using only remote `tcp://` endpoints, you can remove the `api` service socket volume mount from `docker-compose.yml` (it is unused).
