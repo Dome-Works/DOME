@@ -6,8 +6,7 @@ on:
   pull_request:
     branches: [main]
 
-permissions:
-  contents: read
+permissions: {}
 
 concurrency:
   group: ci-${{ github.workflow }}-${{ github.ref }}
@@ -17,6 +16,11 @@ jobs:
   dotnet:
     name: Build .NET
     runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      actions: read
+      checks: write
 
     steps:
       - name: Checkout
@@ -35,9 +39,29 @@ jobs:
       - name: Build
         run: dotnet build src/HomelabDocs.Server/HomelabDocs.slnx --configuration Release --no-restore
 
+      - name: Test
+        run: >
+          dotnet test src/HomelabDocs.Server/HomelabDocs.slnx
+          --configuration Release
+          --no-build
+          --verbosity normal
+          --logger "trx;LogFileName=test-results.trx"
+          --results-directory TestResults
+
+      - name: Test report
+        uses: dorny/test-reporter@a43b3a5f7366b97d083190328d2c652e1a8b6aa2 # v3.0.0
+        if: ${{ !cancelled() }}
+        with:
+          name: .NET Tests
+          path: TestResults/**/*.trx
+          reporter: dotnet-trx
+
   javascript:
     name: Build JavaScript
     runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
 
     steps:
       - name: Checkout

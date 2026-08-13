@@ -12,4 +12,8 @@
     <ProjectReference Include="..\HomelabDocs.Shared\HomelabDocs.Shared.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <InternalsVisibleTo Include="HomelabDocs.Business.Tests" />
+  </ItemGroup>
+
 </Project>
