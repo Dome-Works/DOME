@@ -4,13 +4,33 @@ updates:
     directory: /src/HomelabDocs.Server
     schedule:
       interval: weekly
+    cooldown:
+      default-days: 7
 
   - package-ecosystem: npm
     directory: /src/HomelabDocs.Client
     schedule:
       interval: weekly
+    cooldown:
+      default-days: 7
 
   - package-ecosystem: github-actions
     directory: /
     schedule:
       interval: weekly
+    cooldown:
+      default-days: 7
+
+  - package-ecosystem: docker
+    directory: /src/HomelabDocs.Server/HomelabDocs.Api
+    schedule:
+      interval: weekly
+    cooldown:
+      default-days: 7
+
+  - package-ecosystem: docker
+    directory: /src/HomelabDocs.Client
+    schedule:
+      interval: weekly
+    cooldown:
+      default-days: 7
