@@ -1,3 +1,6 @@
+
+[![OpenSSF Best Practices](https://www.bestpractices.dev/projects/14152/badge)](https://www.bestpractices.dev/projects/14152)
+
 # HomelabDocs
 
 Infrastructure visualization for Docker environments. A Vite + React client renders a [React Flow](https://reactflow.dev/) diagram of containers (with status) loaded from one or more Docker Engines through a read-only ASP.NET Core API.
