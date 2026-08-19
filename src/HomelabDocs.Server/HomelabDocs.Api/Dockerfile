@@ -5,12 +5,14 @@ WORKDIR /src
 COPY Directory.Build.props Directory.Packages.props global.json ./
 COPY HomelabDocs.Shared/HomelabDocs.Shared.csproj HomelabDocs.Shared/
 COPY HomelabDocs.Business/HomelabDocs.Business.csproj HomelabDocs.Business/
+COPY HomelabDocs.Domain/HomelabDocs.Domain.csproj HomelabDocs.Domain/
 COPY HomelabDocs.Api/HomelabDocs.Api.csproj HomelabDocs.Api/
 
 RUN dotnet restore HomelabDocs.Api/HomelabDocs.Api.csproj
 
 COPY HomelabDocs.Shared/ HomelabDocs.Shared/
 COPY HomelabDocs.Business/ HomelabDocs.Business/
+COPY HomelabDocs.Domain/ HomelabDocs.Domain/
 COPY HomelabDocs.Api/ HomelabDocs.Api/
 
 RUN dotnet publish HomelabDocs.Api/HomelabDocs.Api.csproj \

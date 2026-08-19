@@ -1,6 +1,8 @@
 using FastEndpoints;
 using FastEndpoints.Swagger;
 using HomelabDocs.Business;
+using HomelabDocs.Domain;
+using HomelabDocs.Domain.Seeding;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,8 +19,15 @@ builder.Services.AddCors(options =>
 builder.Services.AddFastEndpoints();
 builder.Services.SwaggerDocument();
 builder.Services.AddHomelabDocsBusiness(builder.Configuration);
+builder.Services.AddHomelabDocsDomain(builder.Configuration);
 
 var app = builder.Build();
+
+await using (var scope = app.Services.CreateAsyncScope())
+{
+    var initializer = scope.ServiceProvider.GetRequiredService<IDatabaseInitializer>();
+    await initializer.InitializeAsync();
+}
 
 app.UseCors();
 app.UseFastEndpoints(c =>

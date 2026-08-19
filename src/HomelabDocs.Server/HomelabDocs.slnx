@@ -7,6 +7,7 @@
   <Folder Name="/src/">
     <Project Path="HomelabDocs.Api/HomelabDocs.Api.csproj" />
     <Project Path="HomelabDocs.Business/HomelabDocs.Business.csproj" />
+    <Project Path="HomelabDocs.Domain/HomelabDocs.Domain.csproj" />
     <Project Path="HomelabDocs.Shared/HomelabDocs.Shared.csproj" />
   </Folder>
   <Folder Name="/tests/">

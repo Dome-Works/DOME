@@ -4,10 +4,15 @@ services:
     ports:
       - "5100:8080"
     volumes:
+      # SQLite save directory. Survives image pulls. For host-visible
+      # backups or a future rclone/Google Drive sidecar, bind-mount instead:
+      # - ./data:/var/lib/homelabdocs
+      - homelabdocs-data:/var/lib/homelabdocs
       # Only needed when a connection uses the local unix socket.
       - ${DOCKER_SOCKET_PATH:-/var/run/docker.sock}:/var/run/docker.sock:ro
     environment:
       ASPNETCORE_ENVIRONMENT: Production
+      ConnectionStrings__HomelabDocs: Data Source=/var/lib/homelabdocs/homelabdocs.db
       # Devices come from appsettings.json. Uncomment to override or add here;
       # each index replaces the matching appsettings entry.
       # Docker__Connections__0__Name: Local
@@ -23,3 +28,6 @@ services:
     depends_on:
       - api
     restart: unless-stopped
+
+volumes:
+  homelabdocs-data:

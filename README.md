@@ -16,7 +16,7 @@ Infrastructure visualization for Docker environments. A Vite + React client rend
 
 ```text
 src/
-  HomelabDocs.Server/   .NET solution root (API, Business, Shared)
+  HomelabDocs.Server/   .NET solution root (API, Business, Domain, Shared)
   HomelabDocs.Client/   Vite + React + React Flow frontend
 ```
 
@@ -62,6 +62,25 @@ Configure with `appsettings`, environment variables, or Compose:
 Add more devices with the next index (`Docker__Connections__1__*`, `__2__`, and so on). An index that also exists in `appsettings.json` overrides that entry rather than adding a new one. You can mix a local Unix socket with remote `tcp://` endpoints.
 
 Linux and macOS commonly use the default Unix socket. Docker Desktop environments can differ, and socket permissions may prevent access. Windows named-pipe support is not included in this phase. TLS-protected remote endpoints are not configured yet (plain `tcp://` only).
+
+## Persistence
+
+SQLite is the database. All EF Core types and migrations live in `HomelabDocs.Domain`. The API applies pending migrations on every startup, including after pulling a new Docker image and running `docker compose up`. Seed data, when needed, should go into those migrations so `__EFMigrationsHistory` is the only apply log.
+
+The database is a save directory containing `homelabdocs.db`. Copy or share that whole directory for backups.
+
+| Environment | Location |
+| --- | --- |
+| Docker | `/var/lib/homelabdocs/homelabdocs.db` (named volume `homelabdocs-data`) |
+| Local Development | `%LOCALAPPDATA%/HomelabDocs/homelabdocs.db` (Windows) or `$HOME/.local/share/HomelabDocs/homelabdocs.db` |
+
+Override the path with `ConnectionStrings:HomelabDocs` / `ConnectionStrings__HomelabDocs`. An empty value in Development falls back to local application data.
+
+To add a migration from `src/HomelabDocs.Server`:
+
+```bash
+dotnet ef migrations add <Name> --project HomelabDocs.Domain --startup-project HomelabDocs.Domain
+```
 
 ## Installation
 
@@ -128,7 +147,7 @@ This starts two containers:
 | `api` | ASP.NET Core API | [http://localhost:5100](http://localhost:5100) (Swagger at `/swagger`) |
 | `client` | Nginx static UI + `/api` reverse proxy | [http://localhost:5200](http://localhost:5200) |
 
-The API connects to Docker using `Docker:Connections` (Compose defaults to one local device on `unix:///var/run/docker.sock`) and mounts the host socket read-only when using that local path. The client container proxies browser `/api` requests to the `api` service on the Compose network, so the UI keeps using relative `/api` paths.
+The API connects to Docker using `Docker:Connections` (Compose defaults to one local device on `unix:///var/run/docker.sock`) and mounts the host socket read-only when using that local path. SQLite is stored in the named volume `homelabdocs-data` at `/var/lib/homelabdocs` so it survives container recreate and image pulls. For a host-visible folder (for example a later rclone/Google Drive sidecar), replace that volume with a bind mount such as `./data:/var/lib/homelabdocs`. The client container proxies browser `/api` requests to the `api` service on the Compose network, so the UI keeps using relative `/api` paths.
 
 ### Multiple Docker Engines
 
@@ -148,6 +167,6 @@ If the API cannot list containers with the local socket, check socket permission
 
 - No TLS support for remote Docker TCP endpoints
 - No background synchronization or Docker events
-- No persistence, database, authentication, or configuration UI
+- No authentication or configuration UI
 - Diagram shows container nodes only (no hosts, networks, volumes, or edges)
 - No Windows named-pipe support
