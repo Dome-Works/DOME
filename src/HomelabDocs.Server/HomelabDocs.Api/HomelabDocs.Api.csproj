@@ -7,6 +7,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\HomelabDocs.Business\HomelabDocs.Business.csproj" />
+    <ProjectReference Include="..\HomelabDocs.Domain\HomelabDocs.Domain.csproj" />
     <ProjectReference Include="..\HomelabDocs.Shared\HomelabDocs.Shared.csproj" />
   </ItemGroup>
 

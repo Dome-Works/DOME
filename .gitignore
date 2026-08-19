@@ -20,3 +20,8 @@ Thumbs.db
 ## Ignore Node.js dependencies and build output
 node_modules/
 dist/
+
+## Ignore SQLite database files
+*.db
+*.db-wal
+*.db-shm
