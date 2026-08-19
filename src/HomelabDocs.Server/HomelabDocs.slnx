@@ -12,6 +12,7 @@
   </Folder>
   <Folder Name="/tests/">
     <Project Path="HomelabDocs.Business.Tests/HomelabDocs.Business.Tests.csproj" />
+    <Project Path="HomelabDocs.Domain.Tests/HomelabDocs.Domain.Tests.csproj" />
   </Folder>
   <Folder Name="/Workflows/">
     <File Path="..\..\.github\workflows\build.yml" />
