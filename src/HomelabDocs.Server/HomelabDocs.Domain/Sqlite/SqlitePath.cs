@@ -17,13 +17,13 @@ internal static class SqlitePath
             return configured;
         }
 
-        var directory = Path.Combine(
+        var directory = Path.Join(
             Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
             ApplicationFolderName);
 
         return new SqliteConnectionStringBuilder
         {
-            DataSource = Path.Combine(directory, DatabaseFileName)
+            DataSource = Path.Join(directory, DatabaseFileName)
         }.ConnectionString;
     }
 

@@ -30,7 +30,7 @@ public sealed class SqlitePathTests
         var resolved = SqlitePath.ResolveConnectionString(configuration);
         var dataSource = new SqliteConnectionStringBuilder(resolved).DataSource;
 
-        var expected = Path.Combine(
+        var expected = Path.Join(
             Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
             "HomelabDocs",
             "homelabdocs.db");
@@ -44,7 +44,7 @@ public sealed class SqlitePathTests
         var root = CreateTempRoot();
         try
         {
-            var dbPath = Path.Combine(root, "nested", "homelabdocs.db");
+            var dbPath = Path.Join(root, "nested", "homelabdocs.db");
             var parent = Path.GetDirectoryName(dbPath)!;
             Assert.False(Directory.Exists(parent));
 
@@ -71,7 +71,7 @@ public sealed class SqlitePathTests
 
     private static string CreateTempRoot()
     {
-        var root = Path.Combine(Path.GetTempPath(), "HomelabDocsTests", Guid.NewGuid().ToString("N"));
+        var root = Path.Join(Path.GetTempPath(), "HomelabDocsTests", Guid.NewGuid().ToString("N"));
         Directory.CreateDirectory(root);
         return root;
     }

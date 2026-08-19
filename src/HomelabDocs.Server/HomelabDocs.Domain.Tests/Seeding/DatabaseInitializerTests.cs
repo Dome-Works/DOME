@@ -10,8 +10,8 @@ public sealed class DatabaseInitializerTests
     [Fact]
     public async Task Applying_migrations_twice_keeps_a_single_history_row()
     {
-        var root = Path.Combine(Path.GetTempPath(), "HomelabDocsTests", Guid.NewGuid().ToString("N"));
-        var dbPath = Path.Combine(root, "nested", "homelabdocs.db");
+        var root = Path.Join(Path.GetTempPath(), "HomelabDocsTests", Guid.NewGuid().ToString("N"));
+        var dbPath = Path.Join(root, "nested", "homelabdocs.db");
         var connectionString = new SqliteConnectionStringBuilder
         {
             DataSource = dbPath,
