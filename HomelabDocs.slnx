@@ -15,6 +15,39 @@
     <Project Path="src/HomelabDocs.Socket/HomelabDocs.Socket.Api/HomelabDocs.Socket.Api.csproj" />
     <Project Path="src/HomelabDocs.Socket/HomelabDocs.Socket.Contracts/HomelabDocs.Socket.Contracts.csproj" />
   </Folder>
+  <Folder Name="/src/HomelabDocs.Client/">
+    <File Path="src/HomelabDocs.Client/package.json" />
+    <File Path="src/HomelabDocs.Client/package-lock.json" />
+    <File Path="src/HomelabDocs.Client/vite.config.ts" />
+    <File Path="src/HomelabDocs.Client/tsconfig.json" />
+    <File Path="src/HomelabDocs.Client/tsconfig.app.json" />
+    <File Path="src/HomelabDocs.Client/tsconfig.node.json" />
+    <File Path="src/HomelabDocs.Client/index.html" />
+    <File Path="src/HomelabDocs.Client/nginx.conf" />
+    <File Path="src/HomelabDocs.Client/Dockerfile" />
+    <File Path="src/HomelabDocs.Client/.oxlintrc.json" />
+    <File Path="src/HomelabDocs.Client/public/favicon.svg" />
+  </Folder>
+  <Folder Name="/src/HomelabDocs.Client/src/">
+    <File Path="src/HomelabDocs.Client/src/main.tsx" />
+    <File Path="src/HomelabDocs.Client/src/App.tsx" />
+    <File Path="src/HomelabDocs.Client/src/App.css" />
+    <File Path="src/HomelabDocs.Client/src/index.css" />
+  </Folder>
+  <Folder Name="/src/HomelabDocs.Client/src/api/">
+    <File Path="src/HomelabDocs.Client/src/api/containers.ts" />
+    <File Path="src/HomelabDocs.Client/src/api/devices.ts" />
+  </Folder>
+  <Folder Name="/src/HomelabDocs.Client/src/components/">
+    <File Path="src/HomelabDocs.Client/src/components/ContainerDiagram.tsx" />
+    <File Path="src/HomelabDocs.Client/src/components/ContainerNode.tsx" />
+    <File Path="src/HomelabDocs.Client/src/components/DeviceTabs.tsx" />
+    <File Path="src/HomelabDocs.Client/src/components/StackNode.tsx" />
+  </Folder>
+  <Folder Name="/src/HomelabDocs.Client/src/types/">
+    <File Path="src/HomelabDocs.Client/src/types/containers.ts" />
+    <File Path="src/HomelabDocs.Client/src/types/devices.ts" />
+  </Folder>
   <Folder Name="/tests/">
     <Project Path="src/HomelabDocs.Server/HomelabDocs.Business.Tests/HomelabDocs.Business.Tests.csproj" />
     <Project Path="src/HomelabDocs.Server/HomelabDocs.Domain.Tests/HomelabDocs.Domain.Tests.csproj" />

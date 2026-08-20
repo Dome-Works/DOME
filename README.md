@@ -87,6 +87,7 @@ dotnet run --project src/HomelabDocs.Socket/HomelabDocs.Socket.Api --launch-prof
 ```
 
 - Socket base URL: `http://localhost:5110`
+- HTTPS profile also available: `https://localhost:7110` (and `http://localhost:5110`)
 - Swagger UI: [http://localhost:5110/swagger](http://localhost:5110/swagger)
 - Health: `GET /api/health`
 - Containers: `GET /api/containers`
