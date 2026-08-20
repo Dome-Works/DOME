@@ -32,10 +32,18 @@ jobs:
       - name: Build Server Image
         uses: docker/build-push-action@53b7df96c91f9c12dcc8a07bcb9ccacbed38856a # v7.3.0
         with:
-          context: src/HomelabDocs.Server
+          context: .
           file: src/HomelabDocs.Server/HomelabDocs.Api/Dockerfile
           push: false
           tags: homelabdocs-server:ci
+
+      - name: Build Socket Image
+        uses: docker/build-push-action@53b7df96c91f9c12dcc8a07bcb9ccacbed38856a # v7.3.0
+        with:
+          context: .
+          file: src/HomelabDocs.Socket/HomelabDocs.Socket.Api/Dockerfile
+          push: false
+          tags: homelabdocs-socket:ci
 
       - name: Build Client Image
         uses: docker/build-push-action@53b7df96c91f9c12dcc8a07bcb9ccacbed38856a # v7.3.0

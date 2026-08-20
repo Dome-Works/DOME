@@ -8,7 +8,7 @@ namespace HomelabDocs.Domain.Tests.Seeding;
 public sealed class DatabaseInitializerTests
 {
     [Fact]
-    public async Task Applying_migrations_twice_keeps_a_single_history_row()
+    public async Task Applying_migrations_twice_keeps_a_stable_history()
     {
         var root = Path.Join(Path.GetTempPath(), "HomelabDocsTests", Guid.NewGuid().ToString("N"));
         var dbPath = Path.Join(root, "nested", "homelabdocs.db");
@@ -37,7 +37,15 @@ public sealed class DatabaseInitializerTests
             }
 
             Assert.True(File.Exists(dbPath));
-            Assert.Equal(1, await CountAppliedMigrationsAsync(connectionString));
+            var applied = await CountAppliedMigrationsAsync(connectionString);
+            Assert.True(applied >= 2);
+
+            await using (var provider = services.BuildServiceProvider())
+            {
+                await InitializeAsync(provider);
+            }
+
+            Assert.Equal(applied, await CountAppliedMigrationsAsync(connectionString));
         }
         finally
         {

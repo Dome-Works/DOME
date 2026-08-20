@@ -1,21 +1,17 @@
-using HomelabDocs.Business.Docker.Clients;
-using HomelabDocs.Business.Docker.Configuration;
-using Microsoft.Extensions.Configuration;
+using HomelabDocs.Business.Devices;
+using HomelabDocs.Business.Sockets;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace HomelabDocs.Business;
 
 public static class DependencyInjection
 {
-    public static IServiceCollection AddHomelabDocsBusiness(
-        this IServiceCollection services,
-        IConfiguration configuration)
+    public static IServiceCollection AddHomelabDocsBusiness(this IServiceCollection services)
     {
-        services.Configure<DockerConnectionOptions>(
-            configuration.GetSection(DockerConnectionOptions.SectionName));
-
-        services.AddSingleton<IDockerClientRegistry, DockerClientRegistry>();
-        services.AddSingleton<IDockerContainerClient, DockerContainerClient>();
+        services.AddHttpClient(nameof(HomelabDocsSocketApiFactory));
+        services.AddSingleton<IHomelabDocsSocketApiFactory, HomelabDocsSocketApiFactory>();
+        services.AddScoped<ISocketService, SocketService>();
+        services.AddScoped<IDeviceQueryService, DeviceQueryService>();
 
         return services;
     }

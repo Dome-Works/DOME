@@ -1,4 +1,5 @@
 using HomelabDocs.Domain.Seeding;
+using HomelabDocs.Domain.Sockets;
 using HomelabDocs.Domain.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -19,6 +20,7 @@ public static class DependencyInjection
             options.UseSqlite(connectionString));
 
         services.AddScoped<IDatabaseInitializer, DatabaseInitializer>();
+        services.AddScoped<ISocketRepository, SocketRepository>();
 
         return services;
     }

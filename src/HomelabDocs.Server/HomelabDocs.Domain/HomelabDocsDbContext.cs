@@ -1,3 +1,4 @@
+using HomelabDocs.Domain.Sockets;
 using Microsoft.EntityFrameworkCore;
 
 namespace HomelabDocs.Domain;
@@ -8,6 +9,8 @@ public sealed class HomelabDocsDbContext : DbContext
         : base(options)
     {
     }
+
+    public DbSet<Socket> Sockets => Set<Socket>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

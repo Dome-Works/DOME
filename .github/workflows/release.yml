@@ -29,8 +29,11 @@ jobs:
       matrix:
         include:
           - image: server
-            context: src/HomelabDocs.Server
+            context: .
             file: src/HomelabDocs.Server/HomelabDocs.Api/Dockerfile
+          - image: socket
+            context: .
+            file: src/HomelabDocs.Socket/HomelabDocs.Socket.Api/Dockerfile
           - image: client
             context: src/HomelabDocs.Client
             file: src/HomelabDocs.Client/Dockerfile

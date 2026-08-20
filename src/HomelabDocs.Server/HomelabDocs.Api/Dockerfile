@@ -1,21 +1,24 @@
-# Build context: src/HomelabDocs.Server
+# Build context: repository root
 FROM mcr.microsoft.com/dotnet/sdk:10.0@sha256:e1fc6e423f543119c406d24e2e687d67c569f18f04a37a8b0005d80ad0dcee80 AS build
-WORKDIR /src
+WORKDIR /build
 
 COPY Directory.Build.props Directory.Packages.props global.json ./
-COPY HomelabDocs.Shared/HomelabDocs.Shared.csproj HomelabDocs.Shared/
-COPY HomelabDocs.Business/HomelabDocs.Business.csproj HomelabDocs.Business/
-COPY HomelabDocs.Domain/HomelabDocs.Domain.csproj HomelabDocs.Domain/
-COPY HomelabDocs.Api/HomelabDocs.Api.csproj HomelabDocs.Api/
 
-RUN dotnet restore HomelabDocs.Api/HomelabDocs.Api.csproj
+COPY src/HomelabDocs.Socket/HomelabDocs.Socket.Contracts/HomelabDocs.Socket.Contracts.csproj src/HomelabDocs.Socket/HomelabDocs.Socket.Contracts/
+COPY src/HomelabDocs.Server/HomelabDocs.Shared/HomelabDocs.Shared.csproj src/HomelabDocs.Server/HomelabDocs.Shared/
+COPY src/HomelabDocs.Server/HomelabDocs.Domain/HomelabDocs.Domain.csproj src/HomelabDocs.Server/HomelabDocs.Domain/
+COPY src/HomelabDocs.Server/HomelabDocs.Business/HomelabDocs.Business.csproj src/HomelabDocs.Server/HomelabDocs.Business/
+COPY src/HomelabDocs.Server/HomelabDocs.Api/HomelabDocs.Api.csproj src/HomelabDocs.Server/HomelabDocs.Api/
 
-COPY HomelabDocs.Shared/ HomelabDocs.Shared/
-COPY HomelabDocs.Business/ HomelabDocs.Business/
-COPY HomelabDocs.Domain/ HomelabDocs.Domain/
-COPY HomelabDocs.Api/ HomelabDocs.Api/
+RUN dotnet restore src/HomelabDocs.Server/HomelabDocs.Api/HomelabDocs.Api.csproj
 
-RUN dotnet publish HomelabDocs.Api/HomelabDocs.Api.csproj \
+COPY src/HomelabDocs.Socket/HomelabDocs.Socket.Contracts/ src/HomelabDocs.Socket/HomelabDocs.Socket.Contracts/
+COPY src/HomelabDocs.Server/HomelabDocs.Shared/ src/HomelabDocs.Server/HomelabDocs.Shared/
+COPY src/HomelabDocs.Server/HomelabDocs.Domain/ src/HomelabDocs.Server/HomelabDocs.Domain/
+COPY src/HomelabDocs.Server/HomelabDocs.Business/ src/HomelabDocs.Server/HomelabDocs.Business/
+COPY src/HomelabDocs.Server/HomelabDocs.Api/ src/HomelabDocs.Server/HomelabDocs.Api/
+
+RUN dotnet publish src/HomelabDocs.Server/HomelabDocs.Api/HomelabDocs.Api.csproj \
     -c Release \
     -o /app/publish \
     --no-restore

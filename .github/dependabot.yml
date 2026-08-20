@@ -1,7 +1,7 @@
 version: 2
 updates:
   - package-ecosystem: nuget
-    directory: /src/HomelabDocs.Server
+    directory: /
     schedule:
       interval: weekly
     cooldown:
@@ -23,6 +23,13 @@ updates:
 
   - package-ecosystem: docker
     directory: /src/HomelabDocs.Server/HomelabDocs.Api
+    schedule:
+      interval: weekly
+    cooldown:
+      default-days: 7
+
+  - package-ecosystem: docker
+    directory: /src/HomelabDocs.Socket/HomelabDocs.Socket.Api
     schedule:
       interval: weekly
     cooldown:

@@ -1,19 +1,16 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
-    <PackageReference Include="Docker.DotNet" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
+    <PackageReference Include="Microsoft.Extensions.Http" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
-    <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" />
+    <PackageReference Include="Refit" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\HomelabDocs.Domain\HomelabDocs.Domain.csproj" />
     <ProjectReference Include="..\HomelabDocs.Shared\HomelabDocs.Shared.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <InternalsVisibleTo Include="HomelabDocs.Business.Tests" />
+    <ProjectReference Include="..\..\HomelabDocs.Socket\HomelabDocs.Socket.Contracts\HomelabDocs.Socket.Contracts.csproj" />
   </ItemGroup>
 
 </Project>
