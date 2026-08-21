@@ -11,6 +11,8 @@ Infrastructure visualization for Docker environments. A Vite + React client rend
 > [!NOTE]
 > Don't be afraid to give feedback or make feature requests by creating [Issues](https://github.com/HomelabDocs/HomelabDocs/issues). I am a solo-engineer with a wild idea, and would love to tailor this idea into an application that is beginner friendly and usable by everyone (with beginner docker knowledge).
 
+> [!WARNING]
+> This repository / application is still a work-in-progress, and is prone to breaking changes. Untill V1.0.0 releases, this should be considered NOT PRODUCTION READY.
 
 ## Repository layout
 
