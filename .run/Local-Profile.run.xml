@@ -9,7 +9,7 @@
         </option>
         <option name="executable">
           <ExecutableSnapshot>
-            <option name="id" value="runConfig:.NET Launch Settings Profile.HomelabDocs.Api: https" />
+            <option name="id" value="runConfig:.NET Launch Settings Profile.HomelabDocs.Server: https" />
           </ExecutableSnapshot>
         </option>
       </ExecutableRowSnapshot>
