@@ -3,65 +3,51 @@
 
 # HomelabDocs
 
-Infrastructure visualization for Docker environments. A Vite + React client renders a [React Flow](https://reactflow.dev/) diagram of containers (with status) loaded from one or more Docker Engines through a read-only ASP.NET Core API.
+Infrastructure visualization for Docker environments. A Vite + React client renders a [React Flow](https://reactflow.dev/) diagram of containers (with status) loaded from HomelabDocs.Server. The Server never talks to Docker Engine. Each host runs HomelabDocs.Socket, which has access to the local Docker socket and is queried by the Server over HTTP (Refit).
 
 > [!CAUTION]
-> This application is intended to be used in secure and private homelab-networks. There is no authentication (yet), the communication to the Docker socket is not covered by TLS (for now), and the application is prone to vulnerabilities as the development is still in it's early stages.
+> This application is intended to be used in secure and private homelab-networks. There is no authentication (yet). HomelabDocs.Socket has full access to the local Docker Engine. The application is prone to vulnerabilities as the development is still in its early stages.
 
 > [!NOTE]
 > Don't be afraid to give feedback or make feature requests by creating [Issues](https://github.com/HomelabDocs/HomelabDocs/issues). I am a solo-engineer with a wild idea, and would love to tailor this idea into an application that is beginner friendly and usable by everyone (with beginner docker knowledge).
 
+> [!WARNING]
+> This repository / application is still a work-in-progress, and is prone to breaking changes. Untill V1.0.0 releases, this should be considered NOT PRODUCTION READY.
 
 ## Repository layout
 
 ```text
+HomelabDocs.slnx            Single .NET solution (Server + Socket)
+Directory.Build.props       Shared SDK / language settings
+Directory.Packages.props    Central package versions
+global.json                 .NET SDK pin
 src/
-  HomelabDocs.Server/   .NET solution root (API, Business, Domain, Shared)
-  HomelabDocs.Client/   Vite + React + React Flow frontend
+  HomelabDocs.Server/       API, Business, Domain, Shared
+  HomelabDocs.Socket/       Privileged Docker socket agent (FastEndpoints, no database)
+  HomelabDocs.Client/       Vite + React + React Flow frontend
 ```
 
 ## Prerequisites
 
-- [.NET 10 SDK](https://dotnet.microsoft.com/download/dotnet/10.0) (see `src/HomelabDocs.Server/global.json`)
+- [.NET 10 SDK](https://dotnet.microsoft.com/download/dotnet/10.0) (see `global.json`)
 - [Node.js](https://nodejs.org/) 22+ and npm
-- One or more running [Docker Engine](https://docs.docker.com/engine/) instances reachable via Unix socket or TCP
+- A running [Docker Engine](https://docs.docker.com/engine/) on each host where HomelabDocs.Socket is deployed (Unix socket only)
 
-## Docker devices
+## Architecture
 
-The API reads Docker Engine connections from configuration (`Docker:Connections`). Each entry becomes a **device** in the UI (one dashboard tab per device).
+The Client talks only to HomelabDocs.Server. The Server stores socket registrations (id, name, HTTP address) in SQLite and calls one or more HomelabDocs.Socket instances via Refit. Each Socket process always uses the local Docker endpoint (`unix:///var/run/docker.sock` by default). Remote Docker Engine URLs (`tcp://`) are not supported.
 
-There is no implicit default: only the connections you configure are loaded, and the API fails to start when the list is empty. Add the local socket explicitly when you want it.
+Register sockets on the Server after they are running. Example:
 
-```json
-{
-  "Docker": {
-    "Connections": [
-      {
-        "Name": "Local",
-        "Endpoint": "unix:///var/run/docker.sock"
-      },
-      {
-        "Name": "raspberrypi",
-        "Endpoint": "tcp://ip-address:2375"
-      }
-    ]
-  }
-}
+```bash
+curl -X POST http://localhost:5100/api/sockets \
+  -H 'Content-Type: application/json' \
+  -d '{"name":"Local","address":"http://127.0.0.1:5110"}'
 ```
 
-`Name` must be unique (case-insensitive). It is used as the device key in the API and as the tab label in the UI.
+On Docker Compose, the Socket service is reachable as `http://socket:8080` from the `api` container.
 
-Configure with `appsettings`, environment variables, or Compose:
-
-| Source | Example |
-| --- | --- |
-| `appsettings.json` | `"Docker": { "Connections": [ { "Name": "Remote", "Endpoint": "tcp://192.168.1.10:2375" } ] }` |
-| Environment | `Docker__Connections__0__Name=Local`, `Docker__Connections__0__Endpoint=unix:///var/run/docker.sock` |
-| Compose / `.env` | Commented `Docker__Connections__*` entries under the `api` service |
-
-Add more devices with the next index (`Docker__Connections__1__*`, `__2__`, and so on). An index that also exists in `appsettings.json` overrides that entry rather than adding a new one. You can mix a local Unix socket with remote `tcp://` endpoints.
-
-Linux and macOS commonly use the default Unix socket. Docker Desktop environments can differ, and socket permissions may prevent access. Windows named-pipe support is not included in this phase. TLS-protected remote endpoints are not configured yet (plain `tcp://` only).
+`Name` must be unique (case-insensitive). It is used as the device key in `GET /api/devices` and as the tab label in the UI.
 
 ## Persistence
 
@@ -76,10 +62,10 @@ The database is a save directory containing `homelabdocs.db`. Copy or share that
 
 Override the path with `ConnectionStrings:HomelabDocs` / `ConnectionStrings__HomelabDocs`. An empty value in Development falls back to local application data.
 
-To add a migration from `src/HomelabDocs.Server`:
+To add a migration from the repository root:
 
 ```bash
-dotnet ef migrations add <Name> --project HomelabDocs.Domain --startup-project HomelabDocs.Domain
+dotnet ef migrations add <Name> --project src/HomelabDocs.Server/HomelabDocs.Domain --startup-project src/HomelabDocs.Server/HomelabDocs.Domain
 ```
 
 ## Installation
@@ -87,16 +73,30 @@ dotnet ef migrations add <Name> --project HomelabDocs.Domain --startup-project H
 From the repository root:
 
 ```bash
-dotnet restore src/HomelabDocs.Server/HomelabDocs.slnx
+dotnet restore HomelabDocs.slnx
 cd src/HomelabDocs.Client
 npm install
 ```
 
 ## Run locally
 
-Start the API and Client separately.
+Start Socket, Server, and Client separately.
 
-### API
+### Socket
+
+```bash
+dotnet run --project src/HomelabDocs.Socket/HomelabDocs.Socket.Api --launch-profile http
+```
+
+- Socket base URL: `http://localhost:5110`
+- HTTPS profile also available: `https://localhost:7110` (and `http://localhost:5110`)
+- Swagger UI: [http://localhost:5110/swagger](http://localhost:5110/swagger)
+- Health: `GET /api/health`
+- Containers: `GET /api/containers`
+
+Override the local Docker Unix socket with `Docker:Endpoint` / `Docker__Endpoint` (unix scheme only).
+
+### Server (API)
 
 ```bash
 dotnet run --project src/HomelabDocs.Server/HomelabDocs.Api --launch-profile http
@@ -105,7 +105,8 @@ dotnet run --project src/HomelabDocs.Server/HomelabDocs.Api --launch-profile htt
 - API base URL: `http://localhost:5100`
 - HTTPS profile also available: `https://localhost:7100` (and `http://localhost:5100`)
 - Swagger UI: [http://localhost:5100/swagger](http://localhost:5100/swagger)
-- Devices endpoint: `GET /api/devices`
+- Sockets: `GET/POST /api/sockets`, `GET/PUT/DELETE /api/sockets/{id}`
+- Devices endpoint: `GET /api/devices` (registered sockets)
 - Containers endpoint: `GET /api/devices/{name}/containers`
 
 ### Client
@@ -117,7 +118,7 @@ npm run dev
 
 Typical Client URL: [http://localhost:5173](http://localhost:5173)
 
-The Vite dev server proxies `/api` to `http://localhost:5100`. Only the API process accesses Docker.
+The Vite dev server proxies `/api` to `http://localhost:5100`. Only HomelabDocs.Socket accesses Docker.
 
 ## Run with Docker Compose
 
@@ -126,6 +127,7 @@ Published images are built and pushed to the GitHub Container Registry when a [G
 | Service | Image |
 | --- | --- |
 | `api` | [`ghcr.io/homelabdocs/server`](https://ghcr.io/homelabdocs/server) |
+| `socket` | [`ghcr.io/homelabdocs/socket`](https://ghcr.io/homelabdocs/socket) |
 | `client` | [`ghcr.io/homelabdocs/client`](https://ghcr.io/homelabdocs/client) |
 
 Stable releases also publish `latest`, `MAJOR.MINOR`, and `MAJOR` tags. Pre-releases publish only the exact version tag (for example `0.1.0-beta.1`).
@@ -136,37 +138,39 @@ From the repository root, pull and start the published images:
 docker compose up
 ```
 
-Pin a specific release by setting the image tags in `docker-compose.yml`, for example `ghcr.io/homelabdocs/server:0.1.0` and `ghcr.io/homelabdocs/client:0.1.0`.
+Pin a specific release by setting the image tags in `docker-compose.yml`, for example `ghcr.io/homelabdocs/server:0.1.0`, `ghcr.io/homelabdocs/socket:0.1.0`, and `ghcr.io/homelabdocs/client:0.1.0`.
 
-To build images locally instead of pulling, use the Dockerfiles under `src/` (see `.github/workflows/docker.yml` for the build contexts).
+To build images locally instead of pulling, use the Dockerfiles under `src/` (see `.github/workflows/docker.yml` for the build contexts). Server and Socket images use the repository root as context so they can restore from the shared `Directory.Build.props` and `Directory.Packages.props`.
 
-This starts two containers:
+This starts three containers:
 
 | Service | Image role | Host URL |
-| --- | --- | --- |
+| --- | --- |
 | `api` | ASP.NET Core API | [http://localhost:5100](http://localhost:5100) (Swagger at `/swagger`) |
+| `socket` | Local Docker agent | [http://localhost:5110](http://localhost:5110) (Swagger at `/swagger`) |
 | `client` | Nginx static UI + `/api` reverse proxy | [http://localhost:5200](http://localhost:5200) |
 
-The API connects to Docker using `Docker:Connections` (Compose defaults to one local device on `unix:///var/run/docker.sock`) and mounts the host socket read-only when using that local path. SQLite is stored in the named volume `homelabdocs-data` at `/var/lib/homelabdocs` so it survives container recreate and image pulls. For a host-visible folder (for example a later rclone/Google Drive sidecar), replace that volume with a bind mount such as `./data:/var/lib/homelabdocs`. The client container proxies browser `/api` requests to the `api` service on the Compose network, so the UI keeps using relative `/api` paths.
+SQLite is stored in the named volume `homelabdocs-data` at `/var/lib/homelabdocs` so it survives container recreate and image pulls. For a host-visible folder (for example a later rclone/Google Drive sidecar), replace that volume with a bind mount such as `./data:/var/lib/homelabdocs`. The `socket` service mounts the host Docker socket. The client container proxies browser `/api` requests to the `api` service on the Compose network, so the UI keeps using relative `/api` paths.
+
+Register the Compose socket once the stack is up (from another container on the Compose network use `http://socket:8080`; from the host use `http://127.0.0.1:5110`):
+
+```bash
+curl -X POST http://localhost:5100/api/sockets \
+  -H 'Content-Type: application/json' \
+  -d '{"name":"Local","address":"http://socket:8080"}'
+```
+
+If the Socket cannot list containers, check socket permissions on the host (the Socket process must be able to access the mounted Docker socket).
 
 ### Multiple Docker Engines
 
-Compose adds no devices of its own. Either edit `Docker:Connections` in `appsettings.json`, or uncomment the `Docker__Connections__*` block in `docker-compose.yml` and set values (env or `.env`):
-
-```bash
-DOCKER_DEVICE_1_NAME=Remote \
-DOCKER_DEVICE_1_ENDPOINT=tcp://192.168.1.10:2375 \
-docker compose up
-```
-
-When using only remote `tcp://` endpoints, you can remove the `api` service socket volume mount from `docker-compose.yml` (it is unused).
-
-If the API cannot list containers with the local socket, check socket permissions on the host (the container process must be able to read the mounted socket).
+Run HomelabDocs.Socket on each machine that has a Docker Engine, then register each Socket’s HTTP address on the Server (`POST /api/sockets`). The Server does not connect to Docker Engine ports.
 
 ## Current limitations
 
-- No TLS support for remote Docker TCP endpoints
+- No TLS or authentication between Server and Socket
 - No background synchronization or Docker events
 - No authentication or configuration UI
 - Diagram shows container nodes only (no hosts, networks, volumes, or edges)
 - No Windows named-pipe support
+- Socket talks only to a local Unix Docker socket (no remote `tcp://` Engine)

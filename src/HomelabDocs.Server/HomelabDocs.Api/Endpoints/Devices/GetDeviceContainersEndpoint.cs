@@ -1,5 +1,5 @@
 using FastEndpoints;
-using HomelabDocs.Business.Docker.Clients;
+using HomelabDocs.Business.Devices;
 using HomelabDocs.Shared.Containers;
 
 namespace HomelabDocs.Api.Endpoints.Devices;
@@ -7,15 +7,11 @@ namespace HomelabDocs.Api.Endpoints.Devices;
 public sealed class GetDeviceContainersEndpoint
     : Endpoint<GetDeviceContainersRequest, GetRunningContainersResponse>
 {
-    private readonly IDockerClientRegistry _dockerClientRegistry;
-    private readonly IDockerContainerClient _dockerContainerClient;
+    private readonly IDeviceQueryService _deviceQueryService;
 
-    public GetDeviceContainersEndpoint(
-        IDockerClientRegistry dockerClientRegistry,
-        IDockerContainerClient dockerContainerClient)
+    public GetDeviceContainersEndpoint(IDeviceQueryService deviceQueryService)
     {
-        _dockerClientRegistry = dockerClientRegistry;
-        _dockerContainerClient = dockerContainerClient;
+        _deviceQueryService = deviceQueryService;
     }
 
     public override void Configure()
@@ -28,15 +24,12 @@ public sealed class GetDeviceContainersEndpoint
         GetDeviceContainersRequest req,
         CancellationToken ct)
     {
-        if (!_dockerClientRegistry.TryGetClient(req.Name, out _))
+        var containers = await _deviceQueryService.GetContainersAsync(req.Name, ct);
+        if (containers is null)
         {
             await Send.NotFoundAsync(ct);
             return;
         }
-
-        var containers = await _dockerContainerClient.GetRunningContainersAsync(
-            req.Name,
-            ct);
 
         await Send.OkAsync(
             new GetRunningContainersResponse

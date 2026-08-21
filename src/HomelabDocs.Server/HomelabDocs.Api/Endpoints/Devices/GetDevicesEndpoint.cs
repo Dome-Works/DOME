@@ -1,16 +1,16 @@
 using FastEndpoints;
-using HomelabDocs.Business.Docker.Clients;
+using HomelabDocs.Business.Devices;
 using HomelabDocs.Shared.Devices;
 
 namespace HomelabDocs.Api.Endpoints.Devices;
 
 public sealed class GetDevicesEndpoint : EndpointWithoutRequest<GetDevicesResponse>
 {
-    private readonly IDockerClientRegistry _dockerClientRegistry;
+    private readonly IDeviceQueryService _deviceQueryService;
 
-    public GetDevicesEndpoint(IDockerClientRegistry dockerClientRegistry)
+    public GetDevicesEndpoint(IDeviceQueryService deviceQueryService)
     {
-        _dockerClientRegistry = dockerClientRegistry;
+        _deviceQueryService = deviceQueryService;
     }
 
     public override void Configure()
@@ -21,10 +21,11 @@ public sealed class GetDevicesEndpoint : EndpointWithoutRequest<GetDevicesRespon
 
     public override async Task HandleAsync(CancellationToken ct)
     {
+        var devices = await _deviceQueryService.GetDevicesAsync(ct);
         await Send.OkAsync(
             new GetDevicesResponse
             {
-                Devices = _dockerClientRegistry.GetDevices()
+                Devices = devices
             },
             ct);
     }

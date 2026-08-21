@@ -27,16 +27,15 @@ Please give us a reasonable window to investigate and release a fix before any p
 
 In scope:
 
-- Remote code execution, privilege escalation, or unintended Docker Engine control through the HomelabDocs API or client
+- Remote code execution, privilege escalation, or unintended Docker Engine control through HomelabDocs.Socket, HomelabDocs.Server, or the client
 - Authentication or authorization bypass once those features exist
-- Path traversal, SSRF, injection, or similar flaws in the API that expose host or Docker data beyond intended read-only listing
+- Path traversal, SSRF, injection, or similar flaws in the APIs that expose host or Docker data beyond intended listing
 - Supply-chain issues in first-party build or release artifacts published from this repository
 
 Out of scope (unless they cause an unexpected security impact beyond the documented threat model):
 
-- Running HomelabDocs on an untrusted network without network controls — the API currently has **no authentication**
-- Use of unencrypted `tcp://` Docker Engine endpoints — TLS for remote Docker is not implemented yet; see the README
-- Exposing the Docker socket or Engine API to untrusted parties by operator misconfiguration
+- Running HomelabDocs on an untrusted network without network controls — the APIs currently have **no authentication**
+- Exposing HomelabDocs.Socket (full Docker Engine access) or the Docker socket to untrusted parties by operator misconfiguration
 - Denial of service from resource exhaustion in a local/homelab deployment
 - Issues only present in third-party dependencies that are not exploitable through HomelabDocs (report those upstream when appropriate)
 - Social engineering, physical access, or compromised host/Docker environments
@@ -45,9 +44,9 @@ Out of scope (unless they cause an unexpected security impact beyond the documen
 
 HomelabDocs is intended for trusted homelab or private networks.
 
-- Do not expose the API or UI to the public internet without additional access controls (reverse proxy auth, VPN, firewall rules, and so on).
-- Prefer Unix socket access for local Docker Engines over plain `tcp://` where possible.
-- Treat configured Docker endpoints as highly privileged: anyone who can reach the API can query container metadata from those Engines today.
+- Do not expose the Server, Socket, or UI to the public internet without additional access controls (reverse proxy auth, VPN, firewall rules, and so on).
+- Treat HomelabDocs.Socket as highly privileged: it mounts the local Docker socket. Anyone who can reach a Socket (or register one on the Server) can query that Engine.
+- The Server stores Socket HTTP addresses only and never connects to Docker Engine.
 - Keep `.env`, `appsettings*.json` overrides, and Compose secrets out of public repositories and issue reports.
 
 ## Prefer private disclosure
