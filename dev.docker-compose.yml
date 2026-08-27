@@ -1,0 +1,48 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: src/HomelabDocs.Server/HomelabDocs.Api/Dockerfile
+      no_cache: true
+    image: homelabdocs/server:local
+    ports:
+      - "5100:8080"
+    volumes:
+      # SQLite save directory. Survives image pulls. For host-visible
+      # backups or a future rclone/Google Drive sidecar, bind-mount instead:
+      # - ./data:/var/lib/homelabdocs
+      - homelabdocs-data:/var/lib/homelabdocs
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ConnectionStrings__HomelabDocs: Data Source=/var/lib/homelabdocs/homelabdocs.db
+    restart: unless-stopped
+
+  socket:
+    build:
+      context: .
+      dockerfile: src/HomelabDocs.Socket/HomelabDocs.Socket.Api/Dockerfile
+      no_cache: true
+    image: homelabdocs/socket:local
+    ports:
+      - "5110:8080"
+    volumes:
+      - ${DOCKER_SOCKET_PATH:-/var/run/docker.sock}:/var/run/docker.sock
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      Docker__Endpoint: unix:///var/run/docker.sock
+    restart: unless-stopped
+
+  client:
+    build:
+      context: ./src/HomelabDocs.Client
+      dockerfile: Dockerfile
+      no_cache: true
+    image: homelabdocs/client:local
+    ports:
+      - "5200:80"
+    depends_on:
+      - api
+    restart: unless-stopped
+
+volumes:
+  homelabdocs-data:
