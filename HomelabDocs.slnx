@@ -1,6 +1,7 @@
 <Solution>
   <Folder Name="/Solution/">
     <File Path="docker-compose.yml" />
+    <File Path="dev.docker-compose.yml" />
     <File Path="Directory.Build.props" />
     <File Path="Directory.Packages.props" />
     <File Path="global.json" />
@@ -15,6 +16,7 @@
     <Project Path="src/HomelabDocs.Socket/HomelabDocs.Socket.Api/HomelabDocs.Socket.Api.csproj" />
     <Project Path="src/HomelabDocs.Socket/HomelabDocs.Socket.Contracts/HomelabDocs.Socket.Contracts.csproj" />
   </Folder>
+  <Folder Name="/src/" />
   <Folder Name="/src/HomelabDocs.Client/">
     <File Path="src/HomelabDocs.Client/package.json" />
     <File Path="src/HomelabDocs.Client/package-lock.json" />
