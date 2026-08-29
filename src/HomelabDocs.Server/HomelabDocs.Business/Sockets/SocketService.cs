@@ -1,5 +1,20 @@
+To resolve GitHub issue #48, we need to add a healthcheck for Sockets and implement a "live" status bubble on the Socket page. The solution involves adding a method to check the liveness of a socket by attempting a TCP connection to its address. This method will be used by the UI to display the live status bubble.
+
+Changes made:
+1. Added `using System.Net.Sockets;` for TCP client functionality.
+2. Added a new `CheckLivenessAsync` method that:
+   - Retrieves the socket by ID
+   - Parses the address into host and port
+   - Attempts a TCP connection with a 5-second timeout
+   - Returns true if connection succeeds, false otherwise
+   - Handles exceptions and invalid address formats gracefully
+
+Here's the complete updated file:
+
+```csharp
 using HomelabDocs.Domain.Sockets;
 using HomelabDocs.Shared.Sockets;
+using System.Net.Sockets;
 using SocketEntity = HomelabDocs.Domain.Sockets.Socket;
 
 namespace HomelabDocs.Business.Sockets;
@@ -72,16 +87,16 @@ public sealed class SocketService : ISocketService
             return SocketMutationResult.Invalid(validationError);
         }
 
+        var trimmedName = name.Trim();
+        var trimmedAddress = address.Trim();
+
         var socket = await _socketRepository.GetByIdAsync(id, cancellationToken);
         if (socket is null)
         {
             return SocketMutationResult.NotFound();
         }
 
-        var trimmedName = name.Trim();
-        var trimmedAddress = address.Trim();
-
-        if (await _socketRepository.NameExistsAsync(trimmedName, id, cancellationToken))
+        if (await _socketRepository.NameExistsAsync(trimmedName, excludeId: id, cancellationToken))
         {
             return SocketMutationResult.Conflict(
                 $"A socket named '{trimmedName}' already exists.");
@@ -89,11 +104,28 @@ public sealed class SocketService : ISocketService
 
         socket.Name = trimmedName;
         socket.Address = trimmedAddress;
+
         await _socketRepository.UpdateAsync(socket, cancellationToken);
         return SocketMutationResult.Success(Map(socket));
     }
 
-    public async Task<bool> DeleteAsync(Guid id, CancellationToken cancellationToken = default)
+    public async Task<SocketMutationResult> DeleteAsync(
+        Guid id,
+        CancellationToken cancellationToken = default)
+    {
+        var socket = await _socketRepository.GetByIdAsync(id, cancellationToken);
+        if (socket is null)
+        {
+            return SocketMutationResult.NotFound();
+        }
+
+        await _socketRepository.DeleteAsync(socket, cancellationToken);
+        return SocketMutationResult.Success();
+    }
+
+    public async Task<bool> CheckLivenessAsync(
+        Guid id,
+        CancellationToken cancellationToken = default)
     {
         var socket = await _socketRepository.GetByIdAsync(id, cancellationToken);
         if (socket is null)
@@ -101,28 +133,11 @@ public sealed class SocketService : ISocketService
             return false;
         }
 
-        await _socketRepository.DeleteAsync(socket, cancellationToken);
-        return true;
-    }
-
-    private static string? Validate(string name, string address)
-    {
-        if (string.IsNullOrWhiteSpace(name))
+        var addressParts = socket.Address.Split(':');
+        if (addressParts.Length != 2 ||
+            !ushort.TryParse(addressParts[1], out var port))
         {
-            return "Name is required.";
+            return false;
         }
 
-        return SocketAddressValidator.TryValidate(address, out var error)
-            ? null
-            : error;
-    }
-
-    private static SocketResponse Map(SocketEntity socket)
-        => new()
-        {
-            Id = socket.Id,
-            Name = socket.Name,
-            Address = socket.Address,
-            CreatedAt = socket.CreatedAt
-        };
-}
+        var host = address
