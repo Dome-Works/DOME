@@ -6,6 +6,7 @@ import {
   createSocket,
   deleteSocket,
   fetchSockets,
+  fetchSocketStatuses,
   updateSocket,
 } from '@/api/sockets'
 import { Button } from '@/components/ui/button'
@@ -25,6 +26,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { cn } from '@/lib/utils'
 import {
   Table,
   TableBody,
@@ -45,12 +47,15 @@ type EditorState =
   | { mode: 'create' }
   | { mode: 'edit'; socket: SocketRecord }
 
+type SocketStatuses = Record<string, boolean>
+
 export function SocketsPage() {
   const [state, setState] = useState<SocketsState>({ status: 'loading' })
   const [editor, setEditor] = useState<EditorState>({ mode: 'closed' })
   const [socketToDelete, setSocketToDelete] = useState<SocketRecord | null>(
     null,
   )
+  const [socketStatuses, setSocketStatuses] = useState<SocketStatuses>({})
   const [name, setName] = useState('')
   const [address, setAddress] = useState('')
   const [formError, setFormError] = useState<string | null>(null)
@@ -79,11 +84,55 @@ export function SocketsPage() {
     }
   }, [])
 
+  const loadSocketStatuses = useCallback(
+    async (sockets: SocketRecord[], signal?: AbortSignal) => {
+      if (sockets.length === 0) {
+        setSocketStatuses({})
+        return
+      }
+
+      try {
+        const response = await fetchSocketStatuses(signal)
+        if (signal?.aborted) {
+          return
+        }
+
+        setSocketStatuses(
+          Object.fromEntries(
+            response.statuses.map((status) => [status.id, status.isReachable]),
+          ),
+        )
+      } catch {
+        if (signal?.aborted) {
+          return
+        }
+
+        setSocketStatuses(
+          Object.fromEntries(sockets.map((socket) => [socket.id, false])),
+        )
+      }
+    },
+    [],
+  )
+
   useEffect(() => {
     const controller = new AbortController()
     void loadSockets(controller.signal)
     return () => controller.abort()
   }, [loadSockets])
+
+  const readySockets = state.status === 'ready' ? state.sockets : undefined
+
+  useEffect(() => {
+    if (!readySockets) {
+      setSocketStatuses({})
+      return
+    }
+
+    const controller = new AbortController()
+    void loadSocketStatuses(readySockets, controller.signal)
+    return () => controller.abort()
+  }, [loadSocketStatuses, readySockets])
 
   const openCreate = () => {
     setName('')
@@ -198,6 +247,9 @@ export function SocketsPage() {
           <Table>
             <TableHeader>
               <TableRow>
+                <TableHead className="w-16">
+                  <span className="sr-only">Status</span>
+                </TableHead>
                 <TableHead>Name</TableHead>
                 <TableHead>Address</TableHead>
                 <TableHead>Created</TableHead>
@@ -209,13 +261,32 @@ export function SocketsPage() {
             <TableBody>
               {sockets.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={4} className="h-24 text-center">
+                  <TableCell colSpan={5} className="h-24 text-center">
                     No sockets are registered yet.
                   </TableCell>
                 </TableRow>
               ) : (
                 sockets.map((socket) => (
                   <TableRow key={socket.id}>
+                    <TableCell>
+                      <span
+                        aria-label={
+                          socketStatuses[socket.id] === undefined
+                            ? 'Checking status'
+                            : socketStatuses[socket.id]
+                              ? 'Socket reachable'
+                              : 'Socket unreachable'
+                        }
+                        className={cn(
+                          'inline-flex h-2.5 w-2.5 rounded-full',
+                          socketStatuses[socket.id] === undefined
+                            ? 'bg-muted-foreground/40'
+                            : socketStatuses[socket.id]
+                              ? 'bg-emerald-500'
+                              : 'bg-destructive',
+                        )}
+                      />
+                    </TableCell>
                     <TableCell className="font-medium">{socket.name}</TableCell>
                     <TableCell>{socket.address}</TableCell>
                     <TableCell>

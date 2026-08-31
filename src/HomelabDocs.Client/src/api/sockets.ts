@@ -1,6 +1,7 @@
 import type {
   CreateSocketRequest,
   GetSocketsResponse,
+  GetSocketStatusesResponse,
   SocketRecord,
   UpdateSocketRequest,
 } from '../types/sockets'
@@ -21,6 +22,23 @@ export async function fetchSockets(
   }
 
   return (await response.json()) as GetSocketsResponse
+}
+
+export async function fetchSocketStatuses(
+  signal?: AbortSignal,
+): Promise<GetSocketStatusesResponse> {
+  const response = await fetch('/api/sockets/statuses', { signal })
+
+  if (!response.ok) {
+    throw new Error(
+      await readApiError(
+        response,
+        `Failed to load socket statuses (${response.status})`,
+      ),
+    )
+  }
+
+  return (await response.json()) as GetSocketStatusesResponse
 }
 
 export async function createSocket(
