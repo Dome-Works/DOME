@@ -19,5 +19,8 @@ public interface ISocketService
         string address,
         CancellationToken cancellationToken = default);
 
+    Task<IReadOnlyList<SocketStatusResponse>> GetStatusesAsync(
+        CancellationToken cancellationToken = default);
+
     Task<bool> DeleteAsync(Guid id, CancellationToken cancellationToken = default);
 }

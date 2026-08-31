@@ -1,5 +1,6 @@
 using HomelabDocs.Domain.Sockets;
 using HomelabDocs.Shared.Sockets;
+using Microsoft.Extensions.Logging;
 using SocketEntity = HomelabDocs.Domain.Sockets.Socket;
 
 namespace HomelabDocs.Business.Sockets;
@@ -7,10 +8,17 @@ namespace HomelabDocs.Business.Sockets;
 public sealed class SocketService : ISocketService
 {
     private readonly ISocketRepository _socketRepository;
+    private readonly IHomelabDocsSocketApiFactory _socketApiFactory;
+    private readonly ILogger<SocketService> _logger;
 
-    public SocketService(ISocketRepository socketRepository)
+    public SocketService(
+        ISocketRepository socketRepository,
+        IHomelabDocsSocketApiFactory socketApiFactory,
+        ILogger<SocketService> logger)
     {
         _socketRepository = socketRepository;
+        _socketApiFactory = socketApiFactory;
+        _logger = logger;
     }
 
     public async Task<IReadOnlyList<SocketResponse>> ListAsync(
@@ -93,6 +101,16 @@ public sealed class SocketService : ISocketService
         return SocketMutationResult.Success(Map(socket));
     }
 
+    public async Task<IReadOnlyList<SocketStatusResponse>> GetStatusesAsync(
+        CancellationToken cancellationToken = default)
+    {
+        var sockets = await _socketRepository.ListAsync(cancellationToken);
+        var statuses = await Task.WhenAll(
+            sockets.Select(socket => GetStatusAsync(socket, cancellationToken)));
+
+        return statuses;
+    }
+
     public async Task<bool> DeleteAsync(Guid id, CancellationToken cancellationToken = default)
     {
         var socket = await _socketRepository.GetByIdAsync(id, cancellationToken);
@@ -125,4 +143,34 @@ public sealed class SocketService : ISocketService
             Address = socket.Address,
             CreatedAt = socket.CreatedAt
         };
+
+    private async Task<SocketStatusResponse> GetStatusAsync(
+        SocketEntity socket,
+        CancellationToken cancellationToken)
+    {
+        try
+        {
+            var api = _socketApiFactory.Create(socket.Address);
+            await api.GetHealthAsync(cancellationToken);
+            return new SocketStatusResponse
+            {
+                Id = socket.Id,
+                IsReachable = true
+            };
+        }
+        catch (Exception ex) when (ex is not OperationCanceledException)
+        {
+            _logger.LogWarning(
+                ex,
+                "Failed to reach socket '{SocketName}' at '{Address}'.",
+                socket.Name,
+                socket.Address);
+
+            return new SocketStatusResponse
+            {
+                Id = socket.Id,
+                IsReachable = false
+            };
+        }
+    }
 }

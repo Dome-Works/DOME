@@ -5,8 +5,17 @@ export type SocketRecord = {
   createdAt: string
 }
 
+export type SocketStatusRecord = {
+  id: string
+  isReachable: boolean
+}
+
 export type GetSocketsResponse = {
   sockets: SocketRecord[]
+}
+
+export type GetSocketStatusesResponse = {
+  statuses: SocketStatusRecord[]
 }
 
 export type CreateSocketRequest = {
