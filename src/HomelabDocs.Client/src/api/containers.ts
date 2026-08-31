@@ -1,9 +1,9 @@
-import type { GetRunningContainersResponse } from '../types/containers'
+import type { GetDeviceContainersResponse } from '../types/containers'
 
 export async function fetchDeviceContainers(
   deviceName: string,
   signal?: AbortSignal,
-): Promise<GetRunningContainersResponse> {
+): Promise<GetDeviceContainersResponse> {
   const response = await fetch(
     `/api/devices/${encodeURIComponent(deviceName)}/containers`,
     { signal },
@@ -13,5 +13,5 @@ export async function fetchDeviceContainers(
     throw new Error(`Failed to load containers (${response.status})`)
   }
 
-  return (await response.json()) as GetRunningContainersResponse
+  return (await response.json()) as GetDeviceContainersResponse
 }

@@ -21,7 +21,32 @@ internal static class ContainerMapper
             Name = name,
             State = container.State ?? string.Empty,
             Stack = ResolveStack(container.Labels),
+            Volumes = MapVolumes(container.Mounts),
         };
+    }
+
+    public static IReadOnlyCollection<ContainerVolumeResponse> MapVolumes(
+        IList<MountPoint>? mounts)
+    {
+        if (mounts is null || mounts.Count == 0)
+        {
+            return Array.Empty<ContainerVolumeResponse>();
+        }
+
+        return mounts
+            .Where(static mount => mount is not null)
+            .Select(static mount => new ContainerVolumeResponse
+            {
+                Name = string.IsNullOrWhiteSpace(mount.Name) ? null : mount.Name.Trim(),
+                Source = string.IsNullOrWhiteSpace(mount.Source) ? null : mount.Source.Trim(),
+                Destination = string.IsNullOrWhiteSpace(mount.Destination)
+                    ? string.Empty
+                    : mount.Destination.Trim(),
+                Type = string.IsNullOrWhiteSpace(mount.Type) ? null : mount.Type.Trim(),
+                ReadOnly = mount.RW == false,
+            })
+            .Where(static volume => volume.Destination.Length > 0)
+            .ToArray();
     }
 
     public static string? ResolveStack(IDictionary<string, string>? labels)

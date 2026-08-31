@@ -4,6 +4,7 @@ using HomelabDocs.Shared.Containers;
 using HomelabDocs.Shared.Devices;
 using Microsoft.Extensions.Logging;
 using SocketContainer = HomelabDocs.Socket.Contracts.Containers.ContainerResponse;
+using SocketVolume = HomelabDocs.Socket.Contracts.Containers.ContainerVolumeResponse;
 
 namespace HomelabDocs.Business.Devices;
 
@@ -32,7 +33,7 @@ public sealed class DeviceQueryService : IDeviceQueryService
             .ToArray();
     }
 
-    public async Task<IReadOnlyCollection<ContainerResponse>?> GetContainersAsync(
+    public async Task<IReadOnlyCollection<ContainerDto>?> GetContainersAsync(
         string deviceName,
         CancellationToken cancellationToken = default)
     {
@@ -63,12 +64,25 @@ public sealed class DeviceQueryService : IDeviceQueryService
         }
     }
 
-    private static ContainerResponse Map(SocketContainer container)
+    private static ContainerDto Map(SocketContainer container)
         => new()
         {
             Id = container.Id,
             Name = container.Name,
             State = container.State,
-            Stack = container.Stack
+            Stack = container.Stack,
+            TotalBytes = container.Volumes.Sum(static volume => volume.SizeBytes ?? 0),
+            Volumes = container.Volumes.Select(Map).ToArray(),
+        };
+
+    private static ContainerVolumeDto Map(SocketVolume volume)
+        => new()
+        {
+            Name = volume.Name,
+            Source = volume.Source,
+            Destination = volume.Destination,
+            Type = volume.Type,
+            ReadOnly = volume.ReadOnly,
+            SizeBytes = volume.SizeBytes,
         };
 }

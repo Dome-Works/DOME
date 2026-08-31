@@ -59,13 +59,107 @@
   color: #f0b4b4;
 }
 
-.diagram-canvas {
+.diagram-shell {
   flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1px;
+  background: var(--border);
+}
+
+.diagram-shell-with-detail {
+  grid-template-columns: minmax(0, 1fr) minmax(320px, 380px);
+}
+
+.diagram-canvas {
   min-height: 0;
   position: relative;
   background:
     radial-gradient(ellipse at top, #152033 0%, transparent 55%),
     var(--canvas);
+}
+
+.container-detail-pane {
+  min-height: 0;
+  background: linear-gradient(180deg, rgba(22, 27, 34, 0.96), rgba(15, 20, 25, 0.98));
+  overflow: auto;
+  padding: 1rem;
+}
+
+.container-detail-card {
+  min-height: 100%;
+  gap: 1rem;
+  background: rgba(28, 35, 48, 0.88);
+}
+
+.container-detail-header {
+  gap: 0.75rem;
+}
+
+.container-detail-header-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.container-detail-header-copy {
+  min-width: 0;
+}
+
+.container-detail-title {
+  font-size: 1.05rem;
+  line-height: 1.2;
+  word-break: break-word;
+}
+
+.container-detail-header-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.container-detail-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding-top: 0;
+}
+
+.container-detail-empty {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.container-volume-name {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.container-volume-name-primary {
+  font-weight: 600;
+  word-break: break-word;
+}
+
+.container-volume-name-secondary {
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  word-break: break-word;
+}
+
+.container-volume-access-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: rgba(15, 20, 25, 0.55);
+  color: var(--text-muted);
 }
 
 .stack-node {
@@ -98,11 +192,18 @@
 }
 
 .container-node {
-  width: 220px;
+  width: 260px;
   border: 1px solid var(--border);
   background: var(--bg-elevated);
   color: var(--text);
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.28);
+}
+
+.container-node-selected {
+  border-color: rgba(90, 159, 255, 0.9);
+  box-shadow:
+    0 0 0 1px rgba(90, 159, 255, 0.28),
+    0 12px 28px rgba(0, 0, 0, 0.32);
 }
 
 .react-flow__edge-path {
@@ -114,8 +215,16 @@
 .container-node-body {
   display: flex;
   flex-direction: column;
-  gap: 0.35rem;
+  gap: 0.6rem;
   padding: 0.75rem 0.9rem;
+}
+
+.container-node-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.5rem;
 }
 
 .container-node-name {
@@ -129,6 +238,13 @@
   font-size: 0.75rem;
   color: var(--text-muted);
   text-transform: lowercase;
+}
+
+.container-node-storage-badge {
+  align-self: flex-start;
+  background: rgba(90, 159, 255, 0.12);
+  border-color: rgba(90, 159, 255, 0.3);
+  color: var(--text);
 }
 
 .container-node-state-running {
