@@ -6,6 +6,10 @@ updates:
       interval: weekly
     cooldown:
       default-days: 7
+    groups:
+      monthly-batch:
+        patterns:
+          - "*"  
 
   - package-ecosystem: npm
     directory: /src/HomelabDocs.Client
@@ -13,6 +17,10 @@ updates:
       interval: weekly
     cooldown:
       default-days: 7
+    groups:
+      monthly-batch:
+        patterns:
+          - "*"  
 
   - package-ecosystem: github-actions
     directory: /
@@ -20,6 +28,10 @@ updates:
       interval: weekly
     cooldown:
       default-days: 7
+    groups:
+      monthly-batch:
+        patterns:
+          - "*"  
 
   - package-ecosystem: docker
     directory: /src/HomelabDocs.Server/HomelabDocs.Api
@@ -27,6 +39,10 @@ updates:
       interval: weekly
     cooldown:
       default-days: 7
+    groups:
+      monthly-batch:
+        patterns:
+          - "*"  
 
   - package-ecosystem: docker
     directory: /src/HomelabDocs.Socket/HomelabDocs.Socket.Api
@@ -34,6 +50,10 @@ updates:
       interval: weekly
     cooldown:
       default-days: 7
+    groups:
+      monthly-batch:
+        patterns:
+          - "*"  
 
   - package-ecosystem: docker
     directory: /src/HomelabDocs.Client
@@ -41,3 +61,7 @@ updates:
       interval: weekly
     cooldown:
       default-days: 7
+    groups:
+      monthly-batch:
+        patterns:
+          - "*"  
