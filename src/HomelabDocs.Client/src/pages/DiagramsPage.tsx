@@ -3,6 +3,7 @@ import { Link } from 'react-router'
 
 import { fetchDeviceContainers } from '@/api/containers'
 import { fetchDevices } from '@/api/devices'
+import { ContainerDetailPane } from '@/components/ContainerDetailPane'
 import { ContainerDiagram } from '@/components/ContainerDiagram'
 import { DeviceTabs } from '@/components/DeviceTabs'
 import { Button } from '@/components/ui/button'
@@ -30,6 +31,9 @@ export function DiagramsPage() {
   const [selectedDeviceName, setSelectedDeviceName] = useState<string | null>(
     null,
   )
+  const [selectedContainerId, setSelectedContainerId] = useState<string | null>(
+    null,
+  )
   const [containersState, setContainersState] = useState<ContainersState>({
     status: 'idle',
   })
@@ -44,6 +48,7 @@ export function DiagramsPage() {
 
       if (devices.length === 0) {
         setSelectedDeviceName(null)
+        setSelectedContainerId(null)
         setDevicesState({ status: 'empty' })
         return
       }
@@ -114,6 +119,7 @@ export function DiagramsPage() {
 
   useEffect(() => {
     if (!selectedDeviceName) {
+      setSelectedContainerId(null)
       setContainersState({ status: 'idle' })
       return
     }
@@ -183,8 +189,21 @@ export function DiagramsPage() {
   const containers =
     containersState.status === 'ready' ? containersState.containers : []
   const devices = devicesState.status === 'ready' ? devicesState.devices : []
+  const selectedContainer =
+    selectedContainerId === null
+      ? null
+      : containers.find((container) => container.id === selectedContainerId) ?? null
   const canRefresh =
     selectedDeviceName !== null && devicesState.status === 'ready'
+
+  useEffect(() => {
+    if (
+      selectedContainerId &&
+      !containers.some((container) => container.id === selectedContainerId)
+    ) {
+      setSelectedContainerId(null)
+    }
+  }, [containers, selectedContainerId])
 
   return (
     <div className="app-page">
@@ -234,11 +253,23 @@ export function DiagramsPage() {
         </div>
       ) : null}
 
-      <main className="diagram-canvas">
-        {selectedDeviceName ? (
-          <ContainerDiagram
-            key={selectedDeviceName}
-            containers={containers}
+      <main
+        className={`diagram-shell${selectedContainer ? ' diagram-shell-with-detail' : ''}`}
+      >
+        <section className="diagram-canvas">
+          {selectedDeviceName ? (
+            <ContainerDiagram
+              key={selectedDeviceName}
+              containers={containers}
+              selectedContainerId={selectedContainerId}
+              onContainerSelect={setSelectedContainerId}
+            />
+          ) : null}
+        </section>
+        {selectedContainer ? (
+          <ContainerDetailPane
+            container={selectedContainer}
+            onClose={() => setSelectedContainerId(null)}
           />
         ) : null}
       </main>

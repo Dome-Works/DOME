@@ -9,4 +9,7 @@ public sealed record ContainerResponse
     public required string State { get; init; }
 
     public string? Stack { get; init; }
+
+    public IReadOnlyCollection<ContainerVolumeResponse> Volumes { get; init; }
+        = Array.Empty<ContainerVolumeResponse>();
 }

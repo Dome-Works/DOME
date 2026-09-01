@@ -22,7 +22,7 @@ const nodeTypes: NodeTypes = {
   stack: StackNode,
 }
 
-const NODE_WIDTH = 220
+const NODE_WIDTH = 260
 const STACK_NODE_WIDTH = 200
 const STACK_NODE_HEIGHT = 72
 const GAP_X = 48
@@ -97,6 +97,7 @@ function toGraph(containers: Container[]): {
       nodes.push({
         id: container.id,
         type: 'container',
+        selected: false,
         position: {
           x: membersOriginX + index * (NODE_WIDTH + GAP_X),
           y: ORIGIN_Y + STACK_NODE_HEIGHT + GAP_Y,
@@ -104,6 +105,7 @@ function toGraph(containers: Container[]): {
         data: {
           name: container.name,
           state: container.state,
+          totalBytes: container.totalBytes,
         },
       })
 
@@ -122,6 +124,7 @@ function toGraph(containers: Container[]): {
     nodes.push({
       id: container.id,
       type: 'container',
+      selected: false,
       position: {
         x: cursorX + index * (NODE_WIDTH + STACK_GAP_X),
         y: ORIGIN_Y,
@@ -129,6 +132,7 @@ function toGraph(containers: Container[]): {
       data: {
         name: container.name,
         state: container.state,
+        totalBytes: container.totalBytes,
       },
     })
   })
@@ -138,17 +142,32 @@ function toGraph(containers: Container[]): {
 
 type ContainerDiagramProps = {
   containers: Container[]
+  selectedContainerId: string | null
+  onContainerSelect: (containerId: string | null) => void
 }
 
-export function ContainerDiagram({ containers }: ContainerDiagramProps) {
+export function ContainerDiagram({
+  containers,
+  selectedContainerId,
+  onContainerSelect,
+}: ContainerDiagramProps) {
   const graph = useMemo(() => toGraph(containers), [containers])
   const [nodes, setNodes, onNodesChange] = useNodesState<Node>([])
   const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([])
 
   useEffect(() => {
-    setNodes(graph.nodes)
+    setNodes(
+      graph.nodes.map((node) =>
+        node.type === 'container'
+          ? {
+              ...node,
+              selected: node.id === selectedContainerId,
+            }
+          : node,
+      ),
+    )
     setEdges(graph.edges)
-  }, [graph, setNodes, setEdges])
+  }, [graph, selectedContainerId, setNodes, setEdges])
 
   return (
     <ReactFlow
@@ -164,6 +183,12 @@ export function ContainerDiagram({ containers }: ContainerDiagramProps) {
       proOptions={{ hideAttribution: true }}
       nodesConnectable={false}
       elementsSelectable
+      onNodeClick={(_, node) => {
+        if (node.type === 'container') {
+          onContainerSelect(node.id)
+        }
+      }}
+      onPaneClick={() => onContainerSelect(null)}
     >
       <Background
         variant={BackgroundVariant.Dots}

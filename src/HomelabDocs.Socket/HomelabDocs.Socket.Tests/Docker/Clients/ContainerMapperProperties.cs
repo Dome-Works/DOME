@@ -189,18 +189,4 @@ public sealed class ContainerMapperProperties
                Labels = labels,
            };
 
-    private sealed record NameResolutionSample(
-        string UsableName,
-        int PrefixCount,
-        IList<string> Suffix);
-
-    private sealed record FallbackNameSample(
-        IList<string>? Names,
-        string? ContainerId);
-
-    private sealed record StackSample(
-        string Project,
-        int LeadingSpaces,
-        int TrailingSpaces,
-        Dictionary<string, string> ExtraLabels);
 }

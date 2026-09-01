@@ -1,11 +1,12 @@
 using FastEndpoints;
 using HomelabDocs.Business.Devices;
-using HomelabDocs.Shared.Containers;
+using DeviceContainerDto = HomelabDocs.Shared.Containers.ContainerDto;
+using DeviceContainerVolumeDto = HomelabDocs.Shared.Containers.ContainerVolumeDto;
 
 namespace HomelabDocs.Api.Endpoints.Devices;
 
 public sealed class GetDeviceContainersEndpoint
-    : Endpoint<GetDeviceContainersRequest, GetRunningContainersResponse>
+    : Endpoint<GetDeviceContainersRequest, GetDeviceContainersResponse>
 {
     private readonly IDeviceQueryService _deviceQueryService;
 
@@ -32,10 +33,32 @@ public sealed class GetDeviceContainersEndpoint
         }
 
         await Send.OkAsync(
-            new GetRunningContainersResponse
+            new GetDeviceContainersResponse
             {
-                Containers = containers
+                Containers = containers.Select(Map).ToArray()
             },
             ct);
     }
+
+    private static ContainerViewModel Map(DeviceContainerDto container)
+        => new()
+        {
+            Id = container.Id,
+            Name = container.Name,
+            State = container.State,
+            Stack = container.Stack,
+            TotalBytes = container.TotalBytes,
+            Volumes = container.Volumes.Select(Map).ToArray(),
+        };
+
+    private static ContainerVolumeViewModel Map(DeviceContainerVolumeDto volume)
+        => new()
+        {
+            Name = volume.Name,
+            Source = volume.Source,
+            Destination = volume.Destination,
+            Type = volume.Type,
+            ReadOnly = volume.ReadOnly,
+            SizeBytes = volume.SizeBytes,
+        };
 }

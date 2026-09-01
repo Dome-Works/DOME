@@ -8,7 +8,7 @@ public interface IDeviceQueryService
     Task<IReadOnlyList<DeviceResponse>> GetDevicesAsync(
         CancellationToken cancellationToken = default);
 
-    Task<IReadOnlyCollection<ContainerResponse>?> GetContainersAsync(
+    Task<IReadOnlyCollection<ContainerDto>?> GetContainersAsync(
         string deviceName,
         CancellationToken cancellationToken = default);
 }
