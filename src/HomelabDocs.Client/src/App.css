@@ -111,7 +111,8 @@
 .container-detail-title {
   font-size: 1.05rem;
   line-height: 1.2;
-  word-break: break-word;
+  word-break: normal;
+  overflow-wrap: anywhere;
 }
 
 .container-detail-header-badges {
@@ -141,13 +142,15 @@
 
 .container-volume-name-primary {
   font-weight: 600;
-  word-break: break-word;
+  word-break: normal;
+  overflow-wrap: anywhere;
 }
 
 .container-volume-name-secondary {
   color: var(--text-muted);
   font-size: 0.78rem;
-  word-break: break-word;
+  word-break: normal;
+  overflow-wrap: anywhere;
 }
 
 .container-volume-access-icon {
@@ -188,7 +191,8 @@
   font-size: 0.95rem;
   font-weight: 650;
   line-height: 1.2;
-  word-break: break-word;
+  word-break: normal;
+  overflow-wrap: anywhere;
 }
 
 .container-node {
@@ -231,7 +235,8 @@
   font-size: 0.9rem;
   font-weight: 600;
   line-height: 1.2;
-  word-break: break-word;
+  word-break: normal;
+  overflow-wrap: anywhere;
 }
 
 .container-node-state {

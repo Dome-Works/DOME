@@ -43,7 +43,7 @@ internal static class ContainerMapper
                     ? string.Empty
                     : mount.Destination.Trim(),
                 Type = string.IsNullOrWhiteSpace(mount.Type) ? null : mount.Type.Trim(),
-                ReadOnly = mount.RW == false,
+                ReadOnly = !mount.RW,
             })
             .Where(static volume => volume.Destination.Length > 0)
             .ToArray();

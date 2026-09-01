@@ -30,7 +30,7 @@ function volumeName(volume: ContainerVolume): string {
   return volume.name?.trim() || volume.source?.trim() || volume.destination
 }
 
-function AccessIcon({ readOnly }: { readOnly: boolean }) {
+function AccessIcon({ readOnly }: Readonly<{ readOnly: boolean }>) {
   const Icon = readOnly ? Eye : Pencil
   const label = readOnly ? 'Read-Only' : 'Read-Write'
 
@@ -49,7 +49,7 @@ function AccessIcon({ readOnly }: { readOnly: boolean }) {
 export function ContainerDetailPane({
   container,
   onClose,
-}: ContainerDetailPaneProps) {
+}: Readonly<ContainerDetailPaneProps>) {
   return (
     <TooltipProvider>
       <aside className="container-detail-pane">
