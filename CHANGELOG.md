@@ -81,6 +81,6 @@ application. Changes are grouped by release.
 
 1. Add new notable changes under `[Unreleased]`.
 2. When a version is released, move those changes into a versioned section such
-   as `[0.3.0] - YYYY-MM-DD`.
+   as `[v0.3.0] - YYYY-MM-DD`.
 3. Record the release date on that section.
 4. Create a new empty `[Unreleased]` section at the top for the next cycle.
