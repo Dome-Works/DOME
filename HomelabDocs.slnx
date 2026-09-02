@@ -1,7 +1,21 @@
 <Solution>
-  <Folder Name="/Solution/">
-    <File Path="docker-compose.yml" />
+  <Folder Name="/.cursor/" />
+  <Folder Name="/.cursor/skills/">
+    <File Path=".cursor\skills\document-release\SKILL.md" />
+  </Folder>
+  <Folder Name="/AI/">
+    <File Path="AGENTS.md" />
+    <File Path="Instructions.md" />
+  </Folder>
+  <Folder Name="/Docker/">
     <File Path="dev.docker-compose.yml" />
+    <File Path="docker-compose.yml" />
+  </Folder>
+  <Folder Name="/Documentation/">
+    <File Path="CHANGELOG.md" />
+    <File Path="README.md" />
+  </Folder>
+  <Folder Name="/Solution/">
     <File Path="Directory.Build.props" />
     <File Path="Directory.Packages.props" />
     <File Path="global.json" />
