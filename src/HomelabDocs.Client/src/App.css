@@ -121,11 +121,57 @@
   gap: 0.5rem;
 }
 
+.container-detail-state-badge {
+  text-transform: lowercase;
+}
+
+.container-detail-state-badge-running {
+  background: color-mix(in srgb, var(--node-running) 18%, transparent);
+  border-color: color-mix(in srgb, var(--node-running) 45%, transparent);
+  color: var(--node-running);
+}
+
+.container-detail-state-badge-paused {
+  background: color-mix(in srgb, var(--node-paused) 18%, transparent);
+  border-color: color-mix(in srgb, var(--node-paused) 45%, transparent);
+  color: var(--node-paused);
+}
+
+.container-detail-state-badge-restarting {
+  background: color-mix(in srgb, var(--node-restarting) 18%, transparent);
+  border-color: color-mix(in srgb, var(--node-restarting) 45%, transparent);
+  color: var(--node-restarting);
+}
+
+.container-detail-state-badge-created {
+  background: color-mix(in srgb, var(--node-created) 18%, transparent);
+  border-color: color-mix(in srgb, var(--node-created) 45%, transparent);
+  color: var(--node-created);
+}
+
+.container-detail-state-badge-stopped {
+  background: color-mix(in srgb, var(--node-stopped) 18%, transparent);
+  border-color: color-mix(in srgb, var(--node-stopped) 45%, transparent);
+  color: var(--node-stopped);
+}
+
+.container-detail-state-badge-unknown {
+  background: rgba(139, 155, 176, 0.12);
+  border-color: rgba(139, 155, 176, 0.35);
+  color: var(--text-muted);
+}
+
 .container-detail-content {
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
   padding-top: 0;
+}
+
+.container-detail-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
 }
 
 .container-detail-empty {

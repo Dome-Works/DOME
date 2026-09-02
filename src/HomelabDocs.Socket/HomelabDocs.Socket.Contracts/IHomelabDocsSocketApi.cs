@@ -11,4 +11,10 @@ public interface IHomelabDocsSocketApi
 
     [Get("/api/containers")]
     Task<GetContainersResponse> GetContainersAsync(CancellationToken cancellationToken = default);
+
+    [Post("/api/containers/{id}/start")]
+    Task StartContainerAsync(string id, CancellationToken cancellationToken = default);
+
+    [Post("/api/containers/{id}/stop")]
+    Task StopContainerAsync(string id, CancellationToken cancellationToken = default);
 }

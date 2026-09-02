@@ -12,6 +12,7 @@ public static class DependencyInjection
         services.AddSingleton<IHomelabDocsSocketApiFactory, HomelabDocsSocketApiFactory>();
         services.AddScoped<ISocketService, SocketService>();
         services.AddScoped<IDeviceQueryService, DeviceQueryService>();
+        services.AddScoped<IDeviceContainerCommandService, DeviceContainerCommandService>();
 
         return services;
     }

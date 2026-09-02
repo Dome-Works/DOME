@@ -1,4 +1,4 @@
-import { Eye, Pencil, XIcon } from 'lucide-react'
+import { Eye, Pencil, Play, Square, XIcon } from 'lucide-react'
 
 import type { Container, ContainerVolume } from '@/types/containers'
 import { formatBytes } from '@/lib/bytes'
@@ -24,6 +24,52 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './ui/t
 type ContainerDetailPaneProps = {
   container: Container | null
   onClose: () => void
+  onStart: () => void
+  onStop: () => void
+  isActionPending: boolean
+}
+
+function normalizedState(state: string): string {
+  return state.trim().toLowerCase()
+}
+
+function canStart(state: string): boolean {
+  const normalized = normalizedState(state)
+  return (
+    normalized !== 'running' &&
+    normalized !== 'paused' &&
+    normalized !== 'restarting' &&
+    normalized !== 'removing'
+  )
+}
+
+function canStop(state: string): boolean {
+  const normalized = normalizedState(state)
+  return normalized === 'running' || normalized === 'paused'
+}
+
+function stateBadgeClassName(state: string): string {
+  const normalized = normalizedState(state)
+  const modifier = (() => {
+    switch (normalized) {
+      case 'running':
+        return 'running'
+      case 'paused':
+        return 'paused'
+      case 'restarting':
+        return 'restarting'
+      case 'created':
+        return 'created'
+      case 'exited':
+      case 'dead':
+      case 'removing':
+        return 'stopped'
+      default:
+        return 'unknown'
+    }
+  })()
+
+  return `container-detail-state-badge container-detail-state-badge-${modifier}`
 }
 
 function volumeName(volume: ContainerVolume): string {
@@ -49,6 +95,9 @@ function AccessIcon({ readOnly }: Readonly<{ readOnly: boolean }>) {
 export function ContainerDetailPane({
   container,
   onClose,
+  onStart,
+  onStop,
+  isActionPending,
 }: Readonly<ContainerDetailPaneProps>) {
   return (
     <TooltipProvider>
@@ -75,10 +124,46 @@ export function ContainerDetailPane({
               ) : null}
             </div>
             {container ? (
-              <div className="container-detail-header-badges">
-                <Badge variant="outline">{formatBytes(container.totalBytes)}</Badge>
-                <Badge variant="secondary">{container.state}</Badge>
-              </div>
+              <>
+                <div className="container-detail-header-badges">
+                  <Badge variant="outline" className={stateBadgeClassName(container.state)}>
+                    {container.state}
+                  </Badge>
+                  <Badge variant="outline">{formatBytes(container.totalBytes)}</Badge>
+                </div>
+                <div className="container-detail-actions">
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="icon-sm"
+                        disabled={isActionPending || !canStart(container.state)}
+                        onClick={onStart}
+                        aria-label="Start container"
+                      >
+                        <Play />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent side="top">Start</TooltipContent>
+                  </Tooltip>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        type="button"
+                        variant="destructive"
+                        size="icon-sm"
+                        disabled={isActionPending || !canStop(container.state)}
+                        onClick={onStop}
+                        aria-label="Stop container"
+                      >
+                        <Square />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent side="top">Stop</TooltipContent>
+                  </Tooltip>
+                </div>
+              </>
             ) : null}
           </CardHeader>
 
