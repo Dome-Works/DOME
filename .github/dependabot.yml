@@ -3,7 +3,7 @@ updates:
   - package-ecosystem: nuget
     directory: /
     schedule:
-      interval: weekly
+      interval: monthly
     cooldown:
       default-days: 7
     groups:
@@ -14,7 +14,7 @@ updates:
   - package-ecosystem: npm
     directory: /src/HomelabDocs.Client
     schedule:
-      interval: weekly
+      interval: monthly
     cooldown:
       default-days: 7
     groups:
@@ -25,7 +25,7 @@ updates:
   - package-ecosystem: github-actions
     directory: /
     schedule:
-      interval: weekly
+      interval: monthly
     cooldown:
       default-days: 7
     groups:
@@ -36,7 +36,7 @@ updates:
   - package-ecosystem: docker
     directory: /src/HomelabDocs.Server/HomelabDocs.Api
     schedule:
-      interval: weekly
+      interval: monthly
     cooldown:
       default-days: 7
     groups:
@@ -47,7 +47,7 @@ updates:
   - package-ecosystem: docker
     directory: /src/HomelabDocs.Socket/HomelabDocs.Socket.Api
     schedule:
-      interval: weekly
+      interval: monthly
     cooldown:
       default-days: 7
     groups:
@@ -58,7 +58,7 @@ updates:
   - package-ecosystem: docker
     directory: /src/HomelabDocs.Client
     schedule:
-      interval: weekly
+      interval: monthly
     cooldown:
       default-days: 7
     groups:
