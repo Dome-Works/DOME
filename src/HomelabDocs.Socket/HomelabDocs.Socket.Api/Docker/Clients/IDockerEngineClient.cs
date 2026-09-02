@@ -8,4 +8,12 @@ public interface IDockerEngineClient
 
     Task<IReadOnlyCollection<ContainerResponse>> ListContainersAsync(
         CancellationToken cancellationToken = default);
+
+    Task<DockerContainerLifecycleResult> StartContainerAsync(
+        string containerId,
+        CancellationToken cancellationToken = default);
+
+    Task<DockerContainerLifecycleResult> StopContainerAsync(
+        string containerId,
+        CancellationToken cancellationToken = default);
 }

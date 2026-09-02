@@ -82,6 +82,64 @@ internal sealed class DockerEngineClient : IDockerEngineClient, IDisposable
         }
     }
 
+    public async Task<DockerContainerLifecycleResult> StartContainerAsync(
+        string containerId,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(containerId);
+
+        try
+        {
+            await _dockerClient.Containers.StartContainerAsync(
+                containerId,
+                new ContainerStartParameters(),
+                cancellationToken);
+            return DockerContainerLifecycleResult.Succeeded;
+        }
+        catch (DockerApiException ex)
+        {
+            if (DockerContainerLifecycleExceptionMapper.TryMap(ex, out var result))
+            {
+                return result;
+            }
+
+            _logger.LogError(
+                ex,
+                "Failed to start Docker container '{ContainerId}'.",
+                containerId);
+            throw;
+        }
+    }
+
+    public async Task<DockerContainerLifecycleResult> StopContainerAsync(
+        string containerId,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(containerId);
+
+        try
+        {
+            await _dockerClient.Containers.StopContainerAsync(
+                containerId,
+                new ContainerStopParameters(),
+                cancellationToken);
+            return DockerContainerLifecycleResult.Succeeded;
+        }
+        catch (DockerApiException ex)
+        {
+            if (DockerContainerLifecycleExceptionMapper.TryMap(ex, out var result))
+            {
+                return result;
+            }
+
+            _logger.LogError(
+                ex,
+                "Failed to stop Docker container '{ContainerId}'.",
+                containerId);
+            throw;
+        }
+    }
+
     private async Task<IReadOnlyCollection<ContainerResponse>> EnrichVolumeSizesAsync(
         IReadOnlyCollection<ContainerResponse> containers,
         CancellationToken cancellationToken)

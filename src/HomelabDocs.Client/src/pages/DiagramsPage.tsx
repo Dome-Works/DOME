@@ -1,12 +1,17 @@
 import { useCallback, useEffect, useState } from 'react'
 import { Link } from 'react-router'
 
-import { fetchDeviceContainers } from '@/api/containers'
+import {
+  fetchDeviceContainers,
+  startDeviceContainer,
+  stopDeviceContainer,
+} from '@/api/containers'
 import { fetchDevices } from '@/api/devices'
 import { ContainerDetailPane } from '@/components/ContainerDetailPane'
 import { ContainerDiagram } from '@/components/ContainerDiagram'
 import { DeviceTabs } from '@/components/DeviceTabs'
 import { Button } from '@/components/ui/button'
+import { toast } from 'sonner'
 import type { Container } from '@/types/containers'
 import type { Device } from '@/types/devices'
 import '@/App.css'
@@ -38,6 +43,7 @@ export function DiagramsPage() {
     status: 'idle',
   })
   const [isRefreshing, setIsRefreshing] = useState(false)
+  const [isActionPending, setIsActionPending] = useState(false)
 
   const loadDevices = useCallback(async (signal?: AbortSignal) => {
     setDevicesState({ status: 'loading' })
@@ -196,14 +202,54 @@ export function DiagramsPage() {
   const canRefresh =
     selectedDeviceName !== null && devicesState.status === 'ready'
 
+  const runContainerAction = useCallback(
+    async (action: 'start' | 'stop', container: Container) => {
+      if (!selectedDeviceName) {
+        return
+      }
+
+      setIsActionPending(true)
+      try {
+        if (action === 'start') {
+          await startDeviceContainer(selectedDeviceName, container.id)
+          toast.success(`Started ${container.name}.`)
+        } else {
+          await stopDeviceContainer(selectedDeviceName, container.id)
+          toast.success(`Stopped ${container.name}.`)
+        }
+
+        await loadContainers(selectedDeviceName)
+      } catch (error) {
+        toast.error(
+          error instanceof Error
+            ? error.message
+            : `Unable to ${action} container.`,
+        )
+      } finally {
+        setIsActionPending(false)
+      }
+    },
+    [loadContainers, selectedDeviceName],
+  )
+
   useEffect(() => {
     if (
+      containersState.status !== 'ready' &&
+      containersState.status !== 'empty'
+    ) {
+      return
+    }
+
+    const listedContainers =
+      containersState.status === 'ready' ? containersState.containers : []
+
+    if (
       selectedContainerId &&
-      !containers.some((container) => container.id === selectedContainerId)
+      !listedContainers.some((container) => container.id === selectedContainerId)
     ) {
       setSelectedContainerId(null)
     }
-  }, [containers, selectedContainerId])
+  }, [containersState, selectedContainerId])
 
   return (
     <div className="app-page">
@@ -270,6 +316,13 @@ export function DiagramsPage() {
           <ContainerDetailPane
             container={selectedContainer}
             onClose={() => setSelectedContainerId(null)}
+            isActionPending={isActionPending || isRefreshing}
+            onStart={() => {
+              void runContainerAction('start', selectedContainer)
+            }}
+            onStop={() => {
+              void runContainerAction('stop', selectedContainer)
+            }}
           />
         ) : null}
       </main>
