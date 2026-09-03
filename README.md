@@ -282,8 +282,8 @@ local application-data directory:
 
 | Platform | Default path |
 | --- | --- |
-| Windows | `%LOCALAPPDATA%/DOME/dome.db` |
-| Linux/macOS | `$HOME/.local/share/DOME/dome.db` |
+| Windows | `%LOCALAPPDATA%/Dome/dome.db` |
+| Linux/macOS | `$HOME/.local/share/Dome/dome.db` |
 
 ## Development commands
 
