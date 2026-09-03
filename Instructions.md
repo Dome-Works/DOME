@@ -1,4 +1,4 @@
-# HomelabDocs Development Instructions
+# DOME Development Instructions
 
 These instructions apply to every human or automated contributor working in
 this repository. Follow existing patterns unless this document explicitly says
@@ -6,11 +6,11 @@ otherwise.
 
 ## Project purpose
 
-HomelabDocs visualizes Docker environments:
+DOME visualizes Docker environments:
 
-- `HomelabDocs.Client` is the React user interface.
-- `HomelabDocs.Server` stores configuration and coordinates Docker hosts.
-- `HomelabDocs.Socket` runs on each Docker host and is the only component that
+- `Dome.Client` is the React user interface.
+- `Dome.Server` stores configuration and coordinates Docker hosts.
+- `Dome.Socket` runs on each Docker host and is the only component that
   communicates with the local Docker Engine.
 
 The intended communication flow is:
@@ -23,15 +23,15 @@ socket; do not introduce remote Docker TCP access unless explicitly requested.
 
 ## Repository structure
 
-- `src/HomelabDocs.Client`: React 19, TypeScript, Vite, React Flow and Radix UI.
-- `src/HomelabDocs.Server/HomelabDocs.Api`: FastEndpoints HTTP API.
-- `src/HomelabDocs.Server/HomelabDocs.Business`: application and orchestration logic.
-- `src/HomelabDocs.Server/HomelabDocs.Domain`: EF Core, SQLite, entities,
+- `src/Dome.Client`: React 19, TypeScript, Vite, React Flow and Radix UI.
+- `src/Dome.Server/Dome.Api`: FastEndpoints HTTP API.
+- `src/Dome.Server/Dome.Business`: application and orchestration logic.
+- `src/Dome.Server/Dome.Domain`: EF Core, SQLite, entities,
   repositories and migrations.
-- `src/HomelabDocs.Server/HomelabDocs.Shared`: Server API transport contracts.
-- `src/HomelabDocs.Socket/HomelabDocs.Socket.Api`: Docker integration and
+- `src/Dome.Server/Dome.Shared`: Server API transport contracts.
+- `src/Dome.Socket/Dome.Socket.Api`: Docker integration and
   FastEndpoints socket API.
-- `src/HomelabDocs.Socket/HomelabDocs.Socket.Contracts`: Refit interface and
+- `src/Dome.Socket/Dome.Socket.Contracts`: Refit interface and
   Socket API contracts.
 - `*.Tests`: xUnit test projects. Existing tests also use FakeItEasy and FsCheck.
 
@@ -97,7 +97,7 @@ Layer responsibilities:
   must not depend on API or frontend concerns.
 - Socket contracts define the Refit boundary shared between Server and Socket.
   Do not leak Docker.DotNet types across this boundary.
-- Only `HomelabDocs.Socket.Api` may reference or invoke Docker.DotNet.
+- Only `Dome.Socket.Api` may reference or invoke Docker.DotNet.
 
 Follow existing FastEndpoints, Refit, repository and dependency-injection
 patterns before introducing a new abstraction.
@@ -105,7 +105,7 @@ patterns before introducing a new abstraction.
 ## Database changes
 
 - SQLite persistence and all EF Core migrations belong in
-  `src/HomelabDocs.Server/HomelabDocs.Domain`.
+  `src/Dome.Server/Dome.Domain`.
 - Do not replace migrations with startup-time schema mutations.
 - Preserve existing data unless destructive behavior is explicitly requested.
 - When changing persisted models, add or update tests and create an EF migration
@@ -114,8 +114,8 @@ patterns before introducing a new abstraction.
 
 ```bash
 dotnet ef migrations add <Name> \
-  --project src/HomelabDocs.Server/HomelabDocs.Domain \
-  --startup-project src/HomelabDocs.Server/HomelabDocs.Domain
+  --project src/Dome.Server/Dome.Domain \
+  --startup-project src/Dome.Server/Dome.Domain
 ```
 
 Review generated migrations before considering a database change complete.
@@ -124,8 +124,8 @@ Review generated migrations before considering a database change complete.
 
 - Use TypeScript and preserve strict typing. Do not introduce `any` merely to
   bypass a type error.
-- Keep network calls in `src/HomelabDocs.Client/src/api` and reusable API shapes
-  in `src/HomelabDocs.Client/src/types`.
+- Keep network calls in `src/Dome.Client/src/api` and reusable API shapes
+  in `src/Dome.Client/src/types`.
 - Keep components focused. Extract reusable behavior when it genuinely reduces
   duplication, not pre-emptively.
 - Treat component props as read-only.
@@ -143,15 +143,15 @@ Use the pinned SDK from `global.json` and the lockfile in the Client project.
 Full .NET validation from the repository root:
 
 ```bash
-dotnet restore HomelabDocs.slnx
-dotnet build HomelabDocs.slnx --configuration Release --no-restore
-dotnet test HomelabDocs.slnx --configuration Release --no-build
+dotnet restore Dome.slnx
+dotnet build Dome.slnx --configuration Release --no-restore
+dotnet test Dome.slnx --configuration Release --no-build
 ```
 
 Frontend validation:
 
 ```bash
-cd src/HomelabDocs.Client
+cd src/Dome.Client
 npm ci --ignore-scripts
 npm run lint
 npm run build

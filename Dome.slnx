@@ -1,0 +1,80 @@
+<Solution>
+  <Folder Name="/.cursor/" />
+  <Folder Name="/.cursor/skills/">
+    <File Path=".cursor\skills\document-release\SKILL.md" />
+  </Folder>
+  <Folder Name="/AI/">
+    <File Path="AGENTS.md" />
+    <File Path="Instructions.md" />
+  </Folder>
+  <Folder Name="/Docker/">
+    <File Path="dev.docker-compose.yml" />
+    <File Path="docker-compose.yml" />
+  </Folder>
+  <Folder Name="/Documentation/">
+    <File Path="CHANGELOG.md" />
+    <File Path="README.md" />
+  </Folder>
+  <Folder Name="/Solution/">
+    <File Path="Directory.Build.props" />
+    <File Path="Directory.Packages.props" />
+    <File Path="global.json" />
+  </Folder>
+  <Folder Name="/src/Dome.Server/">
+    <Project Path="src/Dome.Server/Dome.Api/Dome.Api.csproj" />
+    <Project Path="src/Dome.Server/Dome.Business/Dome.Business.csproj" />
+    <Project Path="src/Dome.Server/Dome.Domain/Dome.Domain.csproj" />
+    <Project Path="src/Dome.Server/Dome.Shared/Dome.Shared.csproj" />
+  </Folder>
+  <Folder Name="/src/Dome.Socket/">
+    <Project Path="src/Dome.Socket/Dome.Socket.Api/Dome.Socket.Api.csproj" />
+    <Project Path="src/Dome.Socket/Dome.Socket.Contracts/Dome.Socket.Contracts.csproj" />
+  </Folder>
+  <Folder Name="/src/" />
+  <Folder Name="/src/Dome.Client/">
+    <File Path="src/Dome.Client/package.json" />
+    <File Path="src/Dome.Client/package-lock.json" />
+    <File Path="src/Dome.Client/vite.config.ts" />
+    <File Path="src/Dome.Client/tsconfig.json" />
+    <File Path="src/Dome.Client/tsconfig.app.json" />
+    <File Path="src/Dome.Client/tsconfig.node.json" />
+    <File Path="src/Dome.Client/index.html" />
+    <File Path="src/Dome.Client/nginx.conf" />
+    <File Path="src/Dome.Client/Dockerfile" />
+    <File Path="src/Dome.Client/.oxlintrc.json" />
+    <File Path="src/Dome.Client/public/favicon.svg" />
+  </Folder>
+  <Folder Name="/src/Dome.Client/src/">
+    <File Path="src/Dome.Client/src/main.tsx" />
+    <File Path="src/Dome.Client/src/App.tsx" />
+    <File Path="src/Dome.Client/src/App.css" />
+    <File Path="src/Dome.Client/src/index.css" />
+  </Folder>
+  <Folder Name="/src/Dome.Client/src/api/">
+    <File Path="src/Dome.Client/src/api/containers.ts" />
+    <File Path="src/Dome.Client/src/api/devices.ts" />
+  </Folder>
+  <Folder Name="/src/Dome.Client/src/components/">
+    <File Path="src/Dome.Client/src/components/ContainerDiagram.tsx" />
+    <File Path="src/Dome.Client/src/components/ContainerNode.tsx" />
+    <File Path="src/Dome.Client/src/components/DeviceTabs.tsx" />
+    <File Path="src/Dome.Client/src/components/StackNode.tsx" />
+  </Folder>
+  <Folder Name="/src/Dome.Client/src/types/">
+    <File Path="src/Dome.Client/src/types/containers.ts" />
+    <File Path="src/Dome.Client/src/types/devices.ts" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="src/Dome.Server/Dome.Business.Tests/Dome.Business.Tests.csproj" />
+    <Project Path="src/Dome.Server/Dome.Domain.Tests/Dome.Domain.Tests.csproj" />
+    <Project Path="src/Dome.Socket/Dome.Socket.Tests/Dome.Socket.Tests.csproj" />
+  </Folder>
+  <Folder Name="/Workflows/">
+    <File Path=".github/workflows/build.yml" />
+    <File Path=".github/workflows/dependency-review.yml" />
+    <File Path=".github/workflows/docker.yml" />
+    <File Path=".github/workflows/release.yml" />
+    <File Path=".github/workflows/scorecard.yml" />
+    <File Path=".github/workflows/zizmor.yml" />
+  </Folder>
+</Solution>

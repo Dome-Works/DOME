@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
+    <PackageReference Include="Microsoft.Extensions.Http" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
+    <PackageReference Include="Refit" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Dome.Domain\Dome.Domain.csproj" />
+    <ProjectReference Include="..\Dome.Shared\Dome.Shared.csproj" />
+    <ProjectReference Include="..\..\Dome.Socket\Dome.Socket.Contracts\Dome.Socket.Contracts.csproj" />
+  </ItemGroup>
+
+</Project>

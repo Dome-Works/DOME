@@ -1,9 +1,22 @@
 # Changelog
 
-This file records notable changes to HomelabDocs for people who run and use the
+This file records notable changes to DOME for people who run and use the
 application. Changes are grouped by release.
 
 ## [Unreleased]
+
+### Breaking Changes
+
+- The project is renamed from HomelabDocs to DOME (Docker Orchestration &
+  Management Engine). The GitHub organization is `Dome-Works` and the
+  repository is `DOME`.
+- Published images are now `ghcr.io/dome-works/{server,socket,client}`. Update
+  Compose and pull commands that still use `ghcr.io/homelabdocs/...`.
+- Server SQLite settings and paths changed: use `ConnectionStrings:Dome`
+  (`ConnectionStrings__Dome`), Compose volume `dome-data` at
+  `/var/lib/dome/dome.db`, and local app-data `Dome/dome.db`. Existing
+  HomelabDocs databases are not picked up automatically; copy or remount the
+  old file if you need to keep Socket registrations.
 
 ### Added
 

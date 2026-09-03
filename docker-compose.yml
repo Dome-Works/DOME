@@ -1,20 +1,20 @@
 services:
   api:
-    image: ghcr.io/homelabdocs/server:latest
+    image: ghcr.io/dome-works/server:latest
     ports:
       - "5100:8080"
     volumes:
       # SQLite save directory. Survives image pulls. For host-visible
       # backups or a future rclone/Google Drive sidecar, bind-mount instead:
-      # - ./data:/var/lib/homelabdocs
-      - homelabdocs-data:/var/lib/homelabdocs
+      # - ./data:/var/lib/dome
+      - dome-data:/var/lib/dome
     environment:
       ASPNETCORE_ENVIRONMENT: Production
-      ConnectionStrings__HomelabDocs: Data Source=/var/lib/homelabdocs/homelabdocs.db
+      ConnectionStrings__Dome: Data Source=/var/lib/dome/dome.db
     restart: unless-stopped
 
   socket:
-    image: ghcr.io/homelabdocs/socket:latest
+    image: ghcr.io/dome-works/socket:latest
     ports:
       - "5110:8080"
     volumes:
@@ -25,7 +25,7 @@ services:
     restart: unless-stopped
 
   client:
-    image: ghcr.io/homelabdocs/client:latest
+    image: ghcr.io/dome-works/client:latest
     ports:
       - "5200:80"
     depends_on:
@@ -33,4 +33,4 @@ services:
     restart: unless-stopped
 
 volumes:
-  homelabdocs-data:
+  dome-data:

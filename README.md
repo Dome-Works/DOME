@@ -1,18 +1,28 @@
+<div align="center">
+
+# DOME
+
+**Docker Orchestration & Management Engine**
+
+<img width="400" height="400" alt="DomeLogo" src="https://github.com/user-attachments/assets/dc7af811-68e9-4d19-86a2-be66cd3c82f6" />
+
+*Your entire Docker infrastructure, under one roof.*
+
 [![OpenSSF Best Practices](https://www.bestpractices.dev/projects/14152/badge)](https://www.bestpractices.dev/projects/14152)
 
-# HomelabDocs
+</div>
 
-HomelabDocs is a self-hosted Docker infrastructure viewer. It discovers
+DOME is a self-hosted Docker infrastructure viewer. It discovers
 containers through small Socket agents and presents them in a React Flow
 diagram, grouped by Compose stack, with container state and mounted-volume
 details.
 
 > [!WARNING]
-> HomelabDocs is under active development and is not production-ready before
+> DOME is under active development and is not production-ready before
 > version 1.0. Breaking changes may occur.
 
 > [!CAUTION]
-> There is currently no authentication. HomelabDocs.Socket has privileged
+> There is currently no authentication. Dome.Socket has privileged
 > access to the Docker Engine. Deploy it only on a trusted private network and
 > do not expose the Server or Socket APIs directly to the internet.
 
@@ -40,7 +50,7 @@ flowchart LR
     Socket --> Docker["Local Docker Engine"]
 ```
 
-- The Client communicates only with HomelabDocs.Server.
+- The Client communicates only with Dome.Server.
 - The Server stores Socket registrations and calls each Socket over HTTP using Refit.
 - The Server never connects directly to a Docker Engine.
 - Each Socket communicates only with the Docker Engine on its own host, using a
@@ -49,23 +59,23 @@ flowchart LR
 ## Repository layout
 
 ```text
-HomelabDocs.slnx
+Dome.slnx
 Directory.Build.props
 Directory.Packages.props
 global.json
 src/
-  HomelabDocs.Client/          React 19, TypeScript, Vite and React Flow
-  HomelabDocs.Server/
-    HomelabDocs.Api/           FastEndpoints HTTP API
-    HomelabDocs.Business/      Application and orchestration logic
-    HomelabDocs.Domain/        EF Core, SQLite and migrations
-    HomelabDocs.Shared/        Server API contracts
-  HomelabDocs.Socket/
-    HomelabDocs.Socket.Api/    Docker integration and Socket HTTP API
-    HomelabDocs.Socket.Contracts/  Refit interface and transport contracts
+  Dome.Client/          React 19, TypeScript, Vite and React Flow
+  Dome.Server/
+    Dome.Api/           FastEndpoints HTTP API
+    Dome.Business/      Application and orchestration logic
+    Dome.Domain/        EF Core, SQLite and migrations
+    Dome.Shared/        Server API contracts
+  Dome.Socket/
+    Dome.Socket.Api/    Docker integration and Socket HTTP API
+    Dome.Socket.Contracts/  Refit interface and transport contracts
 ```
 
-## Choose how to run HomelabDocs
+## Choose how to run DOME
 
 | Mode | Best for | Requirements | Client URL |
 | --- | --- | --- | --- |
@@ -86,14 +96,14 @@ src/
 Clone the repository and install the frontend dependencies:
 
 ```bash
-git clone https://github.com/HomelabDocs/HomelabDocs.git
-cd HomelabDocs
-dotnet restore HomelabDocs.slnx
-cd src/HomelabDocs.Client
+git clone https://github.com/Dome-Works/DOME.git
+cd DOME
+dotnet restore Dome.slnx
+cd src/Dome.Client
 npm ci
 ```
 
-Return to the repository root and open `HomelabDocs.slnx` in Rider. If HTTPS
+Return to the repository root and open `Dome.slnx` in Rider. If HTTPS
 development certificates have not yet been configured, run:
 
 ```bash
@@ -120,9 +130,9 @@ The Client's Vite development server proxies `/api` to the Server at
 If Rider does not offer the multi-launch configuration, start these included
 configurations individually:
 
-1. `HomelabDocs.Server: https`
-2. `HomelabDocs.Socket.Api: https`
-3. `HomelabDocs.Client: npm run dev`
+1. `Dome.Server: https`
+2. `Dome.Socket.Api: https`
+3. `Dome.Client: npm run dev`
 
 After startup, open [http://localhost:5173/sockets](http://localhost:5173/sockets),
 choose **Register socket**, and enter:
@@ -140,8 +150,8 @@ This mode builds all three images from the checked-out source using
 `dev.docker-compose.yml`.
 
 ```bash
-git clone https://github.com/HomelabDocs/HomelabDocs.git
-cd HomelabDocs
+git clone https://github.com/Dome-Works/DOME.git
+cd DOME
 docker compose -f dev.docker-compose.yml up --build -d
 ```
 
@@ -186,9 +196,9 @@ Registry:
 
 | Service | Image |
 | --- | --- |
-| Server | `ghcr.io/homelabdocs/server:latest` |
-| Socket | `ghcr.io/homelabdocs/socket:latest` |
-| Client | `ghcr.io/homelabdocs/client:latest` |
+| Server | `ghcr.io/dome-works/server:latest` |
+| Socket | `ghcr.io/dome-works/socket:latest` |
+| Client | `ghcr.io/dome-works/client:latest` |
 
 Clone or download the repository, then run:
 
@@ -218,9 +228,9 @@ docker compose up -d
 
 ## Connect multiple Docker hosts
 
-Run HomelabDocs.Socket on every host whose containers should be displayed. Each
+Run Dome.Socket on every host whose containers should be displayed. Each
 Socket needs access to that host's local Docker Unix socket and must be reachable
-from HomelabDocs.Server over HTTP or HTTPS.
+from Dome.Server over HTTP or HTTPS.
 
 Register every Socket from the Sockets page using a unique name and an address
 that is reachable from the Server. The name becomes the device label and diagram
@@ -234,7 +244,7 @@ environment variables.
 
 | Component | Setting | Environment variable | Default |
 | --- | --- | --- | --- |
-| Server | `ConnectionStrings:HomelabDocs` | `ConnectionStrings__HomelabDocs` | Local app-data path in Development; `/var/lib/homelabdocs/homelabdocs.db` otherwise |
+| Server | `ConnectionStrings:Dome` | `ConnectionStrings__Dome` | Local app-data path in Development; `/var/lib/dome/dome.db` otherwise |
 | Socket | `Docker:Endpoint` | `Docker__Endpoint` | `unix:///var/run/docker.sock` |
 | Compose host | Docker socket mount source | `DOCKER_SOCKET_PATH` | `/var/run/docker.sock` |
 
@@ -249,10 +259,10 @@ docker compose up -d
 
 ## Persistence and backups
 
-In Docker, SQLite data is stored in the named volume `homelabdocs-data` at:
+In Docker, SQLite data is stored in the named volume `dome-data` at:
 
 ```text
-/var/lib/homelabdocs/homelabdocs.db
+/var/lib/dome/dome.db
 ```
 
 The volume survives container recreation and image updates. Do not run
@@ -263,7 +273,7 @@ Compose file with a bind mount such as:
 
 ```yaml
 volumes:
-  - ./data:/var/lib/homelabdocs
+  - ./data:/var/lib/dome
 ```
 
 Back up the complete data directory while ensuring the SQLite database is in a
@@ -274,23 +284,23 @@ local application-data directory:
 
 | Platform | Default path |
 | --- | --- |
-| Windows | `%LOCALAPPDATA%/HomelabDocs/homelabdocs.db` |
-| Linux/macOS | `$HOME/.local/share/HomelabDocs/homelabdocs.db` |
+| Windows | `%LOCALAPPDATA%/Dome/dome.db` |
+| Linux/macOS | `$HOME/.local/share/Dome/dome.db` |
 
 ## Development commands
 
 Run the same core validation used by CI:
 
 ```bash
-dotnet restore HomelabDocs.slnx
-dotnet build HomelabDocs.slnx --configuration Release --no-restore
-dotnet test HomelabDocs.slnx --configuration Release --no-build
+dotnet restore Dome.slnx
+dotnet build Dome.slnx --configuration Release --no-restore
+dotnet test Dome.slnx --configuration Release --no-build
 ```
 
 Validate the Client:
 
 ```bash
-cd src/HomelabDocs.Client
+cd src/Dome.Client
 npm ci --ignore-scripts
 npm run lint
 npm run build
@@ -300,8 +310,8 @@ Create an EF Core migration from the repository root:
 
 ```bash
 dotnet ef migrations add <Name> \
-  --project src/HomelabDocs.Server/HomelabDocs.Domain \
-  --startup-project src/HomelabDocs.Server/HomelabDocs.Domain
+  --project src/Dome.Server/Dome.Domain \
+  --startup-project src/Dome.Server/Dome.Domain
 ```
 
 ## Troubleshooting
@@ -351,7 +361,7 @@ Restart Rider after updating the certificate.
 ## Contributing
 
 Feedback, bug reports and feature requests are welcome through
-[GitHub Issues](https://github.com/HomelabDocs/HomelabDocs/issues).
+[GitHub Issues](https://github.com/Dome-Works/DOME/issues).
 
 Before contributing, read [AGENTS.md](AGENTS.md) and
 [Instructions.md](Instructions.md), then ensure the relevant builds and tests
