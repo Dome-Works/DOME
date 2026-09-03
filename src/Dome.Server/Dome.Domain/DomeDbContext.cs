@@ -1,11 +1,11 @@
-using HomelabDocs.Domain.Sockets;
+using Dome.Domain.Sockets;
 using Microsoft.EntityFrameworkCore;
 
-namespace HomelabDocs.Domain;
+namespace Dome.Domain;
 
-public sealed class HomelabDocsDbContext : DbContext
+public sealed class DomeDbContext : DbContext
 {
-    public HomelabDocsDbContext(DbContextOptions<HomelabDocsDbContext> options)
+    public DomeDbContext(DbContextOptions<DomeDbContext> options)
         : base(options)
     {
     }
@@ -14,6 +14,6 @@ public sealed class HomelabDocsDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.ApplyConfigurationsFromAssembly(typeof(HomelabDocsDbContext).Assembly);
+        modelBuilder.ApplyConfigurationsFromAssembly(typeof(DomeDbContext).Assembly);
     }
 }

@@ -1,14 +1,14 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 
-namespace HomelabDocs.Domain;
+namespace Dome.Domain;
 
-public sealed class HomelabDocsDbContextFactory : IDesignTimeDbContextFactory<HomelabDocsDbContext>
+public sealed class DomeDbContextFactory : IDesignTimeDbContextFactory<DomeDbContext>
 {
-    public HomelabDocsDbContext CreateDbContext(string[] args)
+    public DomeDbContext CreateDbContext(string[] args)
     {
-        var optionsBuilder = new DbContextOptionsBuilder<HomelabDocsDbContext>();
+        var optionsBuilder = new DbContextOptionsBuilder<DomeDbContext>();
         optionsBuilder.UseSqlite("Data Source=design-time.db");
-        return new HomelabDocsDbContext(optionsBuilder.Options);
+        return new DomeDbContext(optionsBuilder.Options);
     }
 }
