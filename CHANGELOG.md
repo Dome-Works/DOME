@@ -5,6 +5,13 @@ application. Changes are grouped by release.
 
 ## [Unreleased]
 
+## [v0.3.0] - 2026-09-03
+
+### Added
+
+- Start and stop Docker containers from the container details panel, without
+  switching to the Docker command line.
+
 ### Breaking Changes
 
 - The project is renamed from HomelabDocs to DOME (Docker Orchestration &
@@ -17,11 +24,6 @@ application. Changes are grouped by release.
   `/var/lib/dome/dome.db`, and local app-data `Dome/dome.db`. Existing
   HomelabDocs databases are not picked up automatically; copy or remount the
   old file if you need to keep Socket registrations.
-
-### Added
-
-- Start and stop Docker containers from the container details panel, without
-  switching to the Docker command line.
 
 ## [v0.2.2] - 2026-09-01
 

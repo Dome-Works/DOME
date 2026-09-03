@@ -15,7 +15,7 @@
 DOME is a self-hosted Docker infrastructure viewer. It discovers
 containers through small Socket agents and presents them in a React Flow
 diagram, grouped by Compose stack, with container state and mounted-volume
-details.
+details. You can start and stop containers from the details panel.
 
 > [!WARNING]
 > DOME is under active development and is not production-ready before
@@ -35,6 +35,7 @@ details.
 - A separate diagram tab for each registered Docker host
 - Containers grouped by Docker Compose stack
 - Container state and total mounted-volume size
+- Start and stop containers from the container details panel
 - Volume name, mount destination, size and read-only/read-write details
 - Multi-host support through one Socket agent per Docker host
 - SQLite persistence with automatic EF Core migration at Server startup
