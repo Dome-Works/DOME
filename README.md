@@ -1,8 +1,16 @@
+<div align="center">
+
+# DOME
+
+**Docker Orchestration & Management Engine**
+
+*Your entire Docker infrastructure, under one roof.*
+
 [![OpenSSF Best Practices](https://www.bestpractices.dev/projects/14152/badge)](https://www.bestpractices.dev/projects/14152)
 
-# HomelabDocs
+</div>
 
-HomelabDocs is a self-hosted Docker infrastructure viewer. It discovers
+HomelabDocs (DOME) is a self-hosted Docker infrastructure viewer. It discovers
 containers through small Socket agents and presents them in a React Flow
 diagram, grouped by Compose stack, with container state and mounted-volume
 details.
