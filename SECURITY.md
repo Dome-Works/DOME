@@ -15,7 +15,7 @@ Please **do not** open a public GitHub issue for security vulnerabilities.
 
 Report them privately through GitHub Security Advisories:
 
-1. Open [Security Advisories](https://github.com/HomelabDocs/DOME/security/advisories/new) for this repository.
+1. Open [Security Advisories](https://github.com/Dome-Works/DOME/security/advisories/new) for this repository.
 2. Include a clear description, impact, affected versions/commits, and steps to reproduce.
 3. If you have a patch or suggested fix, include it.
 

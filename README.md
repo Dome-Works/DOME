@@ -94,7 +94,7 @@ src/
 Clone the repository and install the frontend dependencies:
 
 ```bash
-git clone https://github.com/HomelabDocs/DOME.git
+git clone https://github.com/Dome-Works/DOME.git
 cd DOME
 dotnet restore Dome.slnx
 cd src/Dome.Client
@@ -148,7 +148,7 @@ This mode builds all three images from the checked-out source using
 `dev.docker-compose.yml`.
 
 ```bash
-git clone https://github.com/HomelabDocs/DOME.git
+git clone https://github.com/Dome-Works/DOME.git
 cd DOME
 docker compose -f dev.docker-compose.yml up --build -d
 ```
@@ -194,9 +194,9 @@ Registry:
 
 | Service | Image |
 | --- | --- |
-| Server | `ghcr.io/homelabdocs/server:latest` |
-| Socket | `ghcr.io/homelabdocs/socket:latest` |
-| Client | `ghcr.io/homelabdocs/client:latest` |
+| Server | `ghcr.io/dome-works/server:latest` |
+| Socket | `ghcr.io/dome-works/socket:latest` |
+| Client | `ghcr.io/dome-works/client:latest` |
 
 Clone or download the repository, then run:
 
@@ -359,7 +359,7 @@ Restart Rider after updating the certificate.
 ## Contributing
 
 Feedback, bug reports and feature requests are welcome through
-[GitHub Issues](https://github.com/HomelabDocs/Dome/issues).
+[GitHub Issues](https://github.com/Dome-Works/DOME/issues).
 
 Before contributing, read [AGENTS.md](AGENTS.md) and
 [Instructions.md](Instructions.md), then ensure the relevant builds and tests

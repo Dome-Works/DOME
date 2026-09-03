@@ -1,6 +1,6 @@
 services:
   api:
-    image: ghcr.io/homelabdocs/server:latest
+    image: ghcr.io/dome-works/server:latest
     ports:
       - "5100:8080"
     volumes:
@@ -14,7 +14,7 @@ services:
     restart: unless-stopped
 
   socket:
-    image: ghcr.io/homelabdocs/socket:latest
+    image: ghcr.io/dome-works/socket:latest
     ports:
       - "5110:8080"
     volumes:
@@ -25,7 +25,7 @@ services:
     restart: unless-stopped
 
   client:
-    image: ghcr.io/homelabdocs/client:latest
+    image: ghcr.io/dome-works/client:latest
     ports:
       - "5200:80"
     depends_on:

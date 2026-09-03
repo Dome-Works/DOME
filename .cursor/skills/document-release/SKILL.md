@@ -129,7 +129,7 @@ They should be paste-ready:
 ```
 
 Include only subsections that have items. Mention image tags if useful:
-`ghcr.io/homelabdocs/{server,socket,client}:X.Y.Z`.
+`ghcr.io/dome-works/{server,socket,client}:X.Y.Z`.
 
 Create the GitHub Release with `gh` **only if the user asks**. Publishing a
 GitHub Release triggers `.github/workflows/release.yml` and pushes images.
