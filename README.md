@@ -4,6 +4,8 @@
 
 **Docker Orchestration & Management Engine**
 
+<img width="400" height="400" alt="DomeLogo" src="https://github.com/user-attachments/assets/dc7af811-68e9-4d19-86a2-be66cd3c82f6" />
+
 *Your entire Docker infrastructure, under one roof.*
 
 [![OpenSSF Best Practices](https://www.bestpractices.dev/projects/14152/badge)](https://www.bestpractices.dev/projects/14152)
