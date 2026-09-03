@@ -29,15 +29,15 @@ jobs:
         include:
           - image: server
             context: .
-            file: src/HomelabDocs.Server/HomelabDocs.Api/Dockerfile
+            file: src/Dome.Server/Dome.Api/Dockerfile
 
           - image: socket
             context: .
-            file: src/HomelabDocs.Socket/HomelabDocs.Socket.Api/Dockerfile
+            file: src/Dome.Socket/Dome.Socket.Api/Dockerfile
 
           - image: client
-            context: src/HomelabDocs.Client
-            file: src/HomelabDocs.Client/Dockerfile
+            context: src/Dome.Client
+            file: src/Dome.Client/Dockerfile
 
     steps:
       - name: Checkout
@@ -60,6 +60,6 @@ jobs:
           file: ${{ matrix.file }}
           platforms: ${{ env.PLATFORMS }}
           push: false
-          tags: homelabdocs-${{ matrix.image }}:ci
+          tags: dome-${{ matrix.image }}:ci
           cache-from: type=gha,scope=${{ matrix.image }}
           cache-to: type=gha,mode=max,scope=${{ matrix.image }}

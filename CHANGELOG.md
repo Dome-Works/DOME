@@ -1,6 +1,6 @@
 # Changelog
 
-This file records notable changes to HomelabDocs for people who run and use the
+This file records notable changes to DOME for people who run and use the
 application. Changes are grouped by release.
 
 ## [Unreleased]

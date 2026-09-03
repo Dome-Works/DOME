@@ -12,7 +12,7 @@ updates:
           - "*"  
 
   - package-ecosystem: npm
-    directory: /src/HomelabDocs.Client
+    directory: /src/Dome.Client
     schedule:
       interval: monthly
     cooldown:
@@ -34,7 +34,7 @@ updates:
           - "*"  
 
   - package-ecosystem: docker
-    directory: /src/HomelabDocs.Server/HomelabDocs.Api
+    directory: /src/Dome.Server/Dome.Api
     schedule:
       interval: monthly
     cooldown:
@@ -45,7 +45,7 @@ updates:
           - "*"  
 
   - package-ecosystem: docker
-    directory: /src/HomelabDocs.Socket/HomelabDocs.Socket.Api
+    directory: /src/Dome.Socket/Dome.Socket.Api
     schedule:
       interval: monthly
     cooldown:
@@ -56,7 +56,7 @@ updates:
           - "*"  
 
   - package-ecosystem: docker
-    directory: /src/HomelabDocs.Client
+    directory: /src/Dome.Client
     schedule:
       interval: monthly
     cooldown:

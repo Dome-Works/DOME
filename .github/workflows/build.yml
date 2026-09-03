@@ -40,17 +40,17 @@ jobs:
         with:
           node-version: "22"
           cache: npm
-          cache-dependency-path: src/HomelabDocs.Client/package-lock.json
+          cache-dependency-path: src/Dome.Client/package-lock.json
 
       - name: .NET Restore
-        run: dotnet restore HomelabDocs.slnx
+        run: dotnet restore Dome.slnx
 
       - name: Build .NET
-        run: dotnet build HomelabDocs.slnx --configuration Release --no-restore
+        run: dotnet build Dome.slnx --configuration Release --no-restore
 
       - name: Test .NET
         run: |
-          dotnet test HomelabDocs.slnx \
+          dotnet test Dome.slnx \
             --configuration Release \
             --no-build \
             --verbosity normal \
@@ -66,9 +66,9 @@ jobs:
           reporter: dotnet-trx
 
       - name: Install JavaScript dependencies
-        working-directory: src/HomelabDocs.Client
+        working-directory: src/Dome.Client
         run: npm ci --ignore-scripts
 
       - name: Build JavaScript
-        working-directory: src/HomelabDocs.Client
+        working-directory: src/Dome.Client
         run: npm run build

@@ -1,4 +1,4 @@
-# HomelabDocs Agent Entry Point
+# DOME Agent Entry Point
 
 Before planning, reviewing, or changing this repository, read and follow all
 requirements in [Instructions.md](Instructions.md).

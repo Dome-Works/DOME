@@ -1,14 +1,14 @@
 ---
 name: document-release
 description: >-
-  Prepares HomelabDocs release documentation by moving CHANGELOG.md Unreleased
+  Prepares DOME release documentation by moving CHANGELOG.md Unreleased
   notes into a versioned section, syncing README.md with shipped user-facing
   behavior, and drafting GitHub Release notes. Use when preparing a release,
   cutting a version, updating the changelog for a version bump, writing release
-  notes, or aligning README features with a new HomelabDocs version.
+  notes, or aligning README features with a new DOME version.
 ---
 
-# Document a HomelabDocs release
+# Document a DOME release
 
 Edit **only** release documentation unless the user also asks to tag, commit, or
 publish. Default files:
@@ -38,7 +38,7 @@ Read, in this order:
 4. Commits and merged PRs since the previous tag
 
 Treat the changelog as user documentation, not a git log. Include a change only
-if a HomelabDocs operator would notice it.
+if a DOME operator would notice it.
 
 **Usually omit:** Dependabot bumps, refactors, cleanup, tests-only, CI,
 developer tooling, formatting, contributor-only docs.
