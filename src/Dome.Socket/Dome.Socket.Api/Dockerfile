@@ -3,15 +3,15 @@ FROM mcr.microsoft.com/dotnet/sdk:10.0@sha256:e1ffd2a92ae84c1291bc1b6887501f8af9
 WORKDIR /build
 
 COPY Directory.Build.props Directory.Packages.props global.json ./
-COPY src/HomelabDocs.Socket/HomelabDocs.Socket.Contracts/HomelabDocs.Socket.Contracts.csproj src/HomelabDocs.Socket/HomelabDocs.Socket.Contracts/
-COPY src/HomelabDocs.Socket/HomelabDocs.Socket.Api/HomelabDocs.Socket.Api.csproj src/HomelabDocs.Socket/HomelabDocs.Socket.Api/
+COPY src/Dome.Socket/Dome.Socket.Contracts/Dome.Socket.Contracts.csproj src/Dome.Socket/Dome.Socket.Contracts/
+COPY src/Dome.Socket/Dome.Socket.Api/Dome.Socket.Api.csproj src/Dome.Socket/Dome.Socket.Api/
 
-RUN dotnet restore src/HomelabDocs.Socket/HomelabDocs.Socket.Api/HomelabDocs.Socket.Api.csproj
+RUN dotnet restore src/Dome.Socket/Dome.Socket.Api/Dome.Socket.Api.csproj
 
-COPY src/HomelabDocs.Socket/HomelabDocs.Socket.Contracts/ src/HomelabDocs.Socket/HomelabDocs.Socket.Contracts/
-COPY src/HomelabDocs.Socket/HomelabDocs.Socket.Api/ src/HomelabDocs.Socket/HomelabDocs.Socket.Api/
+COPY src/Dome.Socket/Dome.Socket.Contracts/ src/Dome.Socket/Dome.Socket.Contracts/
+COPY src/Dome.Socket/Dome.Socket.Api/ src/Dome.Socket/Dome.Socket.Api/
 
-RUN dotnet publish src/HomelabDocs.Socket/HomelabDocs.Socket.Api/HomelabDocs.Socket.Api.csproj \
+RUN dotnet publish src/Dome.Socket/Dome.Socket.Api/Dome.Socket.Api.csproj \
     -c Release \
     -o /app/publish \
     --no-restore
@@ -24,4 +24,4 @@ COPY --from=build /app/publish .
 ENV ASPNETCORE_URLS=http://+:8080
 EXPOSE 8080
 
-ENTRYPOINT ["dotnet", "HomelabDocs.Socket.Api.dll"]
+ENTRYPOINT ["dotnet", "Dome.Socket.Api.dll"]

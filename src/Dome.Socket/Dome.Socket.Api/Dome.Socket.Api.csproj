@@ -7,11 +7,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\HomelabDocs.Socket.Contracts\HomelabDocs.Socket.Contracts.csproj" />
+    <ProjectReference Include="..\Dome.Socket.Contracts\Dome.Socket.Contracts.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <InternalsVisibleTo Include="HomelabDocs.Socket.Tests" />
+    <InternalsVisibleTo Include="Dome.Socket.Tests" />
   </ItemGroup>
 
 </Project>

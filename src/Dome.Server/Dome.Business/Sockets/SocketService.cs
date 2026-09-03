@@ -1,19 +1,19 @@
-using HomelabDocs.Domain.Sockets;
-using HomelabDocs.Shared.Sockets;
+using Dome.Domain.Sockets;
+using Dome.Shared.Sockets;
 using Microsoft.Extensions.Logging;
-using SocketEntity = HomelabDocs.Domain.Sockets.Socket;
+using SocketEntity = Dome.Domain.Sockets.Socket;
 
-namespace HomelabDocs.Business.Sockets;
+namespace Dome.Business.Sockets;
 
 public sealed class SocketService : ISocketService
 {
     private readonly ISocketRepository _socketRepository;
-    private readonly IHomelabDocsSocketApiFactory _socketApiFactory;
+    private readonly IDomeSocketApiFactory _socketApiFactory;
     private readonly ILogger<SocketService> _logger;
 
     public SocketService(
         ISocketRepository socketRepository,
-        IHomelabDocsSocketApiFactory socketApiFactory,
+        IDomeSocketApiFactory socketApiFactory,
         ILogger<SocketService> logger)
     {
         _socketRepository = socketRepository;

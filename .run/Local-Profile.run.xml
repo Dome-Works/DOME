@@ -9,7 +9,7 @@
         </option>
         <option name="executable">
           <ExecutableSnapshot>
-            <option name="id" value="runConfig:.NET Launch Settings Profile.HomelabDocs.Server: https" />
+            <option name="id" value="runConfig:.NET Launch Settings Profile.Dome.Server: https" />
           </ExecutableSnapshot>
         </option>
       </ExecutableRowSnapshot>
@@ -21,7 +21,7 @@
         </option>
         <option name="executable">
           <ExecutableSnapshot>
-            <option name="id" value="runConfig:.NET Launch Settings Profile.HomelabDocs.Socket.Api: https" />
+            <option name="id" value="runConfig:.NET Launch Settings Profile.Dome.Socket.Api: https" />
           </ExecutableSnapshot>
         </option>
       </ExecutableRowSnapshot>
@@ -33,7 +33,7 @@
         </option>
         <option name="executable">
           <ExecutableSnapshot>
-            <option name="id" value="runConfig:npm.HomelabDocs.Client: npm run dev" />
+            <option name="id" value="runConfig:npm.Dome.Client: npm run dev" />
           </ExecutableSnapshot>
         </option>
       </ExecutableRowSnapshot>

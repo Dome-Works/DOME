@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace HomelabDocs.Domain.Sockets;
+namespace Dome.Domain.Sockets;
 
 internal sealed class SocketConfiguration : IEntityTypeConfiguration<Socket>
 {

@@ -1,8 +1,8 @@
 using System.Net;
 using Docker.DotNet;
-using HomelabDocs.Socket.Api.Docker.Clients;
+using Dome.Socket.Api.Docker.Clients;
 
-namespace HomelabDocs.Socket.Tests.Docker.Clients;
+namespace Dome.Socket.Tests.Docker.Clients;
 
 public sealed class DockerContainerLifecycleExceptionMapperTests
 {

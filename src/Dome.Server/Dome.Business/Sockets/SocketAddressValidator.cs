@@ -1,4 +1,4 @@
-namespace HomelabDocs.Business.Sockets;
+namespace Dome.Business.Sockets;
 
 public static class SocketAddressValidator
 {

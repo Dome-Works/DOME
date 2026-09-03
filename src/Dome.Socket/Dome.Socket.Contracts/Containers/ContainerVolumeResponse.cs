@@ -1,4 +1,4 @@
-namespace HomelabDocs.Socket.Contracts.Containers;
+namespace Dome.Socket.Contracts.Containers;
 
 public sealed record ContainerVolumeResponse
 {

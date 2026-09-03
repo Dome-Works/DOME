@@ -221,7 +221,7 @@ export function SocketsPage() {
         <div>
           <h2 className="text-2xl font-semibold tracking-tight">Sockets</h2>
           <p className="text-sm text-muted-foreground">
-            Register HomelabDocs Socket agents the server should query.
+            Register DOME Socket agents the server should query.
           </p>
         </div>
         <Button type="button" onClick={openCreate}>

@@ -1,5 +1,5 @@
 {
-  "name": "homelabdocs-client",
+  "name": "dome-client",
   "private": true,
   "version": "1.0.0",
   "type": "module",
@@ -33,5 +33,5 @@
     "typescript": "~7.0.2",
     "vite": "^8.2.2"
   },
-  "description": "HomelabDocs React Flow client"
+  "description": "DOME React Flow client"
 }

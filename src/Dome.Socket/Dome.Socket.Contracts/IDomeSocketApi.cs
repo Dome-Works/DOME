@@ -1,10 +1,10 @@
-using HomelabDocs.Socket.Contracts.Containers;
-using HomelabDocs.Socket.Contracts.Health;
+using Dome.Socket.Contracts.Containers;
+using Dome.Socket.Contracts.Health;
 using Refit;
 
-namespace HomelabDocs.Socket.Contracts;
+namespace Dome.Socket.Contracts;
 
-public interface IHomelabDocsSocketApi
+public interface IDomeSocketApi
 {
     [Get("/api/health")]
     Task<SocketHealthResponse> GetHealthAsync(CancellationToken cancellationToken = default);

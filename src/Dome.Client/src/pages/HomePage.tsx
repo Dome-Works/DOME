@@ -154,7 +154,7 @@ export function HomePage() {
               <CardHeader>
                 <CardTitle>No sockets registered</CardTitle>
                 <CardDescription>
-                  Register a HomelabDocs Socket so the server can query Docker
+                  Register a DOME Socket so the server can query Docker
                   on that host.
                 </CardDescription>
               </CardHeader>

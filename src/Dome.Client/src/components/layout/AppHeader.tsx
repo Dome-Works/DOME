@@ -11,7 +11,7 @@ const pageTitles: Record<string, string> = {
 
 export function AppHeader() {
   const location = useLocation()
-  const title = pageTitles[location.pathname] ?? 'HomelabDocs'
+  const title = pageTitles[location.pathname] ?? 'DOME'
 
   return (
     <header className="flex h-14 shrink-0 items-center gap-2 border-b px-4">

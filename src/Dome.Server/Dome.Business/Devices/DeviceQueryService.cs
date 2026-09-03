@@ -1,22 +1,22 @@
-using HomelabDocs.Business.Sockets;
-using HomelabDocs.Domain.Sockets;
-using HomelabDocs.Shared.Containers;
-using HomelabDocs.Shared.Devices;
+using Dome.Business.Sockets;
+using Dome.Domain.Sockets;
+using Dome.Shared.Containers;
+using Dome.Shared.Devices;
 using Microsoft.Extensions.Logging;
-using SocketContainer = HomelabDocs.Socket.Contracts.Containers.ContainerResponse;
-using SocketVolume = HomelabDocs.Socket.Contracts.Containers.ContainerVolumeResponse;
+using SocketContainer = Dome.Socket.Contracts.Containers.ContainerResponse;
+using SocketVolume = Dome.Socket.Contracts.Containers.ContainerVolumeResponse;
 
-namespace HomelabDocs.Business.Devices;
+namespace Dome.Business.Devices;
 
 public sealed class DeviceQueryService : IDeviceQueryService
 {
     private readonly ISocketRepository _socketRepository;
-    private readonly IHomelabDocsSocketApiFactory _socketApiFactory;
+    private readonly IDomeSocketApiFactory _socketApiFactory;
     private readonly ILogger<DeviceQueryService> _logger;
 
     public DeviceQueryService(
         ISocketRepository socketRepository,
-        IHomelabDocsSocketApiFactory socketApiFactory,
+        IDomeSocketApiFactory socketApiFactory,
         ILogger<DeviceQueryService> logger)
     {
         _socketRepository = socketRepository;

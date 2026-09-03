@@ -1,12 +1,12 @@
 using Microsoft.EntityFrameworkCore;
 
-namespace HomelabDocs.Domain.Sockets;
+namespace Dome.Domain.Sockets;
 
 internal sealed class SocketRepository : ISocketRepository
 {
-    private readonly HomelabDocsDbContext _db;
+    private readonly DomeDbContext _db;
 
-    public SocketRepository(HomelabDocsDbContext db)
+    public SocketRepository(DomeDbContext db)
     {
         _db = db;
     }

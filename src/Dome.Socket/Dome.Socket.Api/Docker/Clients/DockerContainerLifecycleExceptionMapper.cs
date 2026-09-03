@@ -1,7 +1,7 @@
 using System.Net;
 using Docker.DotNet;
 
-namespace HomelabDocs.Socket.Api.Docker.Clients;
+namespace Dome.Socket.Api.Docker.Clients;
 
 internal static class DockerContainerLifecycleExceptionMapper
 {

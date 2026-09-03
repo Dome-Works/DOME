@@ -1,7 +1,7 @@
 using FastEndpoints;
-using HomelabDocs.Business.Devices;
+using Dome.Business.Devices;
 
-namespace HomelabDocs.Api.Endpoints.Devices;
+namespace Dome.Api.Endpoints.Devices;
 
 public sealed class StartDeviceContainerEndpoint : Endpoint<DeviceContainerLifecycleRequest>
 {

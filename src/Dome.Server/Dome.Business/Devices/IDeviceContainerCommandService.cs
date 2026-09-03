@@ -1,4 +1,4 @@
-namespace HomelabDocs.Business.Devices;
+namespace Dome.Business.Devices;
 
 public interface IDeviceContainerCommandService
 {

@@ -1,21 +1,21 @@
 using System.Net;
-using HomelabDocs.Business.Sockets;
-using HomelabDocs.Domain.Sockets;
-using HomelabDocs.Socket.Contracts;
+using Dome.Business.Sockets;
+using Dome.Domain.Sockets;
+using Dome.Socket.Contracts;
 using Microsoft.Extensions.Logging;
 using Refit;
 
-namespace HomelabDocs.Business.Devices;
+namespace Dome.Business.Devices;
 
 public sealed class DeviceContainerCommandService : IDeviceContainerCommandService
 {
     private readonly ISocketRepository _socketRepository;
-    private readonly IHomelabDocsSocketApiFactory _socketApiFactory;
+    private readonly IDomeSocketApiFactory _socketApiFactory;
     private readonly ILogger<DeviceContainerCommandService> _logger;
 
     public DeviceContainerCommandService(
         ISocketRepository socketRepository,
-        IHomelabDocsSocketApiFactory socketApiFactory,
+        IDomeSocketApiFactory socketApiFactory,
         ILogger<DeviceContainerCommandService> logger)
     {
         _socketRepository = socketRepository;
@@ -48,7 +48,7 @@ public sealed class DeviceContainerCommandService : IDeviceContainerCommandServi
     private async Task<DeviceContainerCommandResult> ExecuteAsync(
         string deviceName,
         string containerId,
-        Func<IHomelabDocsSocketApi, string, CancellationToken, Task> operation,
+        Func<IDomeSocketApi, string, CancellationToken, Task> operation,
         string action,
         CancellationToken cancellationToken)
     {

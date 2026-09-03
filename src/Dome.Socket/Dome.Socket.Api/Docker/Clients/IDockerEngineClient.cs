@@ -1,6 +1,6 @@
-using HomelabDocs.Socket.Contracts.Containers;
+using Dome.Socket.Contracts.Containers;
 
-namespace HomelabDocs.Socket.Api.Docker.Clients;
+namespace Dome.Socket.Api.Docker.Clients;
 
 public interface IDockerEngineClient
 {

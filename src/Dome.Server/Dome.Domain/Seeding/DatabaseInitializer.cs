@@ -1,12 +1,12 @@
 using Microsoft.EntityFrameworkCore;
 
-namespace HomelabDocs.Domain.Seeding;
+namespace Dome.Domain.Seeding;
 
 internal sealed class DatabaseInitializer : IDatabaseInitializer
 {
-    private readonly HomelabDocsDbContext _db;
+    private readonly DomeDbContext _db;
 
-    public DatabaseInitializer(HomelabDocsDbContext db)
+    public DatabaseInitializer(DomeDbContext db)
     {
         _db = db;
     }

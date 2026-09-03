@@ -1,20 +1,20 @@
 using FakeItEasy;
-using HomelabDocs.Business.Devices;
-using HomelabDocs.Business.Sockets;
-using HomelabDocs.Domain.Sockets;
-using HomelabDocs.Socket.Contracts;
+using Dome.Business.Devices;
+using Dome.Business.Sockets;
+using Dome.Domain.Sockets;
+using Dome.Socket.Contracts;
 using Microsoft.Extensions.Logging.Abstractions;
 using Refit;
-using SocketEntity = HomelabDocs.Domain.Sockets.Socket;
+using SocketEntity = Dome.Domain.Sockets.Socket;
 
-namespace HomelabDocs.Business.Tests.Devices;
+namespace Dome.Business.Tests.Devices;
 
 public sealed class DeviceContainerCommandServiceTests
 {
     [Fact]
     public async Task StartAsync_returns_device_not_found_when_socket_is_missing()
     {
-        var service = CreateService(socket: null, socketApi: A.Fake<IHomelabDocsSocketApi>());
+        var service = CreateService(socket: null, socketApi: A.Fake<IDomeSocketApi>());
 
         var result = await service.StartAsync("local", "container-1");
 
@@ -25,7 +25,7 @@ public sealed class DeviceContainerCommandServiceTests
     [Fact]
     public async Task StartAsync_returns_success_when_socket_starts_the_container()
     {
-        var socketApi = A.Fake<IHomelabDocsSocketApi>();
+        var socketApi = A.Fake<IDomeSocketApi>();
         var service = CreateService(CreateSocket(), socketApi);
 
         var result = await service.StartAsync("local", "container-1");
@@ -38,7 +38,7 @@ public sealed class DeviceContainerCommandServiceTests
     [Fact]
     public async Task StopAsync_returns_success_when_socket_stops_the_container()
     {
-        var socketApi = A.Fake<IHomelabDocsSocketApi>();
+        var socketApi = A.Fake<IDomeSocketApi>();
         var service = CreateService(CreateSocket(), socketApi);
 
         var result = await service.StopAsync("local", "container-1");
@@ -51,7 +51,7 @@ public sealed class DeviceContainerCommandServiceTests
     [Fact]
     public async Task StartAsync_returns_container_not_found_when_socket_returns_404()
     {
-        var socketApi = A.Fake<IHomelabDocsSocketApi>();
+        var socketApi = A.Fake<IDomeSocketApi>();
         A.CallTo(() => socketApi.StartContainerAsync("missing", A<CancellationToken>._))
             .Throws(await CreateNotFoundApiExceptionAsync());
 
@@ -65,10 +65,10 @@ public sealed class DeviceContainerCommandServiceTests
 
     private static DeviceContainerCommandService CreateService(
         SocketEntity? socket,
-        IHomelabDocsSocketApi socketApi)
+        IDomeSocketApi socketApi)
     {
         var socketRepository = A.Fake<ISocketRepository>();
-        var socketApiFactory = A.Fake<IHomelabDocsSocketApiFactory>();
+        var socketApiFactory = A.Fake<IDomeSocketApiFactory>();
 
         A.CallTo(() => socketRepository.GetByNameAsync("local", A<CancellationToken>._))
             .Returns(socket);

@@ -8,9 +8,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\HomelabDocs.Domain\HomelabDocs.Domain.csproj" />
-    <ProjectReference Include="..\HomelabDocs.Shared\HomelabDocs.Shared.csproj" />
-    <ProjectReference Include="..\..\HomelabDocs.Socket\HomelabDocs.Socket.Contracts\HomelabDocs.Socket.Contracts.csproj" />
+    <ProjectReference Include="..\Dome.Domain\Dome.Domain.csproj" />
+    <ProjectReference Include="..\Dome.Shared\Dome.Shared.csproj" />
+    <ProjectReference Include="..\..\Dome.Socket\Dome.Socket.Contracts\Dome.Socket.Contracts.csproj" />
   </ItemGroup>
 
 </Project>

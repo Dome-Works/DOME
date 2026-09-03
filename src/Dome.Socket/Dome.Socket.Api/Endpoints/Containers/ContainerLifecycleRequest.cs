@@ -1,4 +1,4 @@
-namespace HomelabDocs.Socket.Api.Endpoints.Containers;
+namespace Dome.Socket.Api.Endpoints.Containers;
 
 public sealed class ContainerLifecycleRequest
 {

@@ -1,15 +1,15 @@
 using FakeItEasy;
-using HomelabDocs.Business.Devices;
-using HomelabDocs.Business.Sockets;
-using HomelabDocs.Domain.Sockets;
-using HomelabDocs.Socket.Contracts;
+using Dome.Business.Devices;
+using Dome.Business.Sockets;
+using Dome.Domain.Sockets;
+using Dome.Socket.Contracts;
 using Microsoft.Extensions.Logging.Abstractions;
-using GetContainersResponse = HomelabDocs.Socket.Contracts.Containers.GetContainersResponse;
-using ContainerVolumeResponse = HomelabDocs.Socket.Contracts.Containers.ContainerVolumeResponse;
-using SocketContainerResponse = HomelabDocs.Socket.Contracts.Containers.ContainerResponse;
-using SocketEntity = HomelabDocs.Domain.Sockets.Socket;
+using GetContainersResponse = Dome.Socket.Contracts.Containers.GetContainersResponse;
+using ContainerVolumeResponse = Dome.Socket.Contracts.Containers.ContainerVolumeResponse;
+using SocketContainerResponse = Dome.Socket.Contracts.Containers.ContainerResponse;
+using SocketEntity = Dome.Domain.Sockets.Socket;
 
-namespace HomelabDocs.Business.Tests.Devices;
+namespace Dome.Business.Tests.Devices;
 
 public sealed class DeviceQueryServiceTests
 {
@@ -23,7 +23,7 @@ public sealed class DeviceQueryServiceTests
                 Id = "container-1",
                 Name = "api",
                 State = "running",
-                Stack = "homelabdocs",
+                Stack = "dome",
                 Volumes =
                 [
                     new ContainerVolumeResponse
@@ -54,8 +54,8 @@ public sealed class DeviceQueryServiceTests
             CreatedAt = DateTimeOffset.UtcNow,
         };
         var socketRepository = A.Fake<ISocketRepository>();
-        var socketApiFactory = A.Fake<IHomelabDocsSocketApiFactory>();
-        var socketApi = A.Fake<IHomelabDocsSocketApi>();
+        var socketApiFactory = A.Fake<IDomeSocketApiFactory>();
+        var socketApi = A.Fake<IDomeSocketApi>();
 
         A.CallTo(() => socketRepository.GetByNameAsync("local", A<CancellationToken>._))
             .Returns(socket);

@@ -1,8 +1,8 @@
 using FastEndpoints;
-using HomelabDocs.Business.Sockets;
-using HomelabDocs.Shared.Sockets;
+using Dome.Business.Sockets;
+using Dome.Shared.Sockets;
 
-namespace HomelabDocs.Api.Endpoints.Sockets;
+namespace Dome.Api.Endpoints.Sockets;
 
 public sealed class DeleteSocketEndpoint : Endpoint<GetSocketRequest>
 {

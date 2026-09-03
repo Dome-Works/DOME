@@ -1,4 +1,4 @@
-namespace HomelabDocs.Api.Endpoints.Devices;
+namespace Dome.Api.Endpoints.Devices;
 
 public sealed class DeviceContainerLifecycleRequest
 {

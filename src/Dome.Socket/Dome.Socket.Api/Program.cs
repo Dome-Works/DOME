@@ -1,12 +1,12 @@
 using FastEndpoints;
 using FastEndpoints.Swagger;
-using HomelabDocs.Socket.Api.Docker;
+using Dome.Socket.Api.Docker;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddFastEndpoints();
 builder.Services.SwaggerDocument();
-builder.Services.AddHomelabDocsSocket(builder.Configuration);
+builder.Services.AddDomeSocket(builder.Configuration);
 
 var app = builder.Build();
 

@@ -1,4 +1,4 @@
-namespace HomelabDocs.Socket.Api.Docker.Configuration;
+namespace Dome.Socket.Api.Docker.Configuration;
 
 public sealed class DockerEndpointOptions
 {

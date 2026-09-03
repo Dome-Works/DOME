@@ -1,8 +1,8 @@
 using FastEndpoints;
-using HomelabDocs.Business.Devices;
-using HomelabDocs.Shared.Devices;
+using Dome.Business.Devices;
+using Dome.Shared.Devices;
 
-namespace HomelabDocs.Api.Endpoints.Devices;
+namespace Dome.Api.Endpoints.Devices;
 
 public sealed class GetDevicesEndpoint : EndpointWithoutRequest<GetDevicesResponse>
 {

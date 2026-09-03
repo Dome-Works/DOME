@@ -1,4 +1,4 @@
-namespace HomelabDocs.Socket.Tests.Docker.Clients;
+namespace Dome.Socket.Tests.Docker.Clients;
 
 internal sealed record StackSample(
     string Project,

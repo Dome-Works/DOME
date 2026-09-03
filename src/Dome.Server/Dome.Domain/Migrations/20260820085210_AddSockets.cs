@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace HomelabDocs.Domain.Migrations
+namespace Dome.Domain.Migrations
 {
     /// <inheritdoc />
     public partial class AddSockets : Migration

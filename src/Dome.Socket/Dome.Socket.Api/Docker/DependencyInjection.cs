@@ -1,13 +1,13 @@
-using HomelabDocs.Socket.Api.Docker.Clients;
-using HomelabDocs.Socket.Api.Docker.Configuration;
+using Dome.Socket.Api.Docker.Clients;
+using Dome.Socket.Api.Docker.Configuration;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace HomelabDocs.Socket.Api.Docker;
+namespace Dome.Socket.Api.Docker;
 
 public static class DependencyInjection
 {
-    public static IServiceCollection AddHomelabDocsSocket(
+    public static IServiceCollection AddDomeSocket(
         this IServiceCollection services,
         IConfiguration configuration)
     {

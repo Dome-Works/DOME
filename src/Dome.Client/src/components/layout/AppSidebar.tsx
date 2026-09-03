@@ -34,7 +34,7 @@ export function AppSidebar() {
                   <LayoutDashboard className="size-4" />
                 </div>
                 <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-semibold">HomelabDocs</span>
+                  <span className="truncate font-semibold">DOME</span>
                   <span className="truncate text-xs text-muted-foreground">
                     Homelab console
                   </span>

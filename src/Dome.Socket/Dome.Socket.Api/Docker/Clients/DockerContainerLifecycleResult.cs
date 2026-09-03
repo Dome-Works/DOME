@@ -1,4 +1,4 @@
-namespace HomelabDocs.Socket.Api.Docker.Clients;
+namespace Dome.Socket.Api.Docker.Clients;
 
 public enum DockerContainerLifecycleResult
 {

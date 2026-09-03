@@ -1,4 +1,4 @@
-namespace HomelabDocs.Domain.Sockets;
+namespace Dome.Domain.Sockets;
 
 public interface ISocketRepository
 {

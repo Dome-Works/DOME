@@ -1,15 +1,15 @@
-using HomelabDocs.Domain.Sqlite;
+using Dome.Domain.Sqlite;
 using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.Configuration;
 
-namespace HomelabDocs.Domain.Tests.Sqlite;
+namespace Dome.Domain.Tests.Sqlite;
 
 public sealed class SqlitePathTests
 {
     [Fact]
     public void Uses_configured_connection_string()
     {
-        const string configured = "Data Source=/var/lib/homelabdocs/homelabdocs.db";
+        const string configured = "Data Source=/var/lib/dome/dome.db";
         var configuration = ConfigurationWithConnectionString(configured);
 
         var resolved = SqlitePath.ResolveConnectionString(configuration);
@@ -32,8 +32,8 @@ public sealed class SqlitePathTests
 
         var expected = Path.Join(
             Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-            "HomelabDocs",
-            "homelabdocs.db");
+            "Dome",
+            "dome.db");
 
         Assert.Equal(Path.GetFullPath(expected), Path.GetFullPath(dataSource));
     }
@@ -44,7 +44,7 @@ public sealed class SqlitePathTests
         var root = CreateTempRoot();
         try
         {
-            var dbPath = Path.Join(root, "nested", "homelabdocs.db");
+            var dbPath = Path.Join(root, "nested", "dome.db");
             var parent = Path.GetDirectoryName(dbPath)!;
             Assert.False(Directory.Exists(parent));
 
@@ -64,14 +64,14 @@ public sealed class SqlitePathTests
         return new ConfigurationBuilder()
             .AddInMemoryCollection(new Dictionary<string, string?>
             {
-                ["ConnectionStrings:HomelabDocs"] = value
+                ["ConnectionStrings:Dome"] = value
             })
             .Build();
     }
 
     private static string CreateTempRoot()
     {
-        var root = Path.Join(Path.GetTempPath(), "HomelabDocsTests", Guid.NewGuid().ToString("N"));
+        var root = Path.Join(Path.GetTempPath(), "DomeTests", Guid.NewGuid().ToString("N"));
         Directory.CreateDirectory(root);
         return root;
     }

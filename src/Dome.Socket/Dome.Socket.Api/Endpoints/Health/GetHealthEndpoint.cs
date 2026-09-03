@@ -1,8 +1,8 @@
 using FastEndpoints;
-using HomelabDocs.Socket.Api.Docker.Clients;
-using HomelabDocs.Socket.Contracts.Health;
+using Dome.Socket.Api.Docker.Clients;
+using Dome.Socket.Contracts.Health;
 
-namespace HomelabDocs.Socket.Api.Endpoints.Health;
+namespace Dome.Socket.Api.Endpoints.Health;
 
 public sealed class GetHealthEndpoint : EndpointWithoutRequest<SocketHealthResponse>
 {

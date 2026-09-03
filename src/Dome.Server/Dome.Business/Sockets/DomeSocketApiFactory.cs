@@ -1,10 +1,10 @@
 using System.Text.Json;
-using HomelabDocs.Socket.Contracts;
+using Dome.Socket.Contracts;
 using Refit;
 
-namespace HomelabDocs.Business.Sockets;
+namespace Dome.Business.Sockets;
 
-public sealed class HomelabDocsSocketApiFactory : IHomelabDocsSocketApiFactory
+public sealed class DomeSocketApiFactory : IDomeSocketApiFactory
 {
     private static readonly RefitSettings RefitSettings = new()
     {
@@ -14,17 +14,17 @@ public sealed class HomelabDocsSocketApiFactory : IHomelabDocsSocketApiFactory
 
     private readonly IHttpClientFactory _httpClientFactory;
 
-    public HomelabDocsSocketApiFactory(IHttpClientFactory httpClientFactory)
+    public DomeSocketApiFactory(IHttpClientFactory httpClientFactory)
     {
         _httpClientFactory = httpClientFactory;
     }
 
-    public IHomelabDocsSocketApi Create(string address)
+    public IDomeSocketApi Create(string address)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(address);
 
-        var client = _httpClientFactory.CreateClient(nameof(HomelabDocsSocketApiFactory));
+        var client = _httpClientFactory.CreateClient(nameof(DomeSocketApiFactory));
         client.BaseAddress = new Uri(address, UriKind.Absolute);
-        return RestService.For<IHomelabDocsSocketApi>(client, RefitSettings);
+        return RestService.For<IDomeSocketApi>(client, RefitSettings);
     }
 }

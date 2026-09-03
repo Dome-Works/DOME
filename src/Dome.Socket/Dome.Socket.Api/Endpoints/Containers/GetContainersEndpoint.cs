@@ -1,8 +1,8 @@
 using FastEndpoints;
-using HomelabDocs.Socket.Api.Docker.Clients;
-using HomelabDocs.Socket.Contracts.Containers;
+using Dome.Socket.Api.Docker.Clients;
+using Dome.Socket.Contracts.Containers;
 
-namespace HomelabDocs.Socket.Api.Endpoints.Containers;
+namespace Dome.Socket.Api.Endpoints.Containers;
 
 public sealed class GetContainersEndpoint : EndpointWithoutRequest<GetContainersResponse>
 {

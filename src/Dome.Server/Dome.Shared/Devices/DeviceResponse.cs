@@ -1,4 +1,4 @@
-namespace HomelabDocs.Shared.Devices;
+namespace Dome.Shared.Devices;
 
 public sealed record DeviceResponse
 {

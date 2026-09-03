@@ -1,17 +1,17 @@
-using HomelabDocs.Domain.Seeding;
+using Dome.Domain.Seeding;
 using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace HomelabDocs.Domain.Tests.Seeding;
+namespace Dome.Domain.Tests.Seeding;
 
 public sealed class DatabaseInitializerTests
 {
     [Fact]
     public async Task Applying_migrations_twice_keeps_a_stable_history()
     {
-        var root = Path.Join(Path.GetTempPath(), "HomelabDocsTests", Guid.NewGuid().ToString("N"));
-        var dbPath = Path.Join(root, "nested", "homelabdocs.db");
+        var root = Path.Join(Path.GetTempPath(), "DomeTests", Guid.NewGuid().ToString("N"));
+        var dbPath = Path.Join(root, "nested", "dome.db");
         var connectionString = new SqliteConnectionStringBuilder
         {
             DataSource = dbPath,
@@ -23,12 +23,12 @@ public sealed class DatabaseInitializerTests
             var configuration = new ConfigurationBuilder()
                 .AddInMemoryCollection(new Dictionary<string, string?>
                 {
-                    ["ConnectionStrings:HomelabDocs"] = connectionString
+                    ["ConnectionStrings:Dome"] = connectionString
                 })
                 .Build();
 
             var services = new ServiceCollection();
-            services.AddHomelabDocsDomain(configuration);
+            services.AddDomeDomain(configuration);
 
             await using (var provider = services.BuildServiceProvider())
             {

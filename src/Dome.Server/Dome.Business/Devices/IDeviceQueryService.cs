@@ -1,7 +1,7 @@
-using HomelabDocs.Shared.Containers;
-using HomelabDocs.Shared.Devices;
+using Dome.Shared.Containers;
+using Dome.Shared.Devices;
 
-namespace HomelabDocs.Business.Devices;
+namespace Dome.Business.Devices;
 
 public interface IDeviceQueryService
 {

@@ -4,21 +4,21 @@ WORKDIR /build
 
 COPY Directory.Build.props Directory.Packages.props global.json ./
 
-COPY src/HomelabDocs.Socket/HomelabDocs.Socket.Contracts/HomelabDocs.Socket.Contracts.csproj src/HomelabDocs.Socket/HomelabDocs.Socket.Contracts/
-COPY src/HomelabDocs.Server/HomelabDocs.Shared/HomelabDocs.Shared.csproj src/HomelabDocs.Server/HomelabDocs.Shared/
-COPY src/HomelabDocs.Server/HomelabDocs.Domain/HomelabDocs.Domain.csproj src/HomelabDocs.Server/HomelabDocs.Domain/
-COPY src/HomelabDocs.Server/HomelabDocs.Business/HomelabDocs.Business.csproj src/HomelabDocs.Server/HomelabDocs.Business/
-COPY src/HomelabDocs.Server/HomelabDocs.Api/HomelabDocs.Api.csproj src/HomelabDocs.Server/HomelabDocs.Api/
+COPY src/Dome.Socket/Dome.Socket.Contracts/Dome.Socket.Contracts.csproj src/Dome.Socket/Dome.Socket.Contracts/
+COPY src/Dome.Server/Dome.Shared/Dome.Shared.csproj src/Dome.Server/Dome.Shared/
+COPY src/Dome.Server/Dome.Domain/Dome.Domain.csproj src/Dome.Server/Dome.Domain/
+COPY src/Dome.Server/Dome.Business/Dome.Business.csproj src/Dome.Server/Dome.Business/
+COPY src/Dome.Server/Dome.Api/Dome.Api.csproj src/Dome.Server/Dome.Api/
 
-RUN dotnet restore src/HomelabDocs.Server/HomelabDocs.Api/HomelabDocs.Api.csproj
+RUN dotnet restore src/Dome.Server/Dome.Api/Dome.Api.csproj
 
-COPY src/HomelabDocs.Socket/HomelabDocs.Socket.Contracts/ src/HomelabDocs.Socket/HomelabDocs.Socket.Contracts/
-COPY src/HomelabDocs.Server/HomelabDocs.Shared/ src/HomelabDocs.Server/HomelabDocs.Shared/
-COPY src/HomelabDocs.Server/HomelabDocs.Domain/ src/HomelabDocs.Server/HomelabDocs.Domain/
-COPY src/HomelabDocs.Server/HomelabDocs.Business/ src/HomelabDocs.Server/HomelabDocs.Business/
-COPY src/HomelabDocs.Server/HomelabDocs.Api/ src/HomelabDocs.Server/HomelabDocs.Api/
+COPY src/Dome.Socket/Dome.Socket.Contracts/ src/Dome.Socket/Dome.Socket.Contracts/
+COPY src/Dome.Server/Dome.Shared/ src/Dome.Server/Dome.Shared/
+COPY src/Dome.Server/Dome.Domain/ src/Dome.Server/Dome.Domain/
+COPY src/Dome.Server/Dome.Business/ src/Dome.Server/Dome.Business/
+COPY src/Dome.Server/Dome.Api/ src/Dome.Server/Dome.Api/
 
-RUN dotnet publish src/HomelabDocs.Server/HomelabDocs.Api/HomelabDocs.Api.csproj \
+RUN dotnet publish src/Dome.Server/Dome.Api/Dome.Api.csproj \
     -c Release \
     -o /app/publish \
     --no-restore
@@ -31,4 +31,4 @@ COPY --from=build /app/publish .
 ENV ASPNETCORE_URLS=http://+:8080
 EXPOSE 8080
 
-ENTRYPOINT ["dotnet", "HomelabDocs.Api.dll"]
+ENTRYPOINT ["dotnet", "Dome.Api.dll"]

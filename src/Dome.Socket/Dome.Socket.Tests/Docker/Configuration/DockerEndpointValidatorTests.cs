@@ -1,6 +1,6 @@
-using HomelabDocs.Socket.Api.Docker.Configuration;
+using Dome.Socket.Api.Docker.Configuration;
 
-namespace HomelabDocs.Socket.Tests.Docker.Configuration;
+namespace Dome.Socket.Tests.Docker.Configuration;
 
 public sealed class DockerEndpointValidatorTests
 {

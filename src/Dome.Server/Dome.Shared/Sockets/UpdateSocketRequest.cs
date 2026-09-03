@@ -1,4 +1,4 @@
-namespace HomelabDocs.Shared.Sockets;
+namespace Dome.Shared.Sockets;
 
 public sealed record UpdateSocketRequest
 {

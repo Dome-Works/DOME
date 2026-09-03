@@ -1,7 +1,7 @@
 using FastEndpoints;
-using HomelabDocs.Socket.Api.Docker.Clients;
+using Dome.Socket.Api.Docker.Clients;
 
-namespace HomelabDocs.Socket.Api.Endpoints.Containers;
+namespace Dome.Socket.Api.Endpoints.Containers;
 
 public sealed class StartContainerEndpoint : Endpoint<ContainerLifecycleRequest>
 {

@@ -1,4 +1,4 @@
-namespace HomelabDocs.Domain.Seeding;
+namespace Dome.Domain.Seeding;
 
 public interface IDatabaseInitializer
 {

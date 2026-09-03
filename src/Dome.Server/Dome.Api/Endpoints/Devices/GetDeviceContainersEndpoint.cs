@@ -1,9 +1,9 @@
 using FastEndpoints;
-using HomelabDocs.Business.Devices;
-using DeviceContainerDto = HomelabDocs.Shared.Containers.ContainerDto;
-using DeviceContainerVolumeDto = HomelabDocs.Shared.Containers.ContainerVolumeDto;
+using Dome.Business.Devices;
+using DeviceContainerDto = Dome.Shared.Containers.ContainerDto;
+using DeviceContainerVolumeDto = Dome.Shared.Containers.ContainerVolumeDto;
 
-namespace HomelabDocs.Api.Endpoints.Devices;
+namespace Dome.Api.Endpoints.Devices;
 
 public sealed class GetDeviceContainersEndpoint
     : Endpoint<GetDeviceContainersRequest, GetDeviceContainersResponse>

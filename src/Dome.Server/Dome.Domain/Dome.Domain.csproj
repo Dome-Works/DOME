@@ -10,7 +10,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <InternalsVisibleTo Include="HomelabDocs.Domain.Tests" />
+    <InternalsVisibleTo Include="Dome.Domain.Tests" />
   </ItemGroup>
 
 </Project>

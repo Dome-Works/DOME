@@ -7,15 +7,15 @@
 
   <ItemGroup>
     <PackageReference Include="coverlet.collector" />
-    <PackageReference Include="FsCheck" />
-    <PackageReference Include="FsCheck.Xunit" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" />
     <PackageReference Include="xunit" />
     <PackageReference Include="xunit.runner.visualstudio" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\HomelabDocs.Socket.Api\HomelabDocs.Socket.Api.csproj" />
+    <ProjectReference Include="..\Dome.Domain\Dome.Domain.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,4 +1,4 @@
-namespace HomelabDocs.Socket.Contracts.Health;
+namespace Dome.Socket.Contracts.Health;
 
 public sealed record SocketHealthResponse
 {

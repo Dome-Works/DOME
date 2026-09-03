@@ -1,6 +1,6 @@
-using HomelabDocs.Business.Sockets;
+using Dome.Business.Sockets;
 
-namespace HomelabDocs.Business.Tests.Sockets;
+namespace Dome.Business.Tests.Sockets;
 
 public sealed class SocketAddressValidatorTests
 {

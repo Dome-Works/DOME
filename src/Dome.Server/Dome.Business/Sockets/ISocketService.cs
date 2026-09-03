@@ -1,6 +1,6 @@
-using HomelabDocs.Shared.Sockets;
+using Dome.Shared.Sockets;
 
-namespace HomelabDocs.Business.Sockets;
+namespace Dome.Business.Sockets;
 
 public interface ISocketService
 {

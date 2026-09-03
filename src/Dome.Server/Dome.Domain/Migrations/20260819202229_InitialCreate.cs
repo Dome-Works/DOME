@@ -2,7 +2,7 @@
 
 #nullable disable
 
-namespace HomelabDocs.Domain.Migrations
+namespace Dome.Domain.Migrations
 {
     /// <inheritdoc />
     public partial class InitialCreate : Migration

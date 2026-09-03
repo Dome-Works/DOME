@@ -1,4 +1,4 @@
-namespace HomelabDocs.Shared.Containers;
+namespace Dome.Shared.Containers;
 
 public sealed record ContainerVolumeDto
 {

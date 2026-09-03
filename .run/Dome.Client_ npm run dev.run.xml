@@ -1,6 +1,6 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="HomelabDocs.Client: npm run dev" type="js.build_tools.npm">
-    <package-json value="$PROJECT_DIR$/src/HomelabDocs.Client/package.json" />
+  <configuration default="false" name="Dome.Client: npm run dev" type="js.build_tools.npm">
+    <package-json value="$PROJECT_DIR$/src/Dome.Client/package.json" />
     <command value="run" />
     <scripts>
       <script value="dev" />

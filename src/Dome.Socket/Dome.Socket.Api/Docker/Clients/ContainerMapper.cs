@@ -1,7 +1,7 @@
 using Docker.DotNet.Models;
-using HomelabDocs.Socket.Contracts.Containers;
+using Dome.Socket.Contracts.Containers;
 
-namespace HomelabDocs.Socket.Api.Docker.Clients;
+namespace Dome.Socket.Api.Docker.Clients;
 
 internal static class ContainerMapper
 {

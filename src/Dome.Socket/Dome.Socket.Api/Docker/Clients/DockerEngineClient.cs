@@ -1,14 +1,14 @@
 using Docker.DotNet;
 using Docker.DotNet.Models;
-using HomelabDocs.Socket.Api.Docker.Configuration;
-using HomelabDocs.Socket.Contracts.Containers;
+using Dome.Socket.Api.Docker.Configuration;
+using Dome.Socket.Contracts.Containers;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System.Net.Http;
 using System.Net.Sockets;
 using System.Text.Json;
 
-namespace HomelabDocs.Socket.Api.Docker.Clients;
+namespace Dome.Socket.Api.Docker.Clients;
 
 internal sealed class DockerEngineClient : IDockerEngineClient, IDisposable
 {

@@ -1,8 +1,8 @@
 using FastEndpoints;
 using FastEndpoints.Swagger;
-using HomelabDocs.Business;
-using HomelabDocs.Domain;
-using HomelabDocs.Domain.Seeding;
+using Dome.Business;
+using Dome.Domain;
+using Dome.Domain.Seeding;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,8 +18,8 @@ builder.Services.AddCors(options =>
 
 builder.Services.AddFastEndpoints();
 builder.Services.SwaggerDocument();
-builder.Services.AddHomelabDocsBusiness();
-builder.Services.AddHomelabDocsDomain(builder.Configuration);
+builder.Services.AddDomeBusiness();
+builder.Services.AddDomeDomain(builder.Configuration);
 
 var app = builder.Build();
 

@@ -2,9 +2,9 @@ using Docker.DotNet.Models;
 using FsCheck;
 using FsCheck.Fluent;
 using FsCheck.Xunit;
-using HomelabDocs.Socket.Api.Docker.Clients;
+using Dome.Socket.Api.Docker.Clients;
 
-namespace HomelabDocs.Socket.Tests.Docker.Clients;
+namespace Dome.Socket.Tests.Docker.Clients;
 
 public sealed class ContainerMapperProperties
 {
