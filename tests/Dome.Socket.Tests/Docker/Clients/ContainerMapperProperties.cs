@@ -1,7 +1,6 @@
 using Docker.DotNet.Models;
 using FsCheck;
 using FsCheck.Fluent;
-using FsCheck.Xunit;
 using Dome.Socket.Api.Docker.Clients;
 
 namespace Dome.Socket.Tests.Docker.Clients;
@@ -11,40 +10,44 @@ public sealed class ContainerMapperProperties
     private const string ComposeProjectLabel = "com.docker.compose.project";
     private const int ShortIdLength = 12;
 
-    [Property]
-    public bool ShortenId_never_exceeds_short_id_length(string? containerId)
+    [Fact]
+    public void ShortenId_never_exceeds_short_id_length()
     {
-        var shortened = ContainerMapper.ShortenId(containerId!);
-        return shortened.Length <= ShortIdLength;
+        Check.QuickThrowOnFailure(
+            Prop.ForAll(
+                ArbMap.Default.GeneratorFor<string?>().ToArbitrary(),
+                static containerId => ContainerMapper.ShortenId(containerId!).Length <= ShortIdLength));
     }
 
-    [Property]
-    public Property ShortenId_whitespace_or_empty_returns_empty()
+    [Fact]
+    public void ShortenId_whitespace_or_empty_returns_empty()
     {
-        return Prop.ForAll(
-            WhitespaceOrEmptyStringGen().ToArbitrary(),
-            static input => ContainerMapper.ShortenId(input) == string.Empty);
+        Check.QuickThrowOnFailure(
+            Prop.ForAll(
+                WhitespaceOrEmptyStringGen().ToArbitrary(),
+                static input => ContainerMapper.ShortenId(input) == string.Empty));
     }
 
-    [Property]
-    public Property ShortenId_is_stable_prefix_of_non_whitespace_id()
+    [Fact]
+    public void ShortenId_is_stable_prefix_of_non_whitespace_id()
     {
-        return Prop.ForAll(
-            NonWhitespaceString().ToArbitrary(),
-            static containerId =>
-            {
-                var shortened = ContainerMapper.ShortenId(containerId);
-                var expected = containerId.Length <= ShortIdLength
-                    ? containerId
-                    : containerId[..ShortIdLength];
+        Check.QuickThrowOnFailure(
+            Prop.ForAll(
+                NonWhitespaceString().ToArbitrary(),
+                static containerId =>
+                {
+                    var shortened = ContainerMapper.ShortenId(containerId);
+                    var expected = containerId.Length <= ShortIdLength
+                        ? containerId
+                        : containerId[..ShortIdLength];
 
-                return shortened == expected
-                       && containerId.StartsWith(shortened, StringComparison.Ordinal);
-            });
+                    return shortened == expected
+                           && containerId.StartsWith(shortened, StringComparison.Ordinal);
+                }));
     }
 
-    [Property]
-    public Property ResolveName_uses_first_usable_name_without_leading_slashes()
+    [Fact]
+    public void ResolveName_uses_first_usable_name_without_leading_slashes()
     {
         Gen<NameResolutionSample> samples =
             from usableName in NonWhitespaceString()
@@ -53,23 +56,24 @@ public sealed class ContainerMapperProperties
             from suffix in Gen.ListOf(ArbMap.Default.GeneratorFor<string>(), suffixCount)
             select new NameResolutionSample(usableName, prefixCount, suffix);
 
-        return Prop.ForAll(
-            samples.ToArbitrary(),
-            static sample =>
-            {
-                var names = Enumerable
-                    .Repeat("   ", sample.PrefixCount)
-                    .Append(sample.UsableName)
-                    .Concat(sample.Suffix)
-                    .ToList();
+        Check.QuickThrowOnFailure(
+            Prop.ForAll(
+                samples.ToArbitrary(),
+                static sample =>
+                {
+                    var names = Enumerable
+                        .Repeat("   ", sample.PrefixCount)
+                        .Append(sample.UsableName)
+                        .Concat(sample.Suffix)
+                        .ToList();
 
-                var resolved = ContainerMapper.ResolveName(names, "abcdef0123456789");
-                return resolved == sample.UsableName.TrimStart('/');
-            });
+                    var resolved = ContainerMapper.ResolveName(names, "abcdef0123456789");
+                    return resolved == sample.UsableName.TrimStart('/');
+                }));
     }
 
-    [Property]
-    public Property ResolveName_falls_back_to_shortened_id_when_names_unusable()
+    [Fact]
+    public void ResolveName_falls_back_to_shortened_id_when_names_unusable()
     {
         Gen<FallbackNameSample> samples =
             from names in Gen.OneOf(
@@ -79,29 +83,31 @@ public sealed class ContainerMapperProperties
             from containerId in ArbMap.Default.GeneratorFor<string?>()
             select new FallbackNameSample(names, containerId);
 
-        return Prop.ForAll(
-            samples.ToArbitrary(),
-            static sample =>
-            {
-                var id = sample.ContainerId ?? string.Empty;
-                return ContainerMapper.ResolveName(sample.Names, id) == ContainerMapper.ShortenId(id);
-            });
+        Check.QuickThrowOnFailure(
+            Prop.ForAll(
+                samples.ToArbitrary(),
+                static sample =>
+                {
+                    var id = sample.ContainerId ?? string.Empty;
+                    return ContainerMapper.ResolveName(sample.Names, id) == ContainerMapper.ShortenId(id);
+                }));
     }
 
-    [Property]
-    public bool ResolveStack_null_labels_returns_null()
-        => ContainerMapper.ResolveStack(null) is null;
+    [Fact]
+    public void ResolveStack_null_labels_returns_null()
+        => Assert.Null(ContainerMapper.ResolveStack(null));
 
-    [Property]
-    public Property ResolveStack_missing_or_blank_compose_project_returns_null()
+    [Fact]
+    public void ResolveStack_missing_or_blank_compose_project_returns_null()
     {
-        return Prop.ForAll(
-            LabelsWithoutUsableComposeProject().ToArbitrary(),
-            static labels => ContainerMapper.ResolveStack(labels) is null);
+        Check.QuickThrowOnFailure(
+            Prop.ForAll(
+                LabelsWithoutUsableComposeProject().ToArbitrary(),
+                static labels => ContainerMapper.ResolveStack(labels) is null));
     }
 
-    [Property]
-    public Property ResolveStack_returns_trimmed_compose_project()
+    [Fact]
+    public void ResolveStack_returns_trimmed_compose_project()
     {
         Gen<StackSample> samples =
             from project in NonWhitespaceString()
@@ -110,36 +116,38 @@ public sealed class ContainerMapperProperties
             from extraLabels in ArbMap.Default.GeneratorFor<Dictionary<string, string>>()
             select new StackSample(project, leadingSpaces, trailingSpaces, extraLabels);
 
-        return Prop.ForAll(
-            samples.ToArbitrary(),
-            static sample =>
-            {
-                var padded = new string(' ', sample.LeadingSpaces)
-                             + sample.Project
-                             + new string(' ', sample.TrailingSpaces);
+        Check.QuickThrowOnFailure(
+            Prop.ForAll(
+                samples.ToArbitrary(),
+                static sample =>
+                {
+                    var padded = new string(' ', sample.LeadingSpaces)
+                                 + sample.Project
+                                 + new string(' ', sample.TrailingSpaces);
 
-                var labels = new Dictionary<string, string>(sample.ExtraLabels, StringComparer.Ordinal);
-                labels[ComposeProjectLabel] = padded;
+                    var labels = new Dictionary<string, string>(sample.ExtraLabels, StringComparer.Ordinal);
+                    labels[ComposeProjectLabel] = padded;
 
-                return ContainerMapper.ResolveStack(labels) == sample.Project.Trim();
-            });
+                    return ContainerMapper.ResolveStack(labels) == sample.Project.Trim();
+                }));
     }
 
-    [Property]
-    public Property Map_projects_fields_consistently()
+    [Fact]
+    public void Map_projects_fields_consistently()
     {
-        return Prop.ForAll(
-            ContainerListResponseGen().ToArbitrary(),
-            static container =>
-            {
-                var mapped = ContainerMapper.Map(container);
-                var id = container.ID ?? string.Empty;
+        Check.QuickThrowOnFailure(
+            Prop.ForAll(
+                ContainerListResponseGen().ToArbitrary(),
+                static container =>
+                {
+                    var mapped = ContainerMapper.Map(container);
+                    var id = container.ID ?? string.Empty;
 
-                return mapped.Id == id
-                       && mapped.Name == ContainerMapper.ResolveName(container.Names, id)
-                       && mapped.State == (container.State ?? string.Empty)
-                       && mapped.Stack == ContainerMapper.ResolveStack(container.Labels);
-            });
+                    return mapped.Id == id
+                           && mapped.Name == ContainerMapper.ResolveName(container.Names, id)
+                           && mapped.State == (container.State ?? string.Empty)
+                           && mapped.Stack == ContainerMapper.ResolveStack(container.Labels);
+                }));
     }
 
     [Fact]
