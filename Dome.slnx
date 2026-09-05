@@ -65,9 +65,9 @@
     <File Path="src/Dome.Client/src/types/devices.ts" />
   </Folder>
   <Folder Name="/tests/">
-    <Project Path="src/Dome.Server/Dome.Business.Tests/Dome.Business.Tests.csproj" />
-    <Project Path="src/Dome.Server/Dome.Domain.Tests/Dome.Domain.Tests.csproj" />
-    <Project Path="src/Dome.Socket/Dome.Socket.Tests/Dome.Socket.Tests.csproj" />
+    <Project Path="tests/Dome.Business.Tests/Dome.Business.Tests.csproj" />
+    <Project Path="tests/Dome.Domain.Tests/Dome.Domain.Tests.csproj" />
+    <Project Path="tests/Dome.Socket.Tests/Dome.Socket.Tests.csproj" />
   </Folder>
   <Folder Name="/Workflows/">
     <File Path=".github/workflows/build.yml" />
