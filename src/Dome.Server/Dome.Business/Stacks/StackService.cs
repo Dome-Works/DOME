@@ -1,3 +1,4 @@
+using System.Text;
 using Dome.Domain.Sockets;
 using Dome.Domain.Stacks;
 using Dome.Shared.Stacks;
@@ -9,6 +10,7 @@ namespace Dome.Business.Stacks;
 public sealed class StackService : IStackService
 {
     internal const string DefaultComposeYaml = "services: {}";
+    internal const int MaxComposeYamlBytes = 512 * 1024;
 
     private readonly ISocketRepository _socketRepository;
     private readonly IStackRepository _stackRepository;
@@ -48,7 +50,7 @@ public sealed class StackService : IStackService
 
     public async Task<StackMutationResult> CreateAsync(
         string socketName,
-        string composeName,
+        string projectName,
         CancellationToken cancellationToken = default)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(socketName);
@@ -56,13 +58,13 @@ public sealed class StackService : IStackService
         var socket = await _socketRepository.GetByNameAsync(socketName, cancellationToken);
         return socket is null
             ? StackMutationResult.NotFound()
-            : await CreateForSocketAsync(socket, composeName, cancellationToken);
+            : await CreateForSocketAsync(socket, projectName, cancellationToken);
     }
 
     public async Task<StackMutationResult> UpdateAsync(
         string socketName,
         Guid stackId,
-        string composeName,
+        string projectName,
         string composeYaml,
         CancellationToken cancellationToken = default)
     {
@@ -71,7 +73,7 @@ public sealed class StackService : IStackService
         var socket = await _socketRepository.GetByNameAsync(socketName, cancellationToken);
         return socket is null
             ? StackMutationResult.NotFound()
-            : await UpdateForSocketAsync(socket.Id, stackId, composeName, composeYaml, cancellationToken);
+            : await UpdateForSocketAsync(socket.Id, stackId, projectName, composeYaml, cancellationToken);
     }
 
     public async Task<bool?> DeleteAsync(
@@ -111,23 +113,22 @@ public sealed class StackService : IStackService
 
     private async Task<StackMutationResult> CreateForSocketAsync(
         SocketEntity socket,
-        string composeName,
+        string projectName,
         CancellationToken cancellationToken)
     {
-        var validationError = ValidateComposeName(composeName, out var trimmedComposeName, out var projectName);
-        if (validationError is not null)
+        if (!StackProjectName.TryValidate(projectName, out var normalizedProjectName, out var nameError))
         {
-            return StackMutationResult.Invalid(validationError);
+            return StackMutationResult.Invalid(nameError!);
         }
 
         if (await _stackRepository.ProjectNameExistsAsync(
             socket.Id,
-            projectName,
+            normalizedProjectName,
             excludeId: null,
             cancellationToken))
         {
             return StackMutationResult.Conflict(
-                $"A stack named '{projectName}' already exists on this device.");
+                $"A stack named '{normalizedProjectName}' already exists on this device.");
         }
 
         var now = DateTimeOffset.UtcNow;
@@ -135,8 +136,7 @@ public sealed class StackService : IStackService
         {
             Id = Guid.NewGuid(),
             SocketId = socket.Id,
-            ComposeName = trimmedComposeName,
-            ProjectName = projectName,
+            ProjectName = normalizedProjectName,
             ComposeYaml = DefaultComposeYaml,
             CreatedAt = now,
             UpdatedAt = now
@@ -149,7 +149,7 @@ public sealed class StackService : IStackService
     private async Task<StackMutationResult> UpdateForSocketAsync(
         Guid socketId,
         Guid stackId,
-        string composeName,
+        string projectName,
         string composeYaml,
         CancellationToken cancellationToken)
     {
@@ -159,16 +159,12 @@ public sealed class StackService : IStackService
             return StackMutationResult.NotFound();
         }
 
-        var composeNameError = ValidateComposeName(
-            composeName,
-            out var trimmedComposeName,
-            out var projectName);
-        if (composeNameError is not null)
+        if (!StackProjectName.TryValidate(projectName, out var normalizedProjectName, out var nameError))
         {
-            return StackMutationResult.Invalid(composeNameError);
+            return StackMutationResult.Invalid(nameError!);
         }
 
-        var yamlError = ValidateComposeYaml(composeYaml, out var trimmedYaml);
+        var yamlError = ValidateComposeYaml(composeYaml, out var storedYaml);
         if (yamlError is not null)
         {
             return StackMutationResult.Invalid(yamlError);
@@ -176,17 +172,16 @@ public sealed class StackService : IStackService
 
         if (await _stackRepository.ProjectNameExistsAsync(
             socketId,
-            projectName,
+            normalizedProjectName,
             stack.Id,
             cancellationToken))
         {
             return StackMutationResult.Conflict(
-                $"A stack named '{projectName}' already exists on this device.");
+                $"A stack named '{normalizedProjectName}' already exists on this device.");
         }
 
-        stack.ComposeName = trimmedComposeName;
-        stack.ProjectName = projectName;
-        stack.ComposeYaml = trimmedYaml;
+        stack.ProjectName = normalizedProjectName;
+        stack.ComposeYaml = storedYaml;
         stack.UpdatedAt = DateTimeOffset.UtcNow;
         await _stackRepository.UpdateAsync(stack, cancellationToken);
         return StackMutationResult.Success(Map(stack));
@@ -207,41 +202,21 @@ public sealed class StackService : IStackService
         return true;
     }
 
-    private static string? ValidateComposeName(
-        string composeName,
-        out string trimmedComposeName,
-        out string projectName)
+    private static string? ValidateComposeYaml(string? composeYaml, out string storedYaml)
     {
-        trimmedComposeName = composeName.Trim();
-        projectName = string.Empty;
-
-        if (trimmedComposeName.Length == 0)
-        {
-            return "Compose name is required.";
-        }
-
-        if (trimmedComposeName.Length > 128)
-        {
-            return "Compose name must be 128 characters or fewer.";
-        }
-
-        projectName = StackProjectName.FromDisplayName(trimmedComposeName);
-        if (projectName.Length == 0)
-        {
-            return "Compose name must contain at least one letter, number, hyphen, or underscore.";
-        }
-
-        return null;
-    }
-
-    private static string? ValidateComposeYaml(string composeYaml, out string trimmedYaml)
-    {
-        trimmedYaml = composeYaml.Trim();
-        if (trimmedYaml.Length == 0)
+        storedYaml = string.Empty;
+        if (string.IsNullOrWhiteSpace(composeYaml))
         {
             return "Compose file is required.";
         }
 
+        var byteCount = Encoding.UTF8.GetByteCount(composeYaml);
+        if (byteCount > MaxComposeYamlBytes)
+        {
+            return "Compose file must be 512 KiB or smaller.";
+        }
+
+        storedYaml = composeYaml;
         return null;
     }
 
@@ -250,7 +225,6 @@ public sealed class StackService : IStackService
         {
             Id = stack.Id,
             SocketId = stack.SocketId,
-            ComposeName = stack.ComposeName,
             ProjectName = stack.ProjectName,
             ComposeYaml = stack.ComposeYaml,
             CreatedAt = stack.CreatedAt,

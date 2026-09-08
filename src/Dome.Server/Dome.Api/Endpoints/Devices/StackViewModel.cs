@@ -8,8 +8,6 @@ public sealed record StackViewModel
 
     public required Guid SocketId { get; init; }
 
-    public required string ComposeName { get; init; }
-
     public required string ProjectName { get; init; }
 
     public required string ComposeYaml { get; init; }
@@ -23,7 +21,6 @@ public sealed record StackViewModel
         {
             Id = stack.Id,
             SocketId = stack.SocketId,
-            ComposeName = stack.ComposeName,
             ProjectName = stack.ProjectName,
             ComposeYaml = stack.ComposeYaml,
             CreatedAt = stack.CreatedAt,

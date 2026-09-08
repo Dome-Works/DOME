@@ -57,11 +57,6 @@ namespace Dome.Domain.Migrations
                     b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("ComposeName")
-                        .IsRequired()
-                        .HasMaxLength(128)
-                        .HasColumnType("TEXT");
-
                     b.Property<string>("ProjectName")
                         .IsRequired()
                         .HasMaxLength(128)

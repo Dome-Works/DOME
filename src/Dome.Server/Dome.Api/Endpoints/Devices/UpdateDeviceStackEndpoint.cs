@@ -24,7 +24,7 @@ public sealed class UpdateDeviceStackEndpoint
         var result = await _stackService.UpdateAsync(
             req.SocketName,
             req.StackId,
-            req.ComposeName,
+            req.ProjectName,
             req.ComposeYaml,
             ct);
         if (result.IsNotFound)

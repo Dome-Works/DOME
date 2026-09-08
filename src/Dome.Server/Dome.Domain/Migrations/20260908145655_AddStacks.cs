@@ -17,7 +17,6 @@ namespace Dome.Domain.Migrations
                 {
                     Id = table.Column<Guid>(type: "TEXT", nullable: false),
                     SocketId = table.Column<Guid>(type: "TEXT", nullable: false),
-                    ComposeName = table.Column<string>(type: "TEXT", maxLength: 128, nullable: false),
                     ProjectName = table.Column<string>(type: "TEXT", maxLength: 128, nullable: false),
                     ComposeYaml = table.Column<string>(type: "TEXT", nullable: false),
                     CreatedAt = table.Column<DateTimeOffset>(type: "TEXT", nullable: false),

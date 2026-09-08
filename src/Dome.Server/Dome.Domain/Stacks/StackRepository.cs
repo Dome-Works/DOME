@@ -18,7 +18,7 @@ internal sealed class StackRepository : IStackRepository
         return await _db.Stacks
             .AsNoTracking()
             .Where(stack => stack.SocketId == socketId)
-            .OrderBy(stack => stack.ComposeName)
+            .OrderBy(stack => stack.ProjectName)
             .ToListAsync(cancellationToken);
     }
 
@@ -33,12 +33,11 @@ internal sealed class StackRepository : IStackRepository
         Guid? excludeId = null,
         CancellationToken cancellationToken = default)
     {
-        var normalized = projectName.ToLower();
         var query = _db.Stacks
             .AsNoTracking()
             .Where(stack =>
                 stack.SocketId == socketId &&
-                stack.ProjectName.ToLower() == normalized);
+                stack.ProjectName == projectName);
         if (excludeId is { } id)
         {
             query = query.Where(stack => stack.Id != id);

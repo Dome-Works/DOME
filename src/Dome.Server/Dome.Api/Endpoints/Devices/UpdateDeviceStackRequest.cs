@@ -6,7 +6,7 @@ public sealed class UpdateDeviceStackRequest
 
     public Guid StackId { get; init; }
 
-    public string ComposeName { get; init; } = string.Empty;
+    public string ProjectName { get; init; } = string.Empty;
 
     public string ComposeYaml { get; init; } = string.Empty;
 }

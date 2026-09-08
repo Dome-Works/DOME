@@ -10,8 +10,6 @@ public sealed class Stack
 
     public Socket Socket { get; set; } = null!;
 
-    public string ComposeName { get; set; } = string.Empty;
-
     public string ProjectName { get; set; } = string.Empty;
 
     public string ComposeYaml { get; set; } = string.Empty;

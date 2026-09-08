@@ -15,13 +15,13 @@ public interface IStackService
 
     Task<StackMutationResult> CreateAsync(
         string socketName,
-        string composeName,
+        string projectName,
         CancellationToken cancellationToken = default);
 
     Task<StackMutationResult> UpdateAsync(
         string socketName,
         Guid stackId,
-        string composeName,
+        string projectName,
         string composeYaml,
         CancellationToken cancellationToken = default);
 

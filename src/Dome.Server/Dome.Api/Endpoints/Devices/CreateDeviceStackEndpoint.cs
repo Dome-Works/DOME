@@ -21,7 +21,7 @@ public sealed class CreateDeviceStackEndpoint
 
     public override async Task HandleAsync(CreateDeviceStackRequest req, CancellationToken ct)
     {
-        var result = await _stackService.CreateAsync(req.SocketName, req.ComposeName, ct);
+        var result = await _stackService.CreateAsync(req.SocketName, req.ProjectName, ct);
         if (result.IsNotFound)
         {
             await Send.NotFoundAsync(ct);

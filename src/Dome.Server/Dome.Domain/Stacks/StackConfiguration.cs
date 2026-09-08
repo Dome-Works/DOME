@@ -9,9 +9,6 @@ internal sealed class StackConfiguration : IEntityTypeConfiguration<Stack>
     {
         builder.ToTable("Stacks");
         builder.HasKey(stack => stack.Id);
-        builder.Property(stack => stack.ComposeName)
-            .HasMaxLength(128)
-            .IsRequired();
         builder.Property(stack => stack.ProjectName)
             .HasMaxLength(128)
             .IsRequired();
