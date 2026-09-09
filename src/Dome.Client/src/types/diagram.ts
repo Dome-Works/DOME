@@ -12,3 +12,9 @@ export type DeviceDiagram = {
   stacks: DiagramStack[]
   containers: Container[]
 }
+
+export function stackCanvasId(stack: DiagramStack): string {
+  return stack.id == null
+    ? `stack:readonly:${stack.projectName}`
+    : `stack:${stack.id}`
+}

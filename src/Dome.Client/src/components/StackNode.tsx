@@ -9,10 +9,15 @@ export type StackNodeData = {
 
 export type StackNodeType = Node<StackNodeData, 'stack'>
 
-export function StackNode({ data }: NodeProps<StackNodeType>) {
+export function StackNode({ data, selected }: NodeProps<StackNodeType>) {
   const kindLabel = data.kind === 'readonly' ? 'Read-only' : 'Stack'
-  const className =
-    data.kind === 'readonly' ? 'stack-node stack-node-readonly' : 'stack-node'
+  const className = [
+    'stack-node',
+    data.kind === 'readonly' ? 'stack-node-readonly' : '',
+    selected ? 'stack-node-selected' : '',
+  ]
+    .filter(Boolean)
+    .join(' ')
 
   return (
     <div className={className}>

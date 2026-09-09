@@ -4,6 +4,7 @@ import {
   BackgroundVariant,
   Controls,
   MiniMap,
+  Panel,
   ReactFlow,
   useEdgesState,
   useNodesState,
@@ -11,10 +12,13 @@ import {
   type Node,
   type NodeTypes,
 } from '@xyflow/react'
+import { Plus } from 'lucide-react'
 import '@xyflow/react/dist/style.css'
 
 import type { Container } from '../types/containers'
-import type { DeviceDiagram, DiagramStack } from '../types/diagram'
+import type { DeviceDiagram } from '../types/diagram'
+import { stackCanvasId } from '../types/diagram'
+import { Button } from './ui/button'
 import { ContainerNode, type ContainerNodeType } from './ContainerNode'
 import { StackNode, type StackNodeType } from './StackNode'
 
@@ -33,10 +37,6 @@ const ORIGIN_X = 40
 const ORIGIN_Y = 40
 
 type DiagramNode = ContainerNodeType | StackNodeType
-
-function stackNodeId(stack: DiagramStack): string {
-  return stack.id == null ? `stack:readonly:${stack.projectName}` : `stack:${stack.id}`
-}
 
 function groupWidth(memberCount: number): number {
   if (memberCount <= 0) {
@@ -70,7 +70,7 @@ function toGraph(diagram: DeviceDiagram): {
 
   for (const stack of diagram.stacks) {
     const members = membersByProject.get(stack.projectName) ?? []
-    const stackId = stackNodeId(stack)
+    const stackId = stackCanvasId(stack)
     const width = groupWidth(members.length)
     const stackX = cursorX + (width - STACK_NODE_WIDTH) / 2
     const membersWidth =
@@ -142,13 +142,21 @@ function toGraph(diagram: DeviceDiagram): {
 type ContainerDiagramProps = {
   diagram: DeviceDiagram
   selectedContainerId: string | null
+  selectedStackCanvasId: string | null
+  canCreateStack: boolean
   onContainerSelect: (containerId: string | null) => void
+  onStackSelect: (stackCanvasId: string | null) => void
+  onCreateStack: () => void
 }
 
 export function ContainerDiagram({
   diagram,
   selectedContainerId,
+  selectedStackCanvasId,
+  canCreateStack,
   onContainerSelect,
+  onStackSelect,
+  onCreateStack,
 }: ContainerDiagramProps) {
   const graph = useMemo(() => toGraph(diagram), [diagram])
   const [nodes, setNodes, onNodesChange] = useNodesState<Node>([])
@@ -156,17 +164,16 @@ export function ContainerDiagram({
 
   useEffect(() => {
     setNodes(
-      graph.nodes.map((node) =>
-        node.type === 'container'
-          ? {
-              ...node,
-              selected: node.id === selectedContainerId,
-            }
-          : node,
-      ),
+      graph.nodes.map((node) => ({
+        ...node,
+        selected:
+          node.type === 'container'
+            ? node.id === selectedContainerId
+            : node.id === selectedStackCanvasId,
+      })),
     )
     setEdges(graph.edges)
-  }, [graph, selectedContainerId, setNodes, setEdges])
+  }, [graph, selectedContainerId, selectedStackCanvasId, setNodes, setEdges])
 
   return (
     <ReactFlow
@@ -184,10 +191,20 @@ export function ContainerDiagram({
       elementsSelectable
       onNodeClick={(_, node) => {
         if (node.type === 'container') {
+          onStackSelect(null)
           onContainerSelect(node.id)
+          return
+        }
+
+        if (node.type === 'stack') {
+          onContainerSelect(null)
+          onStackSelect(node.id)
         }
       }}
-      onPaneClick={() => onContainerSelect(null)}
+      onPaneClick={() => {
+        onContainerSelect(null)
+        onStackSelect(null)
+      }}
     >
       <Background
         variant={BackgroundVariant.Dots}
@@ -195,6 +212,22 @@ export function ContainerDiagram({
         size={1}
         color="#2a3340"
       />
+      {canCreateStack ? (
+        <Panel position="top-left">
+          <Button
+            type="button"
+            size="icon-sm"
+            variant="outline"
+            aria-label="Create stack"
+            onClick={(event) => {
+              event.stopPropagation()
+              onCreateStack()
+            }}
+          >
+            <Plus />
+          </Button>
+        </Panel>
+      ) : null}
       <Controls showInteractive={false} />
       <MiniMap
         pannable
