@@ -1,3 +1,5 @@
+using DeviceContainerVolumeDto = Dome.Shared.Containers.ContainerVolumeDto;
+
 namespace Dome.Api.Endpoints.Devices;
 
 public sealed record ContainerVolumeViewModel
@@ -13,4 +15,15 @@ public sealed record ContainerVolumeViewModel
     public bool ReadOnly { get; init; }
 
     public long? SizeBytes { get; init; }
+
+    public static ContainerVolumeViewModel From(DeviceContainerVolumeDto volume)
+        => new()
+        {
+            Name = volume.Name,
+            Source = volume.Source,
+            Destination = volume.Destination,
+            Type = volume.Type,
+            ReadOnly = volume.ReadOnly,
+            SizeBytes = volume.SizeBytes,
+        };
 }

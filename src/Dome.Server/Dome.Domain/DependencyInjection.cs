@@ -1,5 +1,6 @@
 using Dome.Domain.Seeding;
 using Dome.Domain.Sockets;
+using Dome.Domain.Stacks;
 using Dome.Domain.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -21,6 +22,7 @@ public static class DependencyInjection
 
         services.AddScoped<IDatabaseInitializer, DatabaseInitializer>();
         services.AddScoped<ISocketRepository, SocketRepository>();
+        services.AddScoped<IStackRepository, StackRepository>();
 
         return services;
     }

@@ -4,6 +4,7 @@ import {
   BackgroundVariant,
   Controls,
   MiniMap,
+  Panel,
   ReactFlow,
   useEdgesState,
   useNodesState,
@@ -11,9 +12,13 @@ import {
   type Node,
   type NodeTypes,
 } from '@xyflow/react'
+import { Plus } from 'lucide-react'
 import '@xyflow/react/dist/style.css'
 
 import type { Container } from '../types/containers'
+import type { DeviceDiagram } from '../types/diagram'
+import { stackCanvasId } from '../types/diagram'
+import { Button } from './ui/button'
 import { ContainerNode, type ContainerNodeType } from './ContainerNode'
 import { StackNode, type StackNodeType } from './StackNode'
 
@@ -33,10 +38,6 @@ const ORIGIN_Y = 40
 
 type DiagramNode = ContainerNodeType | StackNodeType
 
-function stackNodeId(stack: string): string {
-  return `stack:${stack}`
-}
-
 function groupWidth(memberCount: number): number {
   if (memberCount <= 0) {
     return STACK_NODE_WIDTH
@@ -46,18 +47,18 @@ function groupWidth(memberCount: number): number {
   return Math.max(STACK_NODE_WIDTH, membersWidth)
 }
 
-function toGraph(containers: Container[]): {
+function toGraph(diagram: DeviceDiagram): {
   nodes: DiagramNode[]
   edges: Edge[]
 } {
-  const stacks = new Map<string, Container[]>()
+  const membersByProject = new Map<string, Container[]>()
   const standalone: Container[] = []
 
-  for (const container of containers) {
+  for (const container of diagram.containers) {
     if (container.stack) {
-      const members = stacks.get(container.stack) ?? []
+      const members = membersByProject.get(container.stack) ?? []
       members.push(container)
-      stacks.set(container.stack, members)
+      membersByProject.set(container.stack, members)
     } else {
       standalone.push(container)
     }
@@ -67,12 +68,9 @@ function toGraph(containers: Container[]): {
   const edges: Edge[] = []
   let cursorX = ORIGIN_X
 
-  const sortedStacks = [...stacks.entries()].sort(([left], [right]) =>
-    left.localeCompare(right),
-  )
-
-  for (const [stack, members] of sortedStacks) {
-    const stackId = stackNodeId(stack)
+  for (const stack of diagram.stacks) {
+    const members = membersByProject.get(stack.projectName) ?? []
+    const stackId = stackCanvasId(stack)
     const width = groupWidth(members.length)
     const stackX = cursorX + (width - STACK_NODE_WIDTH) / 2
     const membersWidth =
@@ -89,7 +87,8 @@ function toGraph(containers: Container[]): {
         y: ORIGIN_Y,
       },
       data: {
-        name: stack,
+        name: stack.projectName,
+        kind: stack.kind,
       },
     })
 
@@ -141,33 +140,40 @@ function toGraph(containers: Container[]): {
 }
 
 type ContainerDiagramProps = {
-  containers: Container[]
+  diagram: DeviceDiagram
   selectedContainerId: string | null
+  selectedStackCanvasId: string | null
+  canCreateStack: boolean
   onContainerSelect: (containerId: string | null) => void
+  onStackSelect: (stackCanvasId: string | null) => void
+  onCreateStack: () => void
 }
 
 export function ContainerDiagram({
-  containers,
+  diagram,
   selectedContainerId,
+  selectedStackCanvasId,
+  canCreateStack,
   onContainerSelect,
+  onStackSelect,
+  onCreateStack,
 }: ContainerDiagramProps) {
-  const graph = useMemo(() => toGraph(containers), [containers])
+  const graph = useMemo(() => toGraph(diagram), [diagram])
   const [nodes, setNodes, onNodesChange] = useNodesState<Node>([])
   const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([])
 
   useEffect(() => {
     setNodes(
-      graph.nodes.map((node) =>
-        node.type === 'container'
-          ? {
-              ...node,
-              selected: node.id === selectedContainerId,
-            }
-          : node,
-      ),
+      graph.nodes.map((node) => ({
+        ...node,
+        selected:
+          node.type === 'container'
+            ? node.id === selectedContainerId
+            : node.id === selectedStackCanvasId,
+      })),
     )
     setEdges(graph.edges)
-  }, [graph, selectedContainerId, setNodes, setEdges])
+  }, [graph, selectedContainerId, selectedStackCanvasId, setNodes, setEdges])
 
   return (
     <ReactFlow
@@ -185,10 +191,20 @@ export function ContainerDiagram({
       elementsSelectable
       onNodeClick={(_, node) => {
         if (node.type === 'container') {
+          onStackSelect(null)
           onContainerSelect(node.id)
+          return
+        }
+
+        if (node.type === 'stack') {
+          onContainerSelect(null)
+          onStackSelect(node.id)
         }
       }}
-      onPaneClick={() => onContainerSelect(null)}
+      onPaneClick={() => {
+        onContainerSelect(null)
+        onStackSelect(null)
+      }}
     >
       <Background
         variant={BackgroundVariant.Dots}
@@ -196,6 +212,22 @@ export function ContainerDiagram({
         size={1}
         color="#2a3340"
       />
+      {canCreateStack ? (
+        <Panel position="top-left">
+          <Button
+            type="button"
+            size="icon-sm"
+            variant="outline"
+            aria-label="Create stack"
+            onClick={(event) => {
+              event.stopPropagation()
+              onCreateStack()
+            }}
+          >
+            <Plus />
+          </Button>
+        </Panel>
+      ) : null}
       <Controls showInteractive={false} />
       <MiniMap
         pannable

@@ -1,4 +1,5 @@
 import type { GetDeviceContainersResponse } from '../types/containers'
+import type { DeviceDiagram } from '../types/diagram'
 import { readApiError } from './errors'
 
 export async function fetchDeviceContainers(
@@ -15,6 +16,22 @@ export async function fetchDeviceContainers(
   }
 
   return (await response.json()) as GetDeviceContainersResponse
+}
+
+export async function fetchDeviceDiagram(
+  deviceName: string,
+  signal?: AbortSignal,
+): Promise<DeviceDiagram> {
+  const response = await fetch(
+    `/api/devices/${encodeURIComponent(deviceName)}/diagram`,
+    { signal },
+  )
+
+  if (!response.ok) {
+    throw new Error(`Failed to load diagram (${response.status})`)
+  }
+
+  return (await response.json()) as DeviceDiagram
 }
 
 export async function startDeviceContainer(
@@ -50,4 +67,3 @@ async function postContainerLifecycle(
     )
   }
 }
-

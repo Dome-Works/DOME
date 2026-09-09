@@ -19,3 +19,4 @@ export type ContainerVolume = {
 export type GetDeviceContainersResponse = {
   containers: Container[]
 }
+

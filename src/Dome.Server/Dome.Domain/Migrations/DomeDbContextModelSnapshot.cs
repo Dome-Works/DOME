@@ -43,6 +43,49 @@ namespace Dome.Domain.Migrations
 
                     b.ToTable("Sockets", (string)null);
                 });
+
+            modelBuilder.Entity("Dome.Domain.Stacks.Stack", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ComposeYaml")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ProjectName")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("SocketId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SocketId", "ProjectName")
+                        .IsUnique();
+
+                    b.ToTable("Stacks", (string)null);
+                });
+
+            modelBuilder.Entity("Dome.Domain.Stacks.Stack", b =>
+                {
+                    b.HasOne("Dome.Domain.Sockets.Socket", "Socket")
+                        .WithMany()
+                        .HasForeignKey("SocketId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Socket");
+                });
 #pragma warning restore 612, 618
         }
     }
