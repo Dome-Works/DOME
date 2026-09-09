@@ -56,8 +56,8 @@ public sealed class DeviceDiagramService : IDeviceDiagramService
                 boundContainers.Add(container with { Stack = null });
                 continue;
             }
-
-            var managed = FindManagedStack(persistedStacks, composeProject);
+            
+            var managed = persistedStacks.FirstOrDefault(stack => string.Equals(stack.ProjectName, composeProject, StringComparison.OrdinalIgnoreCase));
             if (managed is not null)
             {
                 boundContainers.Add(container with { Stack = managed.ProjectName });
@@ -106,20 +106,5 @@ public sealed class DeviceDiagramService : IDeviceDiagramService
         }
 
         return stack.Trim();
-    }
-
-    private static StackEntity? FindManagedStack(
-        IReadOnlyList<StackEntity> persistedStacks,
-        string composeProject)
-    {
-        foreach (var stack in persistedStacks)
-        {
-            if (string.Equals(stack.ProjectName, composeProject, StringComparison.OrdinalIgnoreCase))
-            {
-                return stack;
-            }
-        }
-
-        return null;
     }
 }
