@@ -1,3 +1,6 @@
+using DeviceContainerDto = Dome.Shared.Containers.ContainerDto;
+using DeviceContainerVolumeDto = Dome.Shared.Containers.ContainerVolumeDto;
+
 namespace Dome.Api.Endpoints.Devices;
 
 public sealed record ContainerViewModel
@@ -14,4 +17,15 @@ public sealed record ContainerViewModel
 
     public IReadOnlyCollection<ContainerVolumeViewModel> Volumes { get; init; }
         = Array.Empty<ContainerVolumeViewModel>();
+
+    public static ContainerViewModel From(DeviceContainerDto container)
+        => new()
+        {
+            Id = container.Id,
+            Name = container.Name,
+            State = container.State,
+            Stack = container.Stack,
+            TotalBytes = container.TotalBytes,
+            Volumes = container.Volumes.Select(ContainerVolumeViewModel.From).ToArray(),
+        };
 }

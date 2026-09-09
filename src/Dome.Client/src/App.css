@@ -241,6 +241,12 @@
   overflow-wrap: anywhere;
 }
 
+.stack-node-readonly {
+  border-style: dashed;
+  border-color: var(--border);
+  background: #151b24;
+}
+
 .container-node {
   width: 260px;
   border: 1px solid var(--border);

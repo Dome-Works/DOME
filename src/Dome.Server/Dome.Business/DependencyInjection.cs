@@ -13,6 +13,7 @@ public static class DependencyInjection
         services.AddSingleton<IDomeSocketApiFactory, DomeSocketApiFactory>();
         services.AddScoped<ISocketService, SocketService>();
         services.AddScoped<IDeviceQueryService, DeviceQueryService>();
+        services.AddScoped<IDeviceDiagramService, DeviceDiagramService>();
         services.AddScoped<IDeviceContainerCommandService, DeviceContainerCommandService>();
         services.AddScoped<IStackService, StackService>();
 

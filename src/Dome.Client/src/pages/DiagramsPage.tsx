@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { Link } from 'react-router'
 
 import {
-  fetchDeviceContainers,
+  fetchDeviceDiagram,
   startDeviceContainer,
   stopDeviceContainer,
 } from '@/api/containers'
@@ -13,6 +13,7 @@ import { DeviceTabs } from '@/components/DeviceTabs'
 import { Button } from '@/components/ui/button'
 import { toast } from 'sonner'
 import type { Container } from '@/types/containers'
+import type { DeviceDiagram } from '@/types/diagram'
 import type { Device } from '@/types/devices'
 import '@/App.css'
 
@@ -22,10 +23,10 @@ type DevicesState =
   | { status: 'empty' }
   | { status: 'error'; message: string }
 
-type ContainersState =
+type DiagramState =
   | { status: 'idle' }
   | { status: 'loading' }
-  | { status: 'ready'; containers: Container[] }
+  | { status: 'ready'; diagram: DeviceDiagram }
   | { status: 'empty' }
   | { status: 'error'; message: string }
 
@@ -39,7 +40,7 @@ export function DiagramsPage() {
   const [selectedContainerId, setSelectedContainerId] = useState<string | null>(
     null,
   )
-  const [containersState, setContainersState] = useState<ContainersState>({
+  const [diagramState, setDiagramState] = useState<DiagramState>({
     status: 'idle',
   })
   const [isRefreshing, setIsRefreshing] = useState(false)
@@ -80,30 +81,29 @@ export function DiagramsPage() {
     }
   }, [])
 
-  const loadContainers = useCallback(
+  const loadDiagram = useCallback(
     async (deviceName: string, signal?: AbortSignal) => {
       setIsRefreshing(true)
-      setContainersState({ status: 'loading' })
+      setDiagramState({ status: 'loading' })
 
       try {
-        const response = await fetchDeviceContainers(deviceName, signal)
-        const containers = response.containers ?? []
+        const diagram = await fetchDeviceDiagram(deviceName, signal)
 
         if (signal?.aborted) {
           return
         }
 
-        if (containers.length === 0) {
-          setContainersState({ status: 'empty' })
+        if (diagram.stacks.length === 0 && diagram.containers.length === 0) {
+          setDiagramState({ status: 'empty' })
         } else {
-          setContainersState({ status: 'ready', containers })
+          setDiagramState({ status: 'ready', diagram })
         }
       } catch {
         if (signal?.aborted) {
           return
         }
 
-        setContainersState({
+        setDiagramState({
           status: 'error',
           message:
             'Unable to load containers. Confirm that Docker is reachable for this device.',
@@ -126,14 +126,14 @@ export function DiagramsPage() {
   useEffect(() => {
     if (!selectedDeviceName) {
       setSelectedContainerId(null)
-      setContainersState({ status: 'idle' })
+      setDiagramState({ status: 'idle' })
       return
     }
 
     const controller = new AbortController()
-    void loadContainers(selectedDeviceName, controller.signal)
+    void loadDiagram(selectedDeviceName, controller.signal)
     return () => controller.abort()
-  }, [selectedDeviceName, loadContainers])
+  }, [selectedDeviceName, loadDiagram])
 
   const statusBanner = (() => {
     if (devicesState.status === 'loading') {
@@ -163,7 +163,7 @@ export function DiagramsPage() {
       }
     }
 
-    switch (containersState.status) {
+    switch (diagramState.status) {
       case 'loading':
         return {
           className: 'status-banner status-banner-info',
@@ -174,17 +174,17 @@ export function DiagramsPage() {
       case 'empty':
         return {
           className: 'status-banner status-banner-info',
-          text: 'No containers were found on this device.',
+          text: 'No stacks or containers were found on this device.',
           showRetry: false,
           onRetry: undefined as (() => void) | undefined,
         }
       case 'error':
         return {
           className: 'status-banner status-banner-error',
-          text: containersState.message,
+          text: diagramState.message,
           showRetry: true,
           onRetry: selectedDeviceName
-            ? () => void loadContainers(selectedDeviceName)
+            ? () => void loadDiagram(selectedDeviceName)
             : undefined,
         }
       default:
@@ -192,13 +192,16 @@ export function DiagramsPage() {
     }
   })()
 
-  const containers =
-    containersState.status === 'ready' ? containersState.containers : []
+  const diagram =
+    diagramState.status === 'ready'
+      ? diagramState.diagram
+      : { stacks: [], containers: [] }
   const devices = devicesState.status === 'ready' ? devicesState.devices : []
   const selectedContainer =
     selectedContainerId === null
       ? null
-      : containers.find((container) => container.id === selectedContainerId) ?? null
+      : diagram.containers.find((container) => container.id === selectedContainerId) ??
+        null
   const canRefresh =
     selectedDeviceName !== null && devicesState.status === 'ready'
 
@@ -218,7 +221,7 @@ export function DiagramsPage() {
           toast.success(`Stopped ${container.name}.`)
         }
 
-        await loadContainers(selectedDeviceName)
+        await loadDiagram(selectedDeviceName)
       } catch (error) {
         toast.error(
           error instanceof Error
@@ -229,19 +232,16 @@ export function DiagramsPage() {
         setIsActionPending(false)
       }
     },
-    [loadContainers, selectedDeviceName],
+    [loadDiagram, selectedDeviceName],
   )
 
   useEffect(() => {
-    if (
-      containersState.status !== 'ready' &&
-      containersState.status !== 'empty'
-    ) {
+    if (diagramState.status !== 'ready' && diagramState.status !== 'empty') {
       return
     }
 
     const listedContainers =
-      containersState.status === 'ready' ? containersState.containers : []
+      diagramState.status === 'ready' ? diagramState.diagram.containers : []
 
     if (
       selectedContainerId &&
@@ -249,7 +249,7 @@ export function DiagramsPage() {
     ) {
       setSelectedContainerId(null)
     }
-  }, [containersState, selectedContainerId])
+  }, [diagramState, selectedContainerId])
 
   return (
     <div className="app-page">
@@ -266,7 +266,7 @@ export function DiagramsPage() {
           disabled={!canRefresh || isRefreshing}
           onClick={() => {
             if (selectedDeviceName) {
-              void loadContainers(selectedDeviceName)
+              void loadDiagram(selectedDeviceName)
             }
           }}
         >
@@ -306,7 +306,7 @@ export function DiagramsPage() {
           {selectedDeviceName ? (
             <ContainerDiagram
               key={selectedDeviceName}
-              containers={containers}
+              diagram={diagram}
               selectedContainerId={selectedContainerId}
               onContainerSelect={setSelectedContainerId}
             />
