@@ -45,9 +45,7 @@ export function ComposeEditorDialog({
       <DialogContent className="flex max-h-[90vh] max-w-5xl flex-col sm:max-w-5xl">
         <DialogHeader>
           <DialogTitle>Edit compose file</DialogTitle>
-          <DialogDescription>
-            {projectName} — docker-compose.yml stored on the server.
-          </DialogDescription>
+          <DialogDescription>{projectName}</DialogDescription>
         </DialogHeader>
         <div className="min-h-0 overflow-hidden rounded-md border">
           {open ? (
