@@ -21,7 +21,7 @@ public sealed class DeviceStackDeployServiceTests
     {
         var service = CreateService(socket: null, stack: CreateStack(Guid.NewGuid()), A.Fake<IDomeSocketApi>());
 
-        var result = await service.DeployAsync("local", Guid.NewGuid());
+        var result = await service.DeployAsync("local", Guid.NewGuid(), TestContext.Current.CancellationToken);
 
         Assert.True(result.IsDeviceNotFound);
         Assert.False(result.IsSuccess);
@@ -33,7 +33,7 @@ public sealed class DeviceStackDeployServiceTests
         var socket = CreateSocket();
         var service = CreateService(socket, stack: null, A.Fake<IDomeSocketApi>());
 
-        var result = await service.DeployAsync("local", Guid.NewGuid());
+        var result = await service.DeployAsync("local", Guid.NewGuid(), TestContext.Current.CancellationToken);
 
         Assert.True(result.IsStackNotFound);
         Assert.False(result.IsSuccess);
@@ -46,7 +46,7 @@ public sealed class DeviceStackDeployServiceTests
         var stack = CreateStack(Guid.NewGuid());
         var service = CreateService(socket, stack, A.Fake<IDomeSocketApi>());
 
-        var result = await service.DeployAsync("local", stack.Id);
+        var result = await service.DeployAsync("local", stack.Id, TestContext.Current.CancellationToken);
 
         Assert.True(result.IsStackNotFound);
         Assert.False(result.IsSuccess);
@@ -60,7 +60,7 @@ public sealed class DeviceStackDeployServiceTests
         var socketApi = A.Fake<IDomeSocketApi>();
         var service = CreateService(socket, stack, socketApi);
 
-        var result = await service.DeployAsync("local", stack.Id);
+        var result = await service.DeployAsync("local", stack.Id, TestContext.Current.CancellationToken);
 
         Assert.True(result.IsSuccess);
         A.CallTo(() => socketApi.UpComposeAsync(
@@ -84,7 +84,7 @@ public sealed class DeviceStackDeployServiceTests
 
         var service = CreateService(socket, stack, socketApi);
 
-        var result = await service.DeployAsync("local", stack.Id);
+        var result = await service.DeployAsync("local", stack.Id, TestContext.Current.CancellationToken);
 
         Assert.True(result.IsFailed);
         Assert.Equal("image not found", result.Error);
@@ -103,7 +103,7 @@ public sealed class DeviceStackDeployServiceTests
 
         var service = CreateService(socket, stack, socketApi);
 
-        var result = await service.DeployAsync("local", stack.Id);
+        var result = await service.DeployAsync("local", stack.Id, TestContext.Current.CancellationToken);
 
         Assert.True(result.IsFailed);
         Assert.Equal("Compose file is required.", result.Error);

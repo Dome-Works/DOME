@@ -16,7 +16,7 @@ public sealed class DeviceDiagramServiceTests
     {
         var service = CreateService(socket: null, [], []);
 
-        var result = await service.GetDiagramAsync("missing");
+        var result = await service.GetDiagramAsync("missing", TestContext.Current.CancellationToken);
 
         Assert.Null(result);
     }
@@ -33,7 +33,7 @@ public sealed class DeviceDiagramServiceTests
 
         var service = CreateService(socket, [stack], containers);
 
-        var result = await service.GetDiagramAsync("local");
+        var result = await service.GetDiagramAsync("local", TestContext.Current.CancellationToken);
 
         Assert.NotNull(result);
         var diagramStack = Assert.Single(result.Stacks);
@@ -56,7 +56,7 @@ public sealed class DeviceDiagramServiceTests
 
         var service = CreateService(socket, [stack], containers);
 
-        var result = await service.GetDiagramAsync("local");
+        var result = await service.GetDiagramAsync("local", TestContext.Current.CancellationToken);
 
         Assert.NotNull(result);
         Assert.Equal("app", Assert.Single(result.Containers).Stack);
@@ -77,7 +77,7 @@ public sealed class DeviceDiagramServiceTests
 
         var service = CreateService(socket, [], containers);
 
-        var result = await service.GetDiagramAsync("local");
+        var result = await service.GetDiagramAsync("local", TestContext.Current.CancellationToken);
 
         Assert.NotNull(result);
         var diagramStack = Assert.Single(result.Stacks);
@@ -99,7 +99,7 @@ public sealed class DeviceDiagramServiceTests
 
         var service = CreateService(socket, [], containers);
 
-        var result = await service.GetDiagramAsync("local");
+        var result = await service.GetDiagramAsync("local", TestContext.Current.CancellationToken);
 
         Assert.NotNull(result);
         Assert.Empty(result.Stacks);
@@ -115,7 +115,7 @@ public sealed class DeviceDiagramServiceTests
 
         var service = CreateService(socket, [stack], []);
 
-        var result = await service.GetDiagramAsync("local");
+        var result = await service.GetDiagramAsync("local", TestContext.Current.CancellationToken);
 
         Assert.NotNull(result);
         var diagramStack = Assert.Single(result.Stacks);
@@ -137,7 +137,7 @@ public sealed class DeviceDiagramServiceTests
 
         var service = CreateService(socket, [stack], containers);
 
-        var result = await service.GetDiagramAsync("local");
+        var result = await service.GetDiagramAsync("local", TestContext.Current.CancellationToken);
 
         Assert.NotNull(result);
         Assert.Equal(2, result.Stacks.Count);

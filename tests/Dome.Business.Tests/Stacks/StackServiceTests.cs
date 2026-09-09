@@ -20,7 +20,7 @@ public sealed class StackServiceTests
 
         var service = CreateService(socket, stackRepository);
 
-        var result = await service.CreateAsync("local", "my-stack");
+        var result = await service.CreateAsync("local", "my-stack", TestContext.Current.CancellationToken);
 
         Assert.True(result.IsSuccess);
         Assert.NotNull(result.Stack);
@@ -36,7 +36,7 @@ public sealed class StackServiceTests
     {
         var service = CreateService(socket: null, A.Fake<IStackRepository>());
 
-        var result = await service.CreateAsync("missing", "app");
+        var result = await service.CreateAsync("missing", "app", TestContext.Current.CancellationToken);
 
         Assert.True(result.IsNotFound);
         Assert.False(result.IsSuccess);
@@ -56,7 +56,7 @@ public sealed class StackServiceTests
 
         var service = CreateService(socket, stackRepository);
 
-        var result = await service.CreateAsync("local", "app");
+        var result = await service.CreateAsync("local", "app", TestContext.Current.CancellationToken);
 
         Assert.True(result.IsConflict);
         Assert.False(result.IsSuccess);
@@ -69,7 +69,7 @@ public sealed class StackServiceTests
     {
         var service = CreateService(CreateSocket(), A.Fake<IStackRepository>());
 
-        var result = await service.CreateAsync("local", "   ");
+        var result = await service.CreateAsync("local", "   ", TestContext.Current.CancellationToken);
 
         Assert.False(result.IsSuccess);
         Assert.Equal("Project name is required.", result.Error);
@@ -87,7 +87,7 @@ public sealed class StackServiceTests
         var stackRepository = A.Fake<IStackRepository>();
         var service = CreateService(CreateSocket(), stackRepository);
 
-        var result = await service.CreateAsync("local", projectName);
+        var result = await service.CreateAsync("local", projectName, TestContext.Current.CancellationToken);
 
         Assert.False(result.IsSuccess);
         Assert.Contains("valid Compose project name", result.Error);
@@ -111,7 +111,8 @@ public sealed class StackServiceTests
             "local",
             stack.Id,
             "new-name",
-            yaml);
+            yaml,
+            TestContext.Current.CancellationToken);
 
         Assert.True(result.IsSuccess);
         Assert.Equal("new-name", result.Stack!.ProjectName);
@@ -131,7 +132,7 @@ public sealed class StackServiceTests
 
         var service = CreateService(socket, stackRepository);
 
-        var result = await service.UpdateAsync("local", stack.Id, "app", "services: {}");
+        var result = await service.UpdateAsync("local", stack.Id, "app", "services: {}", TestContext.Current.CancellationToken);
 
         Assert.True(result.IsNotFound);
     }
@@ -147,7 +148,7 @@ public sealed class StackServiceTests
 
         var service = CreateService(socket, stackRepository);
 
-        var result = await service.UpdateAsync("local", stack.Id, "app", "  ");
+        var result = await service.UpdateAsync("local", stack.Id, "app", "  ", TestContext.Current.CancellationToken);
 
         Assert.False(result.IsSuccess);
         Assert.Equal("Compose file is required.", result.Error);
@@ -165,7 +166,7 @@ public sealed class StackServiceTests
         var service = CreateService(socket, stackRepository);
         var yaml = new string('a', StackService.MaxComposeYamlBytes + 1);
 
-        var result = await service.UpdateAsync("local", stack.Id, "app", yaml);
+        var result = await service.UpdateAsync("local", stack.Id, "app", yaml, TestContext.Current.CancellationToken);
 
         Assert.False(result.IsSuccess);
         Assert.Equal("Compose file must be 512 KiB or smaller.", result.Error);
@@ -178,7 +179,7 @@ public sealed class StackServiceTests
     {
         var service = CreateService(socket: null, A.Fake<IStackRepository>());
 
-        var result = await service.ListAsync("missing");
+        var result = await service.ListAsync("missing", TestContext.Current.CancellationToken);
 
         Assert.Null(result);
     }
@@ -194,7 +195,7 @@ public sealed class StackServiceTests
 
         var service = CreateService(socket, stackRepository);
 
-        var result = await service.GetAsync("local", stack.Id);
+        var result = await service.GetAsync("local", stack.Id, TestContext.Current.CancellationToken);
 
         Assert.NotNull(result);
         Assert.Equal(stack.Id, result.Id);
@@ -206,7 +207,7 @@ public sealed class StackServiceTests
     {
         var service = CreateService(socket: null, A.Fake<IStackRepository>());
 
-        var result = await service.DeleteAsync("missing", Guid.NewGuid());
+        var result = await service.DeleteAsync("missing", Guid.NewGuid(), TestContext.Current.CancellationToken);
 
         Assert.Null(result);
     }
@@ -221,7 +222,7 @@ public sealed class StackServiceTests
 
         var service = CreateService(socket, stackRepository);
 
-        var result = await service.DeleteAsync("local", Guid.NewGuid());
+        var result = await service.DeleteAsync("local", Guid.NewGuid(), TestContext.Current.CancellationToken);
 
         Assert.False(result);
         A.CallTo(() => stackRepository.DeleteAsync(A<StackEntity>._, A<CancellationToken>._))
@@ -239,7 +240,7 @@ public sealed class StackServiceTests
 
         var service = CreateService(socket, stackRepository);
 
-        var result = await service.DeleteAsync("local", stack.Id);
+        var result = await service.DeleteAsync("local", stack.Id, TestContext.Current.CancellationToken);
 
         Assert.True(result);
         A.CallTo(() => stackRepository.DeleteAsync(stack, A<CancellationToken>._))
