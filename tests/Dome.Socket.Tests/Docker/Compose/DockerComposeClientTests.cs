@@ -63,9 +63,9 @@ public sealed class DockerComposeClientTests
                 "--project-name",
                 "my-stack",
                 "--project-directory",
-                Path.GetFullPath(Path.Combine(workingRoot, "my-stack")),
+                Path.GetFullPath(Path.Join(workingRoot, "my-stack")),
                 "--file",
-                Path.GetFullPath(Path.Combine(workingRoot, "my-stack", "docker-compose.yml")),
+                Path.GetFullPath(Path.Join(workingRoot, "my-stack", "docker-compose.yml")),
                 "up",
                 "--detach"
             ],
@@ -74,7 +74,7 @@ public sealed class DockerComposeClientTests
         Assert.Equal(
             "services: {}\n",
             await File.ReadAllTextAsync(
-                Path.Combine(workingRoot, "my-stack", "docker-compose.yml"),
+                Path.Join(workingRoot, "my-stack", "docker-compose.yml"),
                 TestContext.Current.CancellationToken));
     }
 
@@ -128,5 +128,5 @@ public sealed class DockerComposeClientTests
             NullLogger<DockerComposeClient>.Instance);
 
     private static string CreateWorkingRoot()
-        => Path.Combine(Path.GetTempPath(), "dome-compose-tests", Guid.NewGuid().ToString("N"));
+        => Path.Join(Path.GetTempPath(), "dome-compose-tests", Guid.NewGuid().ToString("N"));
 }

@@ -52,7 +52,7 @@ internal sealed class DockerComposeClient : IDockerComposeClient
         }
 
         Directory.CreateDirectory(projectDirectory);
-        var composeFilePath = Path.Combine(projectDirectory, ComposeFileName);
+        var composeFilePath = Path.Join(projectDirectory, ComposeFileName);
         await File.WriteAllTextAsync(composeFilePath, composeYaml, Encoding.UTF8, cancellationToken);
 
         var dockerCli = string.IsNullOrWhiteSpace(_composeOptions.DockerCliPath)
@@ -116,11 +116,11 @@ internal sealed class DockerComposeClient : IDockerComposeClient
     private string? ResolveProjectDirectory(string projectName)
     {
         var root = string.IsNullOrWhiteSpace(_composeOptions.WorkingRoot)
-            ? Path.Combine(Path.GetTempPath(), "dome", "compose")
+            ? Path.Join(Path.GetTempPath(), "dome", "compose")
             : _composeOptions.WorkingRoot.Trim();
 
         var fullRoot = Path.GetFullPath(root);
-        var projectDirectory = Path.GetFullPath(Path.Combine(fullRoot, projectName));
+        var projectDirectory = Path.GetFullPath(Path.Join(fullRoot, projectName));
         var prefix = fullRoot.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar)
             + Path.DirectorySeparatorChar;
 
