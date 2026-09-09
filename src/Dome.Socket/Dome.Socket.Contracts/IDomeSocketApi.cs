@@ -1,3 +1,4 @@
+using Dome.Socket.Contracts.Compose;
 using Dome.Socket.Contracts.Containers;
 using Dome.Socket.Contracts.Health;
 using Refit;
@@ -17,4 +18,9 @@ public interface IDomeSocketApi
 
     [Post("/api/containers/{id}/stop")]
     Task StopContainerAsync(string id, CancellationToken cancellationToken = default);
+
+    [Post("/api/compose/up")]
+    Task UpComposeAsync(
+        [Body] ComposeUpRequest request,
+        CancellationToken cancellationToken = default);
 }

@@ -247,7 +247,9 @@ environment variables.
 | --- | --- | --- | --- |
 | Server | `ConnectionStrings:Dome` | `ConnectionStrings__Dome` | Local app-data path in Development; `/var/lib/dome/dome.db` otherwise |
 | Socket | `Docker:Endpoint` | `Docker__Endpoint` | `unix:///var/run/docker.sock` |
+| Socket | `Docker:Compose:WorkingRoot` | `Docker__Compose__WorkingRoot` | `/var/lib/dome/compose` |
 | Compose host | Docker socket mount source | `DOCKER_SOCKET_PATH` | `/var/run/docker.sock` |
+| Compose host | Compose working directory mount | `DOME_COMPOSE_ROOT` | `/var/lib/dome/compose` |
 
 Only Unix Docker sockets are currently supported. When the Docker socket is not
 located at `/var/run/docker.sock`, set `DOCKER_SOCKET_PATH` before starting
@@ -255,6 +257,7 @@ Compose. For example:
 
 ```bash
 export DOCKER_SOCKET_PATH=/path/to/docker.sock
+export DOME_COMPOSE_ROOT=/path/to/dome/compose
 docker compose up -d
 ```
 
@@ -268,6 +271,10 @@ In Docker, SQLite data is stored in the named volume `dome-data` at:
 
 The volume survives container recreation and image updates. Do not run
 `docker compose down -v` unless you intentionally want to delete the database.
+
+Stack Compose files written by the Socket live under `/var/lib/dome/compose`
+inside the Socket container. Bind-mount `DOME_COMPOSE_ROOT` to the same path
+on the Docker host so bind mounts in stack YAML resolve correctly.
 
 For a host-visible data directory, replace the named-volume mount in the
 Compose file with a bind mount such as:
