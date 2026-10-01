@@ -147,6 +147,62 @@ public sealed class DeviceDiagramServiceTests
         Assert.Equal("alpha", result.Stacks[1].ProjectName);
     }
 
+    [Fact]
+    public async Task GetDiagramAsync_calculates_stack_total_bytes_without_duplicating_shared_volumes()
+    {
+        var socket = CreateSocket();
+        var stack = CreateStack(socket.Id, "app");
+        var containers = new[]
+        {
+            CreateContainer(
+                "c1",
+                "web",
+                "app",
+                volumes:
+                [
+                    new ContainerVolumeDto
+                    {
+                        Name = "shared_data",
+                        Destination = "/data",
+                        SizeBytes = 1_000_000_000,
+                    },
+                    new ContainerVolumeDto
+                    {
+                        Name = "web_unique",
+                        Destination = "/var/log",
+                        SizeBytes = 500_000_000,
+                    },
+                ]),
+            CreateContainer(
+                "c2",
+                "api",
+                "app",
+                volumes:
+                [
+                    new ContainerVolumeDto
+                    {
+                        Name = "shared_data",
+                        Destination = "/app/data",
+                        SizeBytes = 1_000_000_000,
+                    },
+                    new ContainerVolumeDto
+                    {
+                        Source = "/host/config",
+                        Destination = "/etc/config",
+                        SizeBytes = 250_000_000,
+                    },
+                ]),
+        };
+
+        var service = CreateService(socket, [stack], containers);
+
+        var result = await service.GetDiagramAsync("local", TestContext.Current.CancellationToken);
+
+        Assert.NotNull(result);
+        var diagramStack = Assert.Single(result.Stacks);
+        Assert.Equal(1_750_000_000, diagramStack.TotalBytes);
+    }
+
     private static DeviceDiagramService CreateService(
         SocketEntity? socket,
         IReadOnlyList<StackEntity> stacks,
@@ -192,13 +248,18 @@ public sealed class DeviceDiagramServiceTests
             UpdatedAt = DateTimeOffset.UtcNow,
         };
 
-    private static ContainerDto CreateContainer(string id, string name, string? stack)
+    private static ContainerDto CreateContainer(
+        string id,
+        string name,
+        string? stack,
+        IReadOnlyCollection<ContainerVolumeDto>? volumes = null)
         => new()
         {
             Id = id,
             Name = name,
             State = "running",
             Stack = stack,
-            TotalBytes = 0,
+            TotalBytes = volumes?.Sum(static v => v.SizeBytes ?? 0) ?? 0,
+            Volumes = volumes ?? Array.Empty<ContainerVolumeDto>(),
         };
 }

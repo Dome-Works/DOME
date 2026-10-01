@@ -89,6 +89,7 @@ function toGraph(diagram: DeviceDiagram): {
       data: {
         name: stack.projectName,
         kind: stack.kind,
+        totalBytes: stack.totalBytes,
       },
     })
 
