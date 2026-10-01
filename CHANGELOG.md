@@ -5,6 +5,26 @@ application. Changes are grouped by release.
 
 ## [Unreleased]
 
+## [v0.3.1] - 2026-10-01
+
+### Added
+
+- Create Compose stacks from the Diagrams page. The project name is the canvas
+  label and the Compose project name.
+- Inspect a stack from a details panel, including whether it is managed by DOME
+  or discovered as read-only from Docker.
+- Edit the Compose file for a managed stack and deploy it. The Socket runs
+  `docker compose up` on that host.
+- See total used volume size on each stack in the diagram and in the stack
+  details panel. Shared volumes are counted once.
+- Persist stack Compose files on the Socket under `/var/lib/dome/compose`.
+  Bind-mount `DOME_COMPOSE_ROOT` so bind mounts in stack YAML resolve on the
+  Docker host.
+
+### Improved
+
+- Open and close the details panel with a smoother transition.
+
 ## [v0.3.0] - 2026-09-03
 
 ### Added

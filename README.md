@@ -15,7 +15,8 @@
 DOME is a self-hosted Docker infrastructure viewer. It discovers
 containers through small Socket agents and presents them in a React Flow
 diagram, grouped by Compose stack, with container state and mounted-volume
-details. You can start and stop containers from the details panel.
+details. You can start and stop containers from the details panel, and
+create, edit, and deploy Compose stacks.
 
 > [!WARNING]
 > DOME is under active development and is not production-ready before
@@ -36,6 +37,8 @@ details. You can start and stop containers from the details panel.
 - Containers grouped by Docker Compose stack
 - Container state and total mounted-volume size
 - Start and stop containers from the container details panel
+- Create, edit and deploy Compose stacks from the Diagrams page
+- Stack details with managed or read-only status and total used volume size
 - Volume name, mount destination, size and read-only/read-write details
 - Multi-host support through one Socket agent per Docker host
 - SQLite persistence with automatic EF Core migration at Server startup
@@ -376,6 +379,8 @@ Restart Rider after updating the certificate.
 - No Windows named-pipe support
 - No remote Docker Engine `tcp://` support
 - Networks and arbitrary container-to-container dependencies are not yet visualized
+- Compose stacks discovered from Docker are read-only and cannot be edited or deployed
+- Managed stacks cannot be deleted from the UI
 
 ## Contributing
 
