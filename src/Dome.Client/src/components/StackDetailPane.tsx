@@ -14,6 +14,7 @@ import {
   CardTitle,
 } from '@/components/ui/card'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
+import { formatBytes } from '@/lib/bytes'
 import type { DiagramStack } from '@/types/diagram'
 import type { DeviceStack } from '@/types/stacks'
 
@@ -139,6 +140,7 @@ export function StackDetailPane({
               <Badge variant="outline">
                 {stack.kind === 'readonly' ? 'Read-only' : 'Managed'}
               </Badge>
+              <Badge variant="outline">{formatBytes(stack.totalBytes ?? 0)}</Badge>
             </div>
             {isManaged ? (
               <div className="container-detail-actions">

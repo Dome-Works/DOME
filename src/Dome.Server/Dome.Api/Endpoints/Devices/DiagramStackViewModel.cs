@@ -10,11 +10,14 @@ public sealed record DiagramStackViewModel
 
     public required string Kind { get; init; }
 
+    public long TotalBytes { get; init; }
+
     public static DiagramStackViewModel From(DiagramStackDto stack)
         => new()
         {
             Id = stack.Id,
             ProjectName = stack.ProjectName,
-            Kind = stack.Kind
+            Kind = stack.Kind,
+            TotalBytes = stack.TotalBytes
         };
 }

@@ -6,6 +6,7 @@ export type DiagramStack = {
   id: string | null
   projectName: string
   kind: DiagramStackKind
+  totalBytes?: number
 }
 
 export type DeviceDiagram = {

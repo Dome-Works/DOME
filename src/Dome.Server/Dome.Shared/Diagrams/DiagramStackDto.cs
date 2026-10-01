@@ -7,4 +7,6 @@ public sealed record DiagramStackDto
     public required string ProjectName { get; init; }
 
     public required string Kind { get; init; }
+
+    public long TotalBytes { get; init; }
 }
