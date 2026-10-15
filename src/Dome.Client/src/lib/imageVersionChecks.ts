@@ -1,48 +1,13 @@
 import type { ImageVersionKind } from '@/types/imageVersionChecks'
 
-const RANK: Record<ImageVersionKind, number> = {
-  none: 0,
-  unknown: 0,
-  digest: 1,
-  patch: 2,
-  minor: 3,
-  major: 4,
-}
-
 export function isVisibleImageVersionCheck(
   kind: ImageVersionKind | undefined,
 ): kind is 'digest' | 'patch' | 'minor' | 'major' {
   return kind === 'digest' || kind === 'patch' || kind === 'minor' || kind === 'major'
 }
 
-export function worseImageVersionKind(
-  current: ImageVersionKind | undefined,
-  next: ImageVersionKind | undefined,
-): ImageVersionKind | undefined {
-  if (!isVisibleImageVersionCheck(next)) {
-    return current
-  }
-
-  if (!isVisibleImageVersionCheck(current) || RANK[next] > RANK[current]) {
-    return next
-  }
-
-  return current
-}
-
 export function imageVersionCheckLabel(kind: ImageVersionKind): string {
-  switch (kind) {
-    case 'major':
-      return 'Major update'
-    case 'minor':
-      return 'Minor update'
-    case 'patch':
-      return 'Patch update'
-    case 'digest':
-      return 'Image update'
-    default:
-      return 'Image status'
-  }
+  return isVisibleImageVersionCheck(kind) ? 'Image update' : 'Image status'
 }
 
 export function imageVersionCheckDescription(check: {

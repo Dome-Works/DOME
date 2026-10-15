@@ -19,7 +19,6 @@ import type { Container } from '../types/containers'
 import type { DeviceDiagram } from '../types/diagram'
 import { stackCanvasId } from '../types/diagram'
 import type { ContainerImageVersionCheck } from '../types/imageVersionChecks'
-import { worseImageVersionKind } from '../lib/imageVersionChecks'
 import { Button } from './ui/button'
 import { ContainerNode, type ContainerNodeType } from './ContainerNode'
 import { StackNode, type StackNodeType } from './StackNode'
@@ -75,18 +74,6 @@ function toGraph(
 
   for (const stack of diagram.stacks) {
     const members = membersByProject.get(stack.projectName) ?? []
-    const stackCheck = members.reduce<ContainerImageVersionCheck | undefined>(
-      (current, container) => {
-        const check = checksByContainerId.get(container.id)
-        if (!check) {
-          return current
-        }
-
-        const worse = worseImageVersionKind(current?.kind, check.kind)
-        return worse === check.kind ? check : current
-      },
-      undefined,
-    )
     const stackId = stackCanvasId(stack)
     const width = groupWidth(members.length)
     const stackX = cursorX + (width - STACK_NODE_WIDTH) / 2
@@ -107,9 +94,6 @@ function toGraph(
         name: stack.projectName,
         kind: stack.kind,
         totalBytes: stack.totalBytes,
-        versionKind: stackCheck?.kind,
-        currentTag: stackCheck?.currentTag,
-        newestTag: stackCheck?.newestTag,
       },
     })
 

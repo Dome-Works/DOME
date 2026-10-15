@@ -8,9 +8,8 @@ application. Changes are grouped by release.
 ### Added
 
 - Show the current image on container details, and overlay an update icon on
-  container and stack nodes when a newer public Docker Hub or GHCR tag is
-  available. Major, minor, patch, and same-tag digest updates use different
-  colors. Other registries, private GHCR packages, and anonymous rate-limit
+  container nodes when a newer public Docker Hub or GHCR tag is available.
+  Other registries, private GHCR packages, and anonymous rate-limit
   failures stay without an icon.
 
 ## [v0.3.2] - 2026-10-15

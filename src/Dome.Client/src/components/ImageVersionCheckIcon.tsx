@@ -26,7 +26,7 @@ export function ImageVersionCheckIcon({
       <Tooltip>
         <TooltipTrigger asChild>
           <span
-            className={`image-version-check-icon image-version-check-icon-${kind}`}
+            className="image-version-check-icon"
             aria-label={description}
           >
             <ArrowUpCircle className="size-3.5" aria-hidden="true" />

@@ -326,19 +326,7 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-}
-
-.image-version-check-icon-digest,
-.image-version-check-icon-patch {
-  color: var(--node-restarting);
-}
-
-.image-version-check-icon-minor {
   color: var(--node-paused);
-}
-
-.image-version-check-icon-major {
-  color: var(--node-stopped);
 }
 
 .container-detail-image-version-check {
