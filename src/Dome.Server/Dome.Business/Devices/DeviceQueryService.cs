@@ -71,6 +71,9 @@ public sealed class DeviceQueryService : IDeviceQueryService
             Name = container.Name,
             State = container.State,
             Stack = container.Stack,
+            Image = container.Image,
+            ImageId = container.ImageId,
+            Digest = container.Digest,
             TotalBytes = container.Volumes.Sum(static volume => volume.SizeBytes ?? 0),
             Volumes = container.Volumes.Select(Map).ToArray(),
         };

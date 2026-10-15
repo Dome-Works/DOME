@@ -35,7 +35,8 @@ create, edit, and deploy Compose stacks.
 - Reachability status for every registered Socket
 - A separate diagram tab for each registered Docker host
 - Containers grouped by Docker Compose stack
-- Container state and total mounted-volume size
+- Container state, current image, and total mounted-volume size
+- Colored update icons when a newer public Docker Hub or GHCR image tag is available
 - Start and stop containers from the container details panel
 - Create, edit and deploy Compose stacks from the Diagrams page
 - Stack details with managed or read-only status and total used volume size
@@ -381,6 +382,9 @@ Restart Rider after updating the certificate.
 - Networks and arbitrary container-to-container dependencies are not yet visualized
 - Compose stacks discovered from Docker are read-only and cannot be edited or deployed
 - Managed stacks cannot be deleted from the UI
+- Image version checks are anonymous and only cover Docker Hub and public GHCR.
+  Other registries, private images, and `:latest` tags that have not moved show
+  no update icon. Update status is cached for 24 hours.
 
 ## Contributing
 

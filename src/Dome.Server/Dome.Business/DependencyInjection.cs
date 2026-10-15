@@ -1,4 +1,5 @@
 using Dome.Business.Devices;
+using Dome.Business.Images;
 using Dome.Business.Sockets;
 using Dome.Business.Stacks;
 using Microsoft.Extensions.DependencyInjection;
@@ -20,6 +21,7 @@ public static class DependencyInjection
         services.AddScoped<IDeviceContainerCommandService, DeviceContainerCommandService>();
         services.AddScoped<IDeviceStackDeployService, DeviceStackDeployService>();
         services.AddScoped<IStackService, StackService>();
+        services.AddScoped<IDeviceImageVersionChecker, DeviceImageVersionChecker>();
 
         return services;
     }

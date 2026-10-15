@@ -24,6 +24,9 @@ public sealed class DeviceQueryServiceTests
                 Name = "api",
                 State = "running",
                 Stack = "dome",
+                Image = "nginx:1.27.3",
+                ImageId = "sha256:localimage",
+                Digest = "sha256:deadbeef",
                 Volumes =
                 [
                     new ContainerVolumeResponse
@@ -69,10 +72,13 @@ public sealed class DeviceQueryServiceTests
             socketApiFactory,
             NullLogger<DeviceQueryService>.Instance);
 
-        var result = await service.GetContainersAsync("local");
+        var result = await service.GetContainersAsync("local", TestContext.Current.CancellationToken);
 
         Assert.NotNull(result);
         var container = Assert.Single(result);
         Assert.Equal(3072, container.TotalBytes);
+        Assert.Equal("nginx:1.27.3", container.Image);
+        Assert.Equal("sha256:localimage", container.ImageId);
+        Assert.Equal("sha256:deadbeef", container.Digest);
     }
 }

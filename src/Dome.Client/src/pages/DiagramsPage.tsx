@@ -6,6 +6,7 @@ import {
   startDeviceContainer,
   stopDeviceContainer,
 } from '@/api/containers'
+import { fetchDeviceImageVersionChecks } from '@/api/imageVersionChecks'
 import { fetchDevices } from '@/api/devices'
 import { createDeviceStack, deployDeviceStack } from '@/api/stacks'
 import { ContainerDetailPane } from '@/components/ContainerDetailPane'
@@ -18,6 +19,7 @@ import { Button } from '@/components/ui/button'
 import { toast } from 'sonner'
 import type { Container } from '@/types/containers'
 import type { DeviceDiagram, DiagramStack } from '@/types/diagram'
+import type { ContainerImageVersionCheck } from '@/types/imageVersionChecks'
 import { stackCanvasId } from '@/types/diagram'
 import type { Device } from '@/types/devices'
 
@@ -62,12 +64,14 @@ export function DiagramsPage() {
   const [renderedDetail, setRenderedDetail] = useState<RenderedDetail | null>(
     null,
   )
+  const [versionChecks, setVersionChecks] = useState<ContainerImageVersionCheck[]>([])
 
   if (selectedDeviceName !== diagramDeviceName) {
     setDiagramDeviceName(selectedDeviceName)
     setSelectedContainerId(null)
     setSelectedStackCanvasId(null)
     setDiagramState(selectedDeviceName ? { status: 'loading' } : { status: 'idle' })
+    setVersionChecks([])
     setIsRefreshing(false)
   }
 
@@ -118,8 +122,19 @@ export function DiagramsPage() {
 
         if (diagram.stacks.length === 0 && diagram.containers.length === 0) {
           setDiagramState({ status: 'empty' })
+          setVersionChecks([])
         } else {
           setDiagramState({ status: 'ready', diagram })
+          try {
+            const checks = await fetchDeviceImageVersionChecks(deviceName, signal)
+            if (!signal?.aborted) {
+              setVersionChecks(checks.checks ?? [])
+            }
+          } catch {
+            if (!signal?.aborted) {
+              setVersionChecks([])
+            }
+          }
         }
       } catch {
         if (signal?.aborted) {
@@ -131,6 +146,7 @@ export function DiagramsPage() {
           message:
             'Unable to load containers. Confirm that Docker is reachable for this device.',
         })
+        setVersionChecks([])
       } finally {
         if (!signal?.aborted) {
           setIsRefreshing(false)
@@ -200,8 +216,22 @@ export function DiagramsPage() {
 
         if (diagram.stacks.length === 0 && diagram.containers.length === 0) {
           setDiagramState({ status: 'empty' })
+          setVersionChecks([])
         } else {
           setDiagramState({ status: 'ready', diagram })
+          try {
+            const checks = await fetchDeviceImageVersionChecks(
+              deviceName,
+              controller.signal,
+            )
+            if (!controller.signal.aborted) {
+              setVersionChecks(checks.checks ?? [])
+            }
+          } catch {
+            if (!controller.signal.aborted) {
+              setVersionChecks([])
+            }
+          }
         }
       } catch {
         if (controller.signal.aborted) {
@@ -213,6 +243,7 @@ export function DiagramsPage() {
           message:
             'Unable to load containers. Confirm that Docker is reachable for this device.',
         })
+        setVersionChecks([])
       } finally {
         if (!controller.signal.aborted) {
           setIsRefreshing(false)
@@ -468,6 +499,7 @@ export function DiagramsPage() {
             <ContainerDiagram
               key={selectedDeviceName}
               diagram={diagram}
+              versionChecks={versionChecks}
               selectedContainerId={selectedContainerId}
               selectedStackCanvasId={selectedStackCanvasId}
               canCreateStack={canCreateStack}
@@ -488,6 +520,11 @@ export function DiagramsPage() {
           {renderedDetail?.kind === 'container' ? (
             <ContainerDetailPane
               container={renderedDetail.container}
+              versionCheck={
+                versionChecks.find(
+                  (check) => check.containerId === renderedDetail.container.id,
+                ) ?? null
+              }
               onClose={() => setSelectedContainerId(null)}
               isActionPending={isActionPending || isRefreshing}
               onStart={() => {
