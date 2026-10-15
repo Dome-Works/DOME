@@ -6,7 +6,7 @@ using Dome.Socket.Contracts.Images;
 
 namespace Dome.Socket.Api.Docker.Registries;
 
-internal abstract class OciRegistryProvider : IRegistryProvider
+internal abstract partial class OciRegistryProvider : IRegistryProvider
 {
     private const int MaxTagPages = 25;
     private static readonly JsonSerializerOptions JsonOptions = new()
@@ -14,9 +14,19 @@ internal abstract class OciRegistryProvider : IRegistryProvider
         PropertyNameCaseInsensitive = true,
     };
 
-    private static readonly Regex NextLinkRegex = new(
+    [GeneratedRegex(
         """<(?<url>[^>]+)>\s*;\s*rel="?next"?""",
-        RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
+        RegexOptions.IgnoreCase | RegexOptions.CultureInvariant)]
+    private static partial Regex NextLinkPattern();
+
+    [GeneratedRegex("realm=\"(?<value>[^\"]+)\"", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant)]
+    private static partial Regex RealmChallenge();
+
+    [GeneratedRegex("service=\"(?<value>[^\"]+)\"", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant)]
+    private static partial Regex ServiceChallenge();
+
+    [GeneratedRegex("scope=\"(?<value>[^\"]+)\"", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant)]
+    private static partial Regex ScopeChallenge();
 
     private readonly HttpClient _httpClient;
 
@@ -236,7 +246,7 @@ internal abstract class OciRegistryProvider : IRegistryProvider
         }
 
         return values
-            .Select(static value => NextLinkRegex.Match(value))
+            .Select(static value => NextLinkPattern().Match(value))
             .Where(static match => match.Success)
             .Select(match => Uri.TryCreate(current, match.Groups["url"].Value, out var next)
                 ? next
@@ -258,18 +268,15 @@ internal abstract class OciRegistryProvider : IRegistryProvider
             return false;
         }
 
-        realm = ReadChallengeValue(header, "realm") ?? string.Empty;
-        service = ReadChallengeValue(header, "service") ?? string.Empty;
-        scope = ReadChallengeValue(header, "scope");
+        realm = ReadChallengeValue(header, RealmChallenge()) ?? string.Empty;
+        service = ReadChallengeValue(header, ServiceChallenge()) ?? string.Empty;
+        scope = ReadChallengeValue(header, ScopeChallenge());
         return realm.Length > 0;
     }
 
-    private static string? ReadChallengeValue(string header, string key)
+    private static string? ReadChallengeValue(string header, Regex pattern)
     {
-        var match = Regex.Match(
-            header,
-            $"{Regex.Escape(key)}=\"(?<value>[^\"]+)\"",
-            RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
+        var match = pattern.Match(header);
         return match.Success ? match.Groups["value"].Value : null;
     }
 

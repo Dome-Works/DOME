@@ -3,11 +3,12 @@ using System.Text.RegularExpressions;
 
 namespace Dome.Business.Images;
 
-public static class ImageTagParser
+public static partial class ImageTagParser
 {
-    private static readonly Regex VersionPattern = new(
+    [GeneratedRegex(
         """^v?(?<major>\d+)\.(?<minor>\d+)(?:\.(?<patch>\d+))?(?<suffix>.*)$""",
-        RegexOptions.CultureInvariant | RegexOptions.ExplicitCapture);
+        RegexOptions.CultureInvariant | RegexOptions.ExplicitCapture)]
+    private static partial Regex VersionPattern();
 
     public static ImageTagVersion? TryParse(string? tag)
     {
@@ -16,7 +17,7 @@ public static class ImageTagParser
             return null;
         }
 
-        var match = VersionPattern.Match(tag.Trim());
+        var match = VersionPattern().Match(tag.Trim());
         if (!match.Success)
         {
             return null;

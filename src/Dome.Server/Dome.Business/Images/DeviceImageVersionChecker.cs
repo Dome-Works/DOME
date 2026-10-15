@@ -140,7 +140,7 @@ public sealed class DeviceImageVersionChecker : IDeviceImageVersionChecker
     private static ImageVersionCheckDto ClassifyContainer(
         ContainerDto container,
         string canonical,
-        IReadOnlyDictionary<string, ImageVersionCache> cached)
+        Dictionary<string, ImageVersionCache> cached)
     {
         cached.TryGetValue(canonical, out var entry);
         var snapshot = entry is null
@@ -172,7 +172,7 @@ public sealed class DeviceImageVersionChecker : IDeviceImageVersionChecker
     }
 
     private static bool IsExpired(
-        IReadOnlyDictionary<string, ImageVersionCache> cached,
+        Dictionary<string, ImageVersionCache> cached,
         string canonical,
         DateTimeOffset now)
     {
@@ -187,7 +187,7 @@ public sealed class DeviceImageVersionChecker : IDeviceImageVersionChecker
     private static string CanonicalReference(string? image)
         => ImageReferenceParser.TryParse(image)?.Canonical ?? image?.Trim() ?? string.Empty;
 
-    private static IReadOnlyCollection<string> SplitTags(string remoteTags)
+    private static string[] SplitTags(string remoteTags)
     {
         if (string.IsNullOrWhiteSpace(remoteTags))
         {
