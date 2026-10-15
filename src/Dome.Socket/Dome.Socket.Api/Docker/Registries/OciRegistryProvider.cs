@@ -235,22 +235,13 @@ internal abstract class OciRegistryProvider : IRegistryProvider
             return null;
         }
 
-        foreach (var value in values)
-        {
-            var match = NextLinkRegex.Match(value);
-            if (!match.Success)
-            {
-                continue;
-            }
-
-            var raw = match.Groups["url"].Value;
-            if (Uri.TryCreate(current, raw, out var next))
-            {
-                return next;
-            }
-        }
-
-        return null;
+        return values
+            .Select(static value => NextLinkRegex.Match(value))
+            .Where(static match => match.Success)
+            .Select(match => Uri.TryCreate(current, match.Groups["url"].Value, out var next)
+                ? next
+                : null)
+            .FirstOrDefault(static next => next is not null);
     }
 
     private static bool TryParseChallenge(
@@ -286,14 +277,8 @@ internal abstract class OciRegistryProvider : IRegistryProvider
     {
         var builder = new UriBuilder(realm);
         var query = $"service={Uri.EscapeDataString(service)}&scope={Uri.EscapeDataString(scope)}";
-        if (string.IsNullOrEmpty(builder.Query) || builder.Query == "?")
-        {
-            builder.Query = query;
-        }
-        else
-        {
-            builder.Query = builder.Query.TrimStart('?') + "&" + query;
-        }
+        var existing = builder.Query.TrimStart('?');
+        builder.Query = existing.Length == 0 ? query : $"{existing}&{query}";
 
         return builder.Uri;
     }
