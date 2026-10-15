@@ -44,7 +44,7 @@ if a DOME operator would notice it.
 developer tooling, formatting, contributor-only docs.
 
 **Include:** user-facing features, noticeable fixes, install/upgrade/platform
-changes, breaking changes, and dependency updates with real user impact.
+changes, and breaking changes.
 
 ## CHANGELOG.md
 
@@ -64,6 +64,20 @@ Allowed subsection order under a version:
 
 **Omit any subsection that has no items.** Never write `None.` or leave an empty
 heading.
+
+### No user-facing changes
+
+When a release contains only dependency updates, vulnerability fixes, and other
+changes an operator would not notice, do not add subsections and do not name
+packages or advisories. Write this sentence under the version heading:
+
+```markdown
+## [vX.Y.Z] - YYYY-MM-DD
+
+This release contains no user-facing changes and includes only dependency updates and vulnerability fixes.
+```
+
+Use that same sentence in the GitHub Release notes.
 
 ### Cutting a version
 
@@ -128,7 +142,9 @@ They should be paste-ready:
 - ...
 ```
 
-Include only subsections that have items. Mention image tags if useful:
+Include only subsections that have items. For a release with no user-facing
+changes, copy the standard sentence from **No user-facing changes** and omit
+the subsections. Mention image tags if useful:
 `ghcr.io/dome-works/{server,socket,client}:X.Y.Z`.
 
 Create the GitHub Release with `gh` **only if the user asks**. Publishing a
@@ -147,6 +163,7 @@ GitHub Release triggers `.github/workflows/release.yml` and pushes images.
 - [ ] Date is real
 - [ ] Unreleased is empty of shipped items
 - [ ] Empty changelog subsections are omitted
+- [ ] A release with no user-facing changes uses the standard sentence
 - [ ] Wording is operator-facing
 - [ ] README Features and limitations match this release
 - [ ] GitHub notes can be copied from the new changelog section

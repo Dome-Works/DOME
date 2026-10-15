@@ -5,6 +5,11 @@ application. Changes are grouped by release.
 
 ## [Unreleased]
 
+## [v0.3.2] - 2026-10-15
+
+This release contains no user-facing changes and includes only dependency
+updates and vulnerability fixes.
+
 ## [v0.3.1] - 2026-10-01
 
 ### Added
@@ -119,3 +124,9 @@ application. Changes are grouped by release.
    as `[v0.3.0] - YYYY-MM-DD`.
 3. Record the release date on that section.
 4. Create a new empty `[Unreleased]` section at the top for the next cycle.
+5. If a release contains no user-facing changes, leave out the Added, Improved,
+   Fixed, and Breaking Changes subsections. Write this sentence under the
+   version heading instead:
+
+   This release contains no user-facing changes and includes only dependency
+   updates and vulnerability fixes.
