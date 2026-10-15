@@ -138,8 +138,28 @@ public sealed class ContainerMapperProperties
                 return mapped.Id == id
                        && mapped.Name == ContainerMapper.ResolveName(container.Names, id)
                        && mapped.State == (container.State ?? string.Empty)
-                       && mapped.Stack == ContainerMapper.ResolveStack(container.Labels);
+                       && mapped.Stack == ContainerMapper.ResolveStack(container.Labels)
+                       && mapped.Image == (container.Image ?? string.Empty)
+                       && mapped.ImageId == (container.ImageID ?? string.Empty)
+                       && mapped.Digest == ContainerMapper.ResolveDigest(container.Image);
             });
+    }
+
+    [Fact]
+    public void Map_copies_image_identity()
+    {
+        var mapped = ContainerMapper.Map(new ContainerListResponse
+        {
+            ID = "abc123",
+            Names = ["/web"],
+            State = "running",
+            Image = "nginx:1.27.3@sha256:deadbeef",
+            ImageID = "sha256:localimage",
+        });
+
+        Assert.Equal("nginx:1.27.3@sha256:deadbeef", mapped.Image);
+        Assert.Equal("sha256:localimage", mapped.ImageId);
+        Assert.Equal("sha256:deadbeef", mapped.Digest);
     }
 
     [Fact]
@@ -173,6 +193,8 @@ public sealed class ContainerMapperProperties
     private static Gen<ContainerListResponse> ContainerListResponseGen()
         => from id in ArbMap.Default.GeneratorFor<string?>()
            from state in ArbMap.Default.GeneratorFor<string?>()
+           from image in ArbMap.Default.GeneratorFor<string?>()
+           from imageId in ArbMap.Default.GeneratorFor<string?>()
            from names in Gen.OneOf(
                Gen.Constant<IList<string>?>(null),
                Gen.ListOf(ArbMap.Default.GeneratorFor<string>())
@@ -185,6 +207,8 @@ public sealed class ContainerMapperProperties
            {
                ID = id,
                State = state,
+               Image = image,
+               ImageID = imageId,
                Names = names,
                Labels = labels,
            };

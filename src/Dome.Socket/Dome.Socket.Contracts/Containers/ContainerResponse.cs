@@ -10,6 +10,12 @@ public sealed record ContainerResponse
 
     public string? Stack { get; init; }
 
+    public string Image { get; init; } = string.Empty;
+
+    public string ImageId { get; init; } = string.Empty;
+
+    public string? Digest { get; init; }
+
     public IReadOnlyCollection<ContainerVolumeResponse> Volumes { get; init; }
         = Array.Empty<ContainerVolumeResponse>();
 }

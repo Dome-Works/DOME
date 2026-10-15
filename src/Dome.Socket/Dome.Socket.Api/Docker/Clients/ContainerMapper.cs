@@ -21,8 +21,28 @@ internal static class ContainerMapper
             Name = name,
             State = container.State ?? string.Empty,
             Stack = ResolveStack(container.Labels),
+            Image = container.Image ?? string.Empty,
+            ImageId = container.ImageID ?? string.Empty,
+            Digest = ResolveDigest(container.Image),
             Volumes = MapVolumes(container.Mounts),
         };
+    }
+
+    public static string? ResolveDigest(string? image)
+    {
+        if (string.IsNullOrWhiteSpace(image))
+        {
+            return null;
+        }
+
+        var separator = image.LastIndexOf('@');
+        if (separator < 0 || separator == image.Length - 1)
+        {
+            return null;
+        }
+
+        var digest = image[(separator + 1)..].Trim();
+        return digest.Length == 0 ? null : digest;
     }
 
     public static IReadOnlyCollection<ContainerVolumeResponse> MapVolumes(

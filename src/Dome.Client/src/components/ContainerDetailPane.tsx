@@ -1,6 +1,9 @@
 import { Eye, Pencil, Play, Square, XIcon } from 'lucide-react'
 
 import type { Container, ContainerVolume } from '@/types/containers'
+import type { ContainerImageVersionCheck } from '@/types/imageVersionChecks'
+import { ImageVersionCheckIcon } from './ImageVersionCheckIcon'
+import { imageVersionCheckDescription, isVisibleImageVersionCheck } from '@/lib/imageVersionChecks'
 import { formatBytes } from '@/lib/bytes'
 import { Badge } from './ui/badge'
 import { Button } from './ui/button'
@@ -23,6 +26,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './ui/t
 
 type ContainerDetailPaneProps = {
   container: Container | null
+  versionCheck?: ContainerImageVersionCheck | null
   onClose: () => void
   onStart: () => void
   onStop: () => void
@@ -94,6 +98,7 @@ function AccessIcon({ readOnly }: Readonly<{ readOnly: boolean }>) {
 
 export function ContainerDetailPane({
   container,
+  versionCheck = null,
   onClose,
   onStart,
   onStop,
@@ -131,6 +136,19 @@ export function ContainerDetailPane({
                   </Badge>
                   <Badge variant="outline">{formatBytes(container.totalBytes)}</Badge>
                 </div>
+                {container.image ? (
+                  <p className="container-detail-image">{container.image}</p>
+                ) : null}
+                {versionCheck && isVisibleImageVersionCheck(versionCheck.kind) ? (
+                  <div className="container-detail-image-version-check">
+                    <ImageVersionCheckIcon
+                      kind={versionCheck.kind}
+                      currentTag={versionCheck.currentTag}
+                      newestTag={versionCheck.newestTag}
+                    />
+                    <span>{imageVersionCheckDescription(versionCheck)}</span>
+                  </div>
+                ) : null}
                 <div className="container-detail-actions">
                   <Tooltip>
                     <TooltipTrigger asChild>

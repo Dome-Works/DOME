@@ -9,6 +9,10 @@ public interface IDockerEngineClient
     Task<IReadOnlyCollection<ContainerResponse>> ListContainersAsync(
         CancellationToken cancellationToken = default);
 
+    Task<IReadOnlyList<string>> GetImageRepoDigestsAsync(
+        string imageId,
+        CancellationToken cancellationToken = default);
+
     Task<DockerContainerLifecycleResult> StartContainerAsync(
         string containerId,
         CancellationToken cancellationToken = default);

@@ -13,6 +13,12 @@ public sealed record ContainerViewModel
 
     public string? Stack { get; init; }
 
+    public string Image { get; init; } = string.Empty;
+
+    public string ImageId { get; init; } = string.Empty;
+
+    public string? Digest { get; init; }
+
     public long TotalBytes { get; init; }
 
     public IReadOnlyCollection<ContainerVolumeViewModel> Volumes { get; init; }
@@ -25,6 +31,9 @@ public sealed record ContainerViewModel
             Name = container.Name,
             State = container.State,
             Stack = container.Stack,
+            Image = container.Image,
+            ImageId = container.ImageId,
+            Digest = container.Digest,
             TotalBytes = container.TotalBytes,
             Volumes = container.Volumes.Select(ContainerVolumeViewModel.From).ToArray(),
         };

@@ -73,7 +73,8 @@ internal sealed class DockerEngineClient : IDockerEngineClient, IDisposable
                 .Select(ContainerMapper.Map)
                 .ToArray();
 
-            return await EnrichVolumeSizesAsync(mappedContainers, cancellationToken);
+            var withDigests = await EnrichImageDigestsAsync(mappedContainers, cancellationToken);
+            return await EnrichVolumeSizesAsync(withDigests, cancellationToken);
         }
         catch (Exception ex) when (ex is not OperationCanceledException)
         {
@@ -138,6 +139,78 @@ internal sealed class DockerEngineClient : IDockerEngineClient, IDisposable
                 containerId);
             throw;
         }
+    }
+
+    public async Task<IReadOnlyList<string>> GetImageRepoDigestsAsync(
+        string imageId,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(imageId);
+
+        try
+        {
+            var inspect = await _dockerClient.Images.InspectImageAsync(imageId, cancellationToken);
+            if (inspect?.RepoDigests is null || inspect.RepoDigests.Count == 0)
+            {
+                return Array.Empty<string>();
+            }
+
+            return inspect.RepoDigests
+                .Where(static digest => !string.IsNullOrWhiteSpace(digest))
+                .Select(static digest => digest.Trim())
+                .ToArray();
+        }
+        catch (Exception ex) when (ex is not OperationCanceledException)
+        {
+            _logger.LogDebug(
+                ex,
+                "Failed to inspect Docker image '{ImageId}' for repo digests.",
+                imageId);
+            return Array.Empty<string>();
+        }
+    }
+
+    private async Task<IReadOnlyCollection<ContainerResponse>> EnrichImageDigestsAsync(
+        IReadOnlyCollection<ContainerResponse> containers,
+        CancellationToken cancellationToken)
+    {
+        var imageIds = containers
+            .Where(static container =>
+                string.IsNullOrWhiteSpace(container.Digest)
+                && !string.IsNullOrWhiteSpace(container.ImageId))
+            .Select(static container => container.ImageId)
+            .Distinct(StringComparer.Ordinal)
+            .ToArray();
+
+        if (imageIds.Length == 0)
+        {
+            return containers;
+        }
+
+        var digestsByImageId = new Dictionary<string, string?>(StringComparer.Ordinal);
+        foreach (var imageId in imageIds)
+        {
+            var repoDigests = await GetImageRepoDigestsAsync(imageId, cancellationToken);
+            var image = containers
+                .First(container => string.Equals(container.ImageId, imageId, StringComparison.Ordinal))
+                .Image;
+            digestsByImageId[imageId] = ImageDigestMapper.Resolve(image, repoDigests);
+        }
+
+        return containers
+            .Select(container =>
+            {
+                if (!string.IsNullOrWhiteSpace(container.Digest)
+                    || string.IsNullOrWhiteSpace(container.ImageId)
+                    || !digestsByImageId.TryGetValue(container.ImageId, out var digest)
+                    || string.IsNullOrWhiteSpace(digest))
+                {
+                    return container;
+                }
+
+                return container with { Digest = digest };
+            })
+            .ToArray();
     }
 
     private async Task<IReadOnlyCollection<ContainerResponse>> EnrichVolumeSizesAsync(

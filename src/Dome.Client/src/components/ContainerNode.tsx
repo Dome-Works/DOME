@@ -1,11 +1,17 @@
 import { Handle, Position, type Node, type NodeProps } from '@xyflow/react'
 import { Badge } from './ui/badge'
+import { ImageVersionCheckIcon } from './ImageVersionCheckIcon'
 import { formatBytes } from '../lib/bytes'
+import { isVisibleImageVersionCheck } from '../lib/imageVersionChecks'
+import type { ImageVersionKind } from '../types/imageVersionChecks'
 
 export type ContainerNodeData = {
   name: string
   state: string
   totalBytes: number
+  versionKind?: ImageVersionKind
+  currentTag?: string | null
+  newestTag?: string | null
 }
 
 export type ContainerNodeType = Node<ContainerNodeData, 'container'>
@@ -40,7 +46,16 @@ export function ContainerNode({ data, selected }: NodeProps<ContainerNodeType>) 
       <div className="container-node-body">
         <div className="container-node-header">
           <span className="container-node-name">{data.name}</span>
-          <span className={stateClassName(data.state)}>{data.state}</span>
+          <span className="container-node-header-status">
+            {isVisibleImageVersionCheck(data.versionKind) && data.versionKind ? (
+              <ImageVersionCheckIcon
+                kind={data.versionKind}
+                currentTag={data.currentTag ?? null}
+                newestTag={data.newestTag ?? null}
+              />
+            ) : null}
+            <span className={stateClassName(data.state)}>{data.state}</span>
+          </span>
         </div>
         <Badge variant="outline" className="container-node-storage-badge">
           {totalBytesLabel}

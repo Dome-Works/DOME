@@ -3,6 +3,9 @@ export type Container = {
   name: string
   state: string
   stack: string | null
+  image: string
+  imageId: string
+  digest: string | null
   totalBytes: number
   volumes: ContainerVolume[]
 }

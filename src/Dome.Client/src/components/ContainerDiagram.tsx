@@ -18,6 +18,7 @@ import '@xyflow/react/dist/style.css'
 import type { Container } from '../types/containers'
 import type { DeviceDiagram } from '../types/diagram'
 import { stackCanvasId } from '../types/diagram'
+import type { ContainerImageVersionCheck } from '../types/imageVersionChecks'
 import { Button } from './ui/button'
 import { ContainerNode, type ContainerNodeType } from './ContainerNode'
 import { StackNode, type StackNodeType } from './StackNode'
@@ -47,7 +48,10 @@ function groupWidth(memberCount: number): number {
   return Math.max(STACK_NODE_WIDTH, membersWidth)
 }
 
-function toGraph(diagram: DeviceDiagram): {
+function toGraph(
+  diagram: DeviceDiagram,
+  checksByContainerId: ReadonlyMap<string, ContainerImageVersionCheck>,
+): {
   nodes: DiagramNode[]
   edges: Edge[]
 } {
@@ -106,6 +110,9 @@ function toGraph(diagram: DeviceDiagram): {
           name: container.name,
           state: container.state,
           totalBytes: container.totalBytes,
+          versionKind: checksByContainerId.get(container.id)?.kind,
+          currentTag: checksByContainerId.get(container.id)?.currentTag,
+          newestTag: checksByContainerId.get(container.id)?.newestTag,
         },
       })
 
@@ -129,19 +136,23 @@ function toGraph(diagram: DeviceDiagram): {
         x: cursorX + index * (NODE_WIDTH + STACK_GAP_X),
         y: ORIGIN_Y,
       },
-      data: {
-        name: container.name,
-        state: container.state,
-        totalBytes: container.totalBytes,
-      },
+        data: {
+          name: container.name,
+          state: container.state,
+          totalBytes: container.totalBytes,
+          versionKind: checksByContainerId.get(container.id)?.kind,
+          currentTag: checksByContainerId.get(container.id)?.currentTag,
+          newestTag: checksByContainerId.get(container.id)?.newestTag,
+        },
+      })
     })
-  })
 
   return { nodes, edges }
 }
 
 type ContainerDiagramProps = {
   diagram: DeviceDiagram
+  versionChecks: readonly ContainerImageVersionCheck[]
   selectedContainerId: string | null
   selectedStackCanvasId: string | null
   canCreateStack: boolean
@@ -152,6 +163,7 @@ type ContainerDiagramProps = {
 
 export function ContainerDiagram({
   diagram,
+  versionChecks,
   selectedContainerId,
   selectedStackCanvasId,
   canCreateStack,
@@ -159,7 +171,18 @@ export function ContainerDiagram({
   onStackSelect,
   onCreateStack,
 }: ContainerDiagramProps) {
-  const graph = useMemo(() => toGraph(diagram), [diagram])
+  const checksByContainerId = useMemo(() => {
+    const checks = new Map<string, ContainerImageVersionCheck>()
+    for (const check of versionChecks) {
+      checks.set(check.containerId, check)
+    }
+
+    return checks
+  }, [versionChecks])
+  const graph = useMemo(
+    () => toGraph(diagram, checksByContainerId),
+    [diagram, checksByContainerId],
+  )
   const [nodes, setNodes, onNodesChange] = useNodesState<Node>([])
   const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([])
 

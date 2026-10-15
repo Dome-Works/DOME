@@ -10,6 +10,12 @@ public sealed record ContainerDto
 
     public string? Stack { get; init; }
 
+    public string Image { get; init; } = string.Empty;
+
+    public string ImageId { get; init; } = string.Empty;
+
+    public string? Digest { get; init; }
+
     public long TotalBytes { get; init; }
 
     public IReadOnlyCollection<ContainerVolumeDto> Volumes { get; init; }
