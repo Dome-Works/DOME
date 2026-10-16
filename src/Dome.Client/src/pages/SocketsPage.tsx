@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
-import { MoreHorizontal } from 'lucide-react'
+import { ArrowUpCircle, MoreHorizontal } from 'lucide-react'
 import { toast } from 'sonner'
 
 import {
@@ -35,7 +35,13 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import type { SocketRecord } from '@/types/sockets'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip'
+import type { SocketRecord, SocketStatusRecord } from '@/types/sockets'
 
 type SocketsState =
   | { status: 'loading' }
@@ -47,7 +53,33 @@ type EditorState =
   | { mode: 'create' }
   | { mode: 'edit'; socket: SocketRecord }
 
-type SocketStatuses = Record<string, boolean>
+type SocketStatuses = Record<string, SocketStatusRecord>
+
+const socketUpdateMessage =
+  'Updating the socket is essential to prevent errors.'
+
+function unreachableStatus(id: string): SocketStatusRecord {
+  return {
+    id,
+    isReachable: false,
+    version: null,
+    needsUpdate: false,
+  }
+}
+
+function socketVersionLabel(status: SocketStatusRecord | undefined): string {
+  if (!status?.isReachable) {
+    return '—'
+  }
+
+  if (!status.version) {
+    return 'Unknown'
+  }
+
+  return status.version.startsWith('v') || status.version.startsWith('V')
+    ? status.version
+    : `v${status.version}`
+}
 
 export function SocketsPage() {
   const [state, setState] = useState<SocketsState>({ status: 'loading' })
@@ -120,14 +152,16 @@ export function SocketsPage() {
         if (!controller.signal.aborted) {
           setSocketStatuses(
             Object.fromEntries(
-              response.statuses.map((status) => [status.id, status.isReachable]),
+              response.statuses.map((status) => [status.id, status]),
             ),
           )
         }
       } catch {
         if (!controller.signal.aborted) {
           setSocketStatuses(
-            Object.fromEntries(sockets.map((socket) => [socket.id, false])),
+            Object.fromEntries(
+              sockets.map((socket) => [socket.id, unreachableStatus(socket.id)]),
+            ),
           )
         }
       }
@@ -261,6 +295,7 @@ export function SocketsPage() {
                 </TableHead>
                 <TableHead>Name</TableHead>
                 <TableHead>Address</TableHead>
+                <TableHead>Version</TableHead>
                 <TableHead>Created</TableHead>
                 <TableHead className="w-12">
                   <span className="sr-only">Actions</span>
@@ -270,7 +305,7 @@ export function SocketsPage() {
             <TableBody>
               {sockets.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={5} className="h-24 text-center">
+                  <TableCell colSpan={6} className="h-24 text-center">
                     No sockets are registered yet.
                   </TableCell>
                 </TableRow>
@@ -282,7 +317,7 @@ export function SocketsPage() {
                         aria-label={
                           socketStatuses[socket.id] === undefined
                             ? 'Checking status'
-                            : socketStatuses[socket.id]
+                            : socketStatuses[socket.id].isReachable
                               ? 'Socket reachable'
                               : 'Socket unreachable'
                         }
@@ -290,7 +325,7 @@ export function SocketsPage() {
                           'inline-flex h-2.5 w-2.5 rounded-full',
                           socketStatuses[socket.id] === undefined
                             ? 'bg-muted-foreground/40'
-                            : socketStatuses[socket.id]
+                            : socketStatuses[socket.id].isReachable
                               ? 'bg-emerald-500'
                               : 'bg-destructive',
                         )}
@@ -298,6 +333,31 @@ export function SocketsPage() {
                     </TableCell>
                     <TableCell className="font-medium">{socket.name}</TableCell>
                     <TableCell>{socket.address}</TableCell>
+                    <TableCell>
+                      <span className="inline-flex items-center gap-1.5">
+                        {socketVersionLabel(socketStatuses[socket.id])}
+                        {socketStatuses[socket.id]?.needsUpdate ? (
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <span
+                                  className="image-version-check-icon"
+                                  aria-label={socketUpdateMessage}
+                                >
+                                  <ArrowUpCircle
+                                    className="size-3.5"
+                                    aria-hidden="true"
+                                  />
+                                </span>
+                              </TooltipTrigger>
+                              <TooltipContent side="top">
+                                {socketUpdateMessage}
+                              </TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
+                        ) : null}
+                      </span>
+                    </TableCell>
                     <TableCell>
                       {new Date(socket.createdAt).toLocaleString()}
                     </TableCell>

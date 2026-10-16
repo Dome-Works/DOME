@@ -1,5 +1,6 @@
 # Build context: repository root
 FROM mcr.microsoft.com/dotnet/sdk:10.0@sha256:35d40304542c8689331f8cab17c65926cdf48fe711e289321d71924b230a7d29 AS build
+ARG VERSION
 WORKDIR /build
 
 COPY Directory.Build.props Directory.Packages.props global.json ./
@@ -18,10 +19,19 @@ COPY src/Dome.Server/Dome.Domain/ src/Dome.Server/Dome.Domain/
 COPY src/Dome.Server/Dome.Business/ src/Dome.Server/Dome.Business/
 COPY src/Dome.Server/Dome.Api/ src/Dome.Server/Dome.Api/
 
-RUN dotnet publish src/Dome.Server/Dome.Api/Dome.Api.csproj \
-    -c Release \
-    -o /app/publish \
-    --no-restore
+RUN if [ -n "$VERSION" ]; then \
+      dotnet publish src/Dome.Server/Dome.Api/Dome.Api.csproj \
+        -c Release \
+        -o /app/publish \
+        --no-restore \
+        /p:Version="$VERSION" \
+        /p:InformationalVersion="$VERSION"; \
+    else \
+      dotnet publish src/Dome.Server/Dome.Api/Dome.Api.csproj \
+        -c Release \
+        -o /app/publish \
+        --no-restore; \
+    fi
 
 FROM mcr.microsoft.com/dotnet/aspnet:10.0@sha256:2d584d8147faddb0d678c5748d47953e5b8e18621ed4fb7049a91381d9d7746f AS final
 WORKDIR /app

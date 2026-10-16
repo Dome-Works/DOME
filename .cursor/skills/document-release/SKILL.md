@@ -10,11 +10,12 @@ description: >-
 
 # Document a DOME release
 
-Edit **only** release documentation unless the user also asks to tag, commit, or
-publish. Default files:
+Edit **only** release documentation and the assembly version unless the user
+also asks to tag, commit, or publish. Default files:
 
 - `CHANGELOG.md`
 - `README.md`
+- `Directory.Build.props` (`Version` only)
 
 Do not invent versions, dates, features, or bug fixes.
 
@@ -102,6 +103,9 @@ Use that same sentence in the GitHub Release notes.
 4. Keep older version sections unchanged.
 5. In **Release process**, keep the example heading in v-prefix form
    (`[v0.3.0] - YYYY-MM-DD`).
+6. Set `<Version>X.Y.Z</Version>` in `Directory.Build.props` to the confirmed
+   tag with the `v` prefix stripped (`v0.3.0` → `0.3.0`). Do not change other
+   properties in that file.
 
 Do not create a version section for a tag/release that does not exist unless
 the user is actively cutting that release.
@@ -154,12 +158,14 @@ GitHub Release triggers `.github/workflows/release.yml` and pushes images.
 
 - Commit, tag, or push unless asked
 - Edit application code, tests, or CI as part of this skill
+- Change anything in `Directory.Build.props` except `Version`
 - Summarize every commit
 - Use unprefixed headings like `[0.3.0]`
 
 ## Quick check
 
 - [ ] Version matches the confirmed tag (`vX.Y.Z`)
+- [ ] `Directory.Build.props` `Version` is the confirmed tag without the `v`
 - [ ] Date is real
 - [ ] Unreleased is empty of shipped items
 - [ ] Empty changelog subsections are omitted

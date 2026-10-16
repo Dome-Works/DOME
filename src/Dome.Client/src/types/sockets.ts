@@ -8,6 +8,8 @@ export type SocketRecord = {
 export type SocketStatusRecord = {
   id: string
   isReachable: boolean
+  version: string | null
+  needsUpdate: boolean
 }
 
 export type GetSocketsResponse = {

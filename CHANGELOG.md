@@ -7,6 +7,9 @@ application. Changes are grouped by release.
 
 ### Added
 
+- Show the version each Socket is running on the Sockets page. An update icon
+  appears when that version does not match the Server, with a reminder that
+  updating the Socket is essential to prevent errors.
 - Show the current image on container details, and overlay an update icon on
   container nodes when a newer public Docker Hub or GHCR tag is available.
   Other registries, private GHCR packages, and anonymous rate-limit
