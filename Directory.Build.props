@@ -1,6 +1,7 @@
 <Project>
   <PropertyGroup>
     <Description>DOME</Description>
+    <Version>0.3.2</Version>
   </PropertyGroup>
 
   <PropertyGroup>

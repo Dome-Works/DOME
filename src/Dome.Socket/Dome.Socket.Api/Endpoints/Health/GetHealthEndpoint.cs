@@ -25,7 +25,8 @@ public sealed class GetHealthEndpoint : EndpointWithoutRequest<SocketHealthRespo
         await Send.OkAsync(
             new SocketHealthResponse
             {
-                DockerReachable = reachable
+                DockerReachable = reachable,
+                Version = ApplicationVersion.Current
             },
             ct);
     }
