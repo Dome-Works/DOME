@@ -33,6 +33,8 @@ create, edit, and deploy Compose stacks.
   unreachable-Socket counts
 - Registration, editing and deletion of Docker hosts from the Sockets page
 - Reachability status for every registered Socket
+- Socket version and update status, with a reminder when a Socket does not
+  match the Server version
 - A separate diagram tab for each registered Docker host
 - Containers grouped by Docker Compose stack
 - Container state, current image, and total mounted-volume size
