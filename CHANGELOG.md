@@ -5,6 +5,8 @@ application. Changes are grouped by release.
 
 ## [Unreleased]
 
+## [v0.4.0] - 2026-10-17
+
 ### Added
 
 - Show the version each Socket is running on the Sockets page. An update icon
