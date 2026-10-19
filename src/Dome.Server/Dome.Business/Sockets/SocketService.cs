@@ -9,15 +9,18 @@ public sealed class SocketService : ISocketService
 {
     private readonly ISocketRepository _socketRepository;
     private readonly IDomeSocketApiFactory _socketApiFactory;
+    private readonly IApplicationVersion _applicationVersion;
     private readonly ILogger<SocketService> _logger;
 
     public SocketService(
         ISocketRepository socketRepository,
         IDomeSocketApiFactory socketApiFactory,
+        IApplicationVersion applicationVersion,
         ILogger<SocketService> logger)
     {
         _socketRepository = socketRepository;
         _socketApiFactory = socketApiFactory;
+        _applicationVersion = applicationVersion;
         _logger = logger;
     }
 
@@ -151,11 +154,13 @@ public sealed class SocketService : ISocketService
         try
         {
             var api = _socketApiFactory.Create(socket.Address);
-            await api.GetHealthAsync(cancellationToken);
+            var health = await api.GetHealthAsync(cancellationToken);
             return new SocketStatusResponse
             {
                 Id = socket.Id,
-                IsReachable = true
+                IsReachable = true,
+                Version = health.Version,
+                NeedsUpdate = NeedsUpdate(health.Version)
             };
         }
         catch (Exception ex) when (ex is not OperationCanceledException)
@@ -169,8 +174,37 @@ public sealed class SocketService : ISocketService
             return new SocketStatusResponse
             {
                 Id = socket.Id,
-                IsReachable = false
+                IsReachable = false,
+                NeedsUpdate = false
             };
         }
+    }
+
+    private bool NeedsUpdate(string? socketVersion)
+        => !string.Equals(
+            Normalize(_applicationVersion.Current),
+            Normalize(socketVersion),
+            StringComparison.OrdinalIgnoreCase);
+
+    private static string? Normalize(string? version)
+    {
+        if (string.IsNullOrWhiteSpace(version))
+        {
+            return null;
+        }
+
+        var trimmed = version.Trim();
+        var plus = trimmed.IndexOf('+');
+        if (plus >= 0)
+        {
+            trimmed = trimmed[..plus];
+        }
+
+        if (trimmed.StartsWith('v') || trimmed.StartsWith('V'))
+        {
+            trimmed = trimmed[1..];
+        }
+
+        return trimmed.Length == 0 ? null : trimmed;
     }
 }

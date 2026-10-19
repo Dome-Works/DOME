@@ -15,6 +15,7 @@ public static class DependencyInjection
             client.Timeout = TimeSpan.FromMinutes(15);
         });
         services.AddSingleton<IDomeSocketApiFactory, DomeSocketApiFactory>();
+        services.AddSingleton<IApplicationVersion, AssemblyApplicationVersion>();
         services.AddScoped<ISocketService, SocketService>();
         services.AddScoped<IDeviceQueryService, DeviceQueryService>();
         services.AddScoped<IDeviceDiagramService, DeviceDiagramService>();
