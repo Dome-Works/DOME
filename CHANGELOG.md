@@ -5,6 +5,10 @@ application. Changes are grouped by release.
 
 ## [Unreleased]
 
+## [v0.4.1] - 2026-10-22
+
+This release contains no user-facing changes and includes only dependency updates and vulnerability fixes.
+
 ## [v0.4.0] - 2026-10-17
 
 ### Added
