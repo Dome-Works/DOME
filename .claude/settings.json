@@ -1,9 +1,4 @@
 {
-  "enabledPlugins": {
-    "frontend-design@anthropic-plugin-directory": true,
-    "superpowers@anthropic-plugin-directory": true,
-    "ponytail@ponytail": true
-  },
   "hooks": {
     "PreToolUse": [
       {
@@ -27,5 +22,10 @@
         ]
       }
     ]
+  },
+  "enabledPlugins": {
+    "frontend-design@anthropic-plugin-directory": true,
+    "superpowers@anthropic-plugin-directory": true,
+    "ponytail@ponytail": true
   }
 }
