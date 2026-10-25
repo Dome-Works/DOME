@@ -25,3 +25,15 @@ dist/
 *.db
 *.db-wal
 *.db-shm
+
+## Ignore backup files
+*.bak
+*-bak
+
+## Ignore graphify local output
+graphify-out/cost.json
+graphify-out/cache/
+
+## Ignore graphify build temporaries and machine-specific paths
+graphify-out/.graphify_*
+!graphify-out/.graphify_labels.json

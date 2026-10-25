@@ -339,6 +339,17 @@ dotnet ef migrations add <Name> \
   --startup-project src/Dome.Server/Dome.Domain
 ```
 
+## Codebase knowledge graph (optional)
+
+The repository ships a [graphify](https://github.com/safishamsi/graphify) knowledge graph in `graphify-out/`. The Claude Code `/graphify` skill and the search hooks in `.claude/settings.json` use it. To enable them, install the graphify CLI once:
+
+```bash
+uv tool install graphifyy
+# or: pip install graphifyy
+```
+
+Without the CLI the rest of DOME works as normal. The search hooks do nothing, and the first `/graphify` run installs the CLI for you.
+
 ## Troubleshooting
 
 ### The Socket is shown as unreachable

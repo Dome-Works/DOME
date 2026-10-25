@@ -3,5 +3,29 @@
     "frontend-design@anthropic-plugin-directory": true,
     "superpowers@anthropic-plugin-directory": true,
     "ponytail@ponytail": true
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash|Grep",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "graphify hook-guard search || exit 0",
+            "timeout": 10
+          }
+        ]
+      },
+      {
+        "matcher": "Read|Glob",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "graphify hook-guard read || exit 0",
+            "timeout": 10
+          }
+        ]
+      }
+    ]
   }
 }
