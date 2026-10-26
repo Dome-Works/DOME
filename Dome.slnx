@@ -1,7 +1,7 @@
 <Solution>
-  <Folder Name="/.cursor/" />
-  <Folder Name="/.cursor/skills/">
-    <File Path=".cursor\skills\document-release\SKILL.md" />
+  <Folder Name="/.agents/" />
+  <Folder Name="/.agents/skills/">
+    <File Path=".agents\skills\document-release\SKILL.md" />
   </Folder>
   <Folder Name="/AI/">
     <File Path="AGENTS.md" />
