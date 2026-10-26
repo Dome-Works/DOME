@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "shadcn": {
+      "command": "npm",
+      "args": ["exec", "--prefix", "src/Dome.Client", "--", "shadcn", "mcp", "--cwd", "src/Dome.Client"]
+    }
+  }
+}
