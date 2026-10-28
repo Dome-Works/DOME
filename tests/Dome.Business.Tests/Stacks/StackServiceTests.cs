@@ -202,51 +202,6 @@ public sealed class StackServiceTests
         Assert.Equal("app", result.ProjectName);
     }
 
-    [Fact]
-    public async Task DeleteAsync_returns_null_when_device_is_missing()
-    {
-        var service = CreateService(socket: null, A.Fake<IStackRepository>());
-
-        var result = await service.DeleteAsync("missing", Guid.NewGuid(), TestContext.Current.CancellationToken);
-
-        Assert.Null(result);
-    }
-
-    [Fact]
-    public async Task DeleteAsync_returns_false_when_stack_is_missing()
-    {
-        var socket = CreateSocket();
-        var stackRepository = A.Fake<IStackRepository>();
-        A.CallTo(() => stackRepository.GetByIdAsync(A<Guid>._, A<CancellationToken>._))
-            .Returns((StackEntity?)null);
-
-        var service = CreateService(socket, stackRepository);
-
-        var result = await service.DeleteAsync("local", Guid.NewGuid(), TestContext.Current.CancellationToken);
-
-        Assert.False(result);
-        A.CallTo(() => stackRepository.DeleteAsync(A<StackEntity>._, A<CancellationToken>._))
-            .MustNotHaveHappened();
-    }
-
-    [Fact]
-    public async Task DeleteAsync_removes_the_stack()
-    {
-        var socket = CreateSocket();
-        var stack = CreateStack(socket.Id, "app");
-        var stackRepository = A.Fake<IStackRepository>();
-        A.CallTo(() => stackRepository.GetByIdAsync(stack.Id, A<CancellationToken>._))
-            .Returns(stack);
-
-        var service = CreateService(socket, stackRepository);
-
-        var result = await service.DeleteAsync("local", stack.Id, TestContext.Current.CancellationToken);
-
-        Assert.True(result);
-        A.CallTo(() => stackRepository.DeleteAsync(stack, A<CancellationToken>._))
-            .MustHaveHappenedOnceExactly();
-    }
-
     private static StackService CreateService(
         SocketEntity? socket,
         IStackRepository stackRepository)

@@ -1,15 +1,15 @@
 using FastEndpoints;
-using Dome.Business.Stacks;
+using Dome.Business.Devices;
 
 namespace Dome.Api.Endpoints.Devices;
 
-public sealed class DeleteDeviceStackEndpoint : Endpoint<GetDeviceStackRequest>
+public sealed class DeleteDeviceStackEndpoint : Endpoint<DeleteDeviceStackRequest>
 {
-    private readonly IStackService _stackService;
+    private readonly IDeviceStackDeployService _deviceStackDeployService;
 
-    public DeleteDeviceStackEndpoint(IStackService stackService)
+    public DeleteDeviceStackEndpoint(IDeviceStackDeployService deviceStackDeployService)
     {
-        _stackService = stackService;
+        _deviceStackDeployService = deviceStackDeployService;
     }
 
     public override void Configure()
@@ -18,12 +18,19 @@ public sealed class DeleteDeviceStackEndpoint : Endpoint<GetDeviceStackRequest>
         AllowAnonymous();
     }
 
-    public override async Task HandleAsync(GetDeviceStackRequest req, CancellationToken ct)
+    public override async Task HandleAsync(DeleteDeviceStackRequest req, CancellationToken ct)
     {
-        var deleted = await _stackService.DeleteAsync(req.SocketName, req.StackId, ct);
-        if (deleted is not true)
+        var result = await _deviceStackDeployService.DeleteAsync(req.SocketName, req.StackId, req.RemoveVolumes, ct);
+        if (result.IsDeviceNotFound || result.IsStackNotFound)
         {
             await Send.NotFoundAsync(ct);
+            return;
+        }
+
+        if (result.IsFailed)
+        {
+            AddError(result.Error ?? "Docker Compose failed.");
+            await Send.ErrorsAsync(statusCode: 502, cancellation: ct);
             return;
         }
 
