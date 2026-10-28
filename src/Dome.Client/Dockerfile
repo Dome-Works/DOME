@@ -5,6 +5,9 @@ COPY package.json package-lock.json ./
 RUN npm ci --ignore-scripts
 
 COPY . .
+ARG VERSION
+# Force the release version into package.json so the bundle reports it.
+RUN if [ -n "$VERSION" ]; then npm pkg set version="$VERSION"; fi
 RUN npm run build
 
 FROM nginx:1.31-alpine@sha256:a9ae6f6d078d477e21323310498e5196cb2b7c0aedd9e07b7306612077227d7c AS final

@@ -1,9 +1,10 @@
-import { LayoutDashboard, Plug, Workflow } from 'lucide-react'
+import { LayoutDashboard, Plug, Settings, Workflow } from 'lucide-react'
 import { NavLink, useLocation } from 'react-router'
 
 import {
   Sidebar,
   SidebarContent,
+  SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
   SidebarGroupLabel,
@@ -74,6 +75,22 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
+      <SidebarFooter>
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton
+              asChild
+              isActive={location.pathname.startsWith('/settings')}
+              tooltip="Settings"
+            >
+              <NavLink to="/settings">
+                <Settings />
+                <span>Settings</span>
+              </NavLink>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
+      </SidebarFooter>
       <SidebarRail />
     </Sidebar>
   )
