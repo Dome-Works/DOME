@@ -141,6 +141,36 @@ internal sealed class DockerEngineClient : IDockerEngineClient, IDisposable
         }
     }
 
+    public async Task<DockerContainerLifecycleResult> RemoveContainerAsync(
+        string containerId,
+        bool removeVolumes,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(containerId);
+
+        try
+        {
+            await _dockerClient.Containers.RemoveContainerAsync(
+                containerId,
+                new ContainerRemoveParameters { Force = true, RemoveVolumes = removeVolumes },
+                cancellationToken);
+            return DockerContainerLifecycleResult.Succeeded;
+        }
+        catch (DockerApiException ex)
+        {
+            if (DockerContainerLifecycleExceptionMapper.TryMap(ex, out var result))
+            {
+                return result;
+            }
+
+            _logger.LogError(
+                ex,
+                "Failed to remove Docker container '{ContainerId}'.",
+                containerId);
+            throw;
+        }
+    }
+
     public async Task<IReadOnlyList<string>> GetImageRepoDigestsAsync(
         string imageId,
         CancellationToken cancellationToken = default)

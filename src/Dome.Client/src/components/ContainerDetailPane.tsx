@@ -1,10 +1,12 @@
-import { Eye, Pencil, Play, Square, XIcon } from 'lucide-react'
+import { useState } from 'react'
+import { Eye, Pencil, Play, Square, Trash2, XIcon } from 'lucide-react'
 
 import type { Container, ContainerVolume } from '@/types/containers'
 import type { ContainerImageVersionCheck } from '@/types/imageVersionChecks'
 import { ImageVersionCheckIcon } from './ImageVersionCheckIcon'
 import { imageVersionCheckDescription, isVisibleImageVersionCheck } from '@/lib/imageVersionChecks'
 import { formatBytes } from '@/lib/bytes'
+import { DeleteContainerDialog } from './DeleteContainerDialog'
 import { Badge } from './ui/badge'
 import { Button } from './ui/button'
 import {
@@ -30,6 +32,7 @@ type ContainerDetailPaneProps = {
   onClose: () => void
   onStart: () => void
   onStop: () => void
+  onDelete: (removeVolumes: boolean) => Promise<void>
   isActionPending: boolean
 }
 
@@ -102,8 +105,11 @@ export function ContainerDetailPane({
   onClose,
   onStart,
   onStop,
+  onDelete,
   isActionPending,
 }: Readonly<ContainerDetailPaneProps>) {
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false)
+
   return (
     <TooltipProvider>
       <aside className="container-detail-pane">
@@ -169,7 +175,7 @@ export function ContainerDetailPane({
                     <TooltipTrigger asChild>
                       <Button
                         type="button"
-                        variant="destructive"
+                        variant="outline"
                         size="icon-sm"
                         disabled={isActionPending || !canStop(container.state)}
                         onClick={onStop}
@@ -180,6 +186,31 @@ export function ContainerDetailPane({
                     </TooltipTrigger>
                     <TooltipContent side="top">Stop</TooltipContent>
                   </Tooltip>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        type="button"
+                        variant="destructive"
+                        size="icon-sm"
+                        disabled={isActionPending}
+                        onClick={() => setIsDeleteOpen(true)}
+                        aria-label="Delete container"
+                      >
+                        <Trash2 />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent side="top">Delete</TooltipContent>
+                  </Tooltip>
+                  <DeleteContainerDialog
+                    open={isDeleteOpen}
+                    onOpenChange={setIsDeleteOpen}
+                    containerName={container.name}
+                    isPending={isActionPending}
+                    onConfirm={async (removeVolumes) => {
+                      await onDelete(removeVolumes)
+                      setIsDeleteOpen(false)
+                    }}
+                  />
                 </div>
               </>
             ) : null}

@@ -11,4 +11,10 @@ public interface IDeviceContainerCommandService
         string deviceName,
         string containerId,
         CancellationToken cancellationToken = default);
+
+    Task<DeviceContainerCommandResult> DeleteAsync(
+        string deviceName,
+        string containerId,
+        bool removeVolumes,
+        CancellationToken cancellationToken = default);
 }

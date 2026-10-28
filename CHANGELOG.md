@@ -5,6 +5,13 @@ application. Changes are grouped by release.
 
 ## [Unreleased]
 
+### Added
+
+- Delete a container from its details pane. A confirmation dialog warns that
+  the action cannot be undone and can optionally remove the container's
+  anonymous volumes as well. Named volumes and bind mounts are always kept,
+  and running containers are force-stopped.
+
 ## [v0.4.1] - 2026-10-22
 
 This release contains no user-facing changes and includes only dependency updates and vulnerability fixes.
