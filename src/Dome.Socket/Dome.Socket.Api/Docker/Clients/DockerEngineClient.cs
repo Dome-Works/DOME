@@ -33,8 +33,7 @@ internal sealed class DockerEngineClient : IDockerEngineClient, IDisposable
             : options.Value.Endpoint;
 
         var uri = DockerEndpointValidator.Validate(endpoint);
-        using var configuration = new DockerClientConfiguration(uri);
-        _dockerClient = configuration.CreateClient();
+        _dockerClient = new DockerClientBuilder().WithEndpoint(uri).Build();
         _httpClient = CreateHttpClient(uri);
     }
 

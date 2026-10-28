@@ -1,7 +1,7 @@
 # Graph Report - DOME  (2026-10-28)
 
 ## Corpus Check
-- 330 files · ~62,162 words
+- 330 files · ~62,176 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 21 file(s) not represented in the graph (top: (none) 8, .xml 6, .css 3)
 
@@ -11,7 +11,7 @@
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `3ded3b2e`
+- Built from commit: `050c4029`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -496,7 +496,7 @@ Nodes (6): AGENTS.md entry point, Root cause before fix working method, Validati
 
 ### Community 85 - "Docker.DotNet and FastEndpoints Deps"
 Cohesion: 0.25
-Nodes (6): Docker.DotNet, FastEndpoints, FastEndpoints.Swagger, Microsoft.NET.Sdk.Web, Refit, Microsoft.NET.Sdk
+Nodes (6): Docker.DotNet.Enhanced, FastEndpoints, FastEndpoints.Swagger, Microsoft.NET.Sdk.Web, Refit, Microsoft.NET.Sdk
 
 ### Community 86 - "Test Tooling Deps"
 Cohesion: 0.25
