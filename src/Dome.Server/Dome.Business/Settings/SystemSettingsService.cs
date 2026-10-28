@@ -21,4 +21,7 @@ internal sealed class SystemSettingsService : ISystemSettingsService
             bool.TryParse(enabled, out var parsed) && parsed && !string.IsNullOrWhiteSpace(installationId),
             installationId ?? string.Empty);
     }
+
+    public Task SetTelemetryEnabledAsync(bool enabled, CancellationToken cancellationToken = default)
+        => _repository.SetAsync(SystemSettingKeys.TelemetryEnabled, enabled.ToString(), cancellationToken);
 }

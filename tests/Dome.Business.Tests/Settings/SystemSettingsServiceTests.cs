@@ -30,4 +30,17 @@ public sealed class SystemSettingsServiceTests
         Assert.Equal(expected, result.Enabled);
         Assert.Equal(installationId ?? string.Empty, result.InstallationId);
     }
+
+    [Theory]
+    [InlineData(true, "True")]
+    [InlineData(false, "False")]
+    public async Task SetTelemetryEnabledAsync_stores_the_flag(bool enabled, string expected)
+    {
+        var repository = A.Fake<ISystemSettingRepository>();
+
+        await new SystemSettingsService(repository).SetTelemetryEnabledAsync(enabled);
+
+        A.CallTo(() => repository.SetAsync(SystemSettingKeys.TelemetryEnabled, expected, A<CancellationToken>._))
+            .MustHaveHappenedOnceExactly();
+    }
 }

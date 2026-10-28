@@ -16,6 +16,7 @@ also asks to tag, commit, or publish. Default files:
 - `CHANGELOG.md`
 - `README.md`
 - `Directory.Build.props` (`Version` only)
+- `src/Dome.Client/package.json` and `src/Dome.Client/package-lock.json` (`version` only)
 
 Do not invent versions, dates, features, or bug fixes.
 
@@ -106,6 +107,9 @@ Use that same sentence in the GitHub Release notes.
 6. Set `<Version>X.Y.Z</Version>` in `Directory.Build.props` to the confirmed
    tag with the `v` prefix stripped (`v0.3.0` → `0.3.0`). Do not change other
    properties in that file.
+7. Set the same `X.Y.Z` as `version` in `src/Dome.Client/package.json` and in
+   the root entries of `src/Dome.Client/package-lock.json` (top-level
+   `version` and `packages[""].version`). Change nothing else in those files.
 
 Do not create a version section for a tag/release that does not exist unless
 the user is actively cutting that release.
@@ -158,7 +162,8 @@ GitHub Release triggers `.github/workflows/release.yml` and pushes images.
 
 - Commit, tag, or push unless asked
 - Edit application code, tests, or CI as part of this skill
-- Change anything in `Directory.Build.props` except `Version`
+- Change anything in `Directory.Build.props` except `Version`, or anything in
+  the client `package.json`/`package-lock.json` except `version`
 - Summarize every commit
 - Use unprefixed headings like `[0.3.0]`
 
@@ -166,6 +171,7 @@ GitHub Release triggers `.github/workflows/release.yml` and pushes images.
 
 - [ ] Version matches the confirmed tag (`vX.Y.Z`)
 - [ ] `Directory.Build.props` `Version` is the confirmed tag without the `v`
+- [ ] Client `package.json` and `package-lock.json` `version` match it
 - [ ] Date is real
 - [ ] Unreleased is empty of shipped items
 - [ ] Empty changelog subsections are omitted
