@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { Link } from 'react-router'
 
 import {
+  deleteDeviceContainer,
   fetchDeviceDiagram,
   startDeviceContainer,
   stopDeviceContainer,
@@ -361,7 +362,11 @@ export function DiagramsPage() {
   }
 
   const runContainerAction = useCallback(
-    async (action: 'start' | 'stop', container: Container) => {
+    async (
+      action: 'start' | 'stop' | 'delete',
+      container: Container,
+      removeVolumes = false,
+    ) => {
       if (!selectedDeviceName) {
         return
       }
@@ -371,9 +376,17 @@ export function DiagramsPage() {
         if (action === 'start') {
           await startDeviceContainer(selectedDeviceName, container.id)
           toast.success(`Started ${container.name}.`)
-        } else {
+        } else if (action === 'stop') {
           await stopDeviceContainer(selectedDeviceName, container.id)
           toast.success(`Stopped ${container.name}.`)
+        } else {
+          await deleteDeviceContainer(
+            selectedDeviceName,
+            container.id,
+            removeVolumes,
+          )
+          toast.success(`Deleted ${container.name}.`)
+          setSelectedContainerId(null)
         }
 
         await loadDiagram(selectedDeviceName)
@@ -533,6 +546,9 @@ export function DiagramsPage() {
               onStop={() => {
                 void runContainerAction('stop', renderedDetail.container)
               }}
+              onDelete={(removeVolumes) =>
+                runContainerAction('delete', renderedDetail.container, removeVolumes)
+              }
             />
           ) : null}
           {renderedDetail?.kind === 'stack' ? (

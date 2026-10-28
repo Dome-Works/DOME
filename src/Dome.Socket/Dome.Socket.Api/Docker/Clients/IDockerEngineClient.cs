@@ -20,4 +20,9 @@ public interface IDockerEngineClient
     Task<DockerContainerLifecycleResult> StopContainerAsync(
         string containerId,
         CancellationToken cancellationToken = default);
+
+    Task<DockerContainerLifecycleResult> RemoveContainerAsync(
+        string containerId,
+        bool removeVolumes,
+        CancellationToken cancellationToken = default);
 }

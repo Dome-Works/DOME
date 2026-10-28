@@ -26,4 +26,10 @@ internal sealed class StubDockerEngineClient : IDockerEngineClient
         string containerId,
         CancellationToken cancellationToken = default)
         => Task.FromResult(DockerContainerLifecycleResult.Succeeded);
+
+    public Task<DockerContainerLifecycleResult> RemoveContainerAsync(
+        string containerId,
+        bool removeVolumes,
+        CancellationToken cancellationToken = default)
+        => Task.FromResult(DockerContainerLifecycleResult.Succeeded);
 }

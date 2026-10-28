@@ -20,6 +20,11 @@ public interface IDomeSocketApi
     [Post("/api/containers/{id}/stop")]
     Task StopContainerAsync(string id, CancellationToken cancellationToken = default);
 
+    [Post("/api/containers/delete")]
+    Task<DeleteContainersResponse> DeleteContainersAsync(
+        [Body] DeleteContainersRequest request,
+        CancellationToken cancellationToken = default);
+
     [Post("/api/compose/up")]
     Task UpComposeAsync(
         [Body] ComposeUpRequest request,

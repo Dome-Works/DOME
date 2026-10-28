@@ -67,3 +67,23 @@ async function postContainerLifecycle(
     )
   }
 }
+
+export async function deleteDeviceContainer(
+  deviceName: string,
+  containerId: string,
+  removeVolumes: boolean,
+): Promise<void> {
+  const response = await fetch(
+    `/api/devices/${encodeURIComponent(deviceName)}/containers/${encodeURIComponent(containerId)}?removeVolumes=${removeVolumes}`,
+    { method: 'DELETE' },
+  )
+
+  if (!response.ok) {
+    throw new Error(
+      await readApiError(
+        response,
+        `Failed to delete container (${response.status})`,
+      ),
+    )
+  }
+}

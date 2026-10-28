@@ -2,6 +2,7 @@ using System.Net;
 using Dome.Business.Sockets;
 using Dome.Domain.Sockets;
 using Dome.Socket.Contracts;
+using Dome.Socket.Contracts.Containers;
 using Microsoft.Extensions.Logging;
 using Refit;
 
@@ -30,7 +31,11 @@ public sealed class DeviceContainerCommandService : IDeviceContainerCommandServi
         => ExecuteAsync(
             deviceName,
             containerId,
-            static (api, id, ct) => api.StartContainerAsync(id, ct),
+            async (api, id, ct) =>
+            {
+                await api.StartContainerAsync(id, ct);
+                return DeviceContainerCommandResult.Success();
+            },
             "start",
             cancellationToken);
 
@@ -41,14 +46,45 @@ public sealed class DeviceContainerCommandService : IDeviceContainerCommandServi
         => ExecuteAsync(
             deviceName,
             containerId,
-            static (api, id, ct) => api.StopContainerAsync(id, ct),
+            async (api, id, ct) =>
+            {
+                await api.StopContainerAsync(id, ct);
+                return DeviceContainerCommandResult.Success();
+            },
             "stop",
+            cancellationToken);
+
+    public Task<DeviceContainerCommandResult> DeleteAsync(
+        string deviceName,
+        string containerId,
+        bool removeVolumes,
+        CancellationToken cancellationToken = default)
+        => ExecuteAsync(
+            deviceName,
+            containerId,
+            async (api, id, ct) =>
+            {
+                var response = await api.DeleteContainersAsync(
+                    new() { ContainerIds = [id], RemoveVolumes = removeVolumes },
+                    ct);
+                var result = response.Results.FirstOrDefault(r => r.ContainerId == id)
+                    ?? (response.Results.Count == 1 ? response.Results[0] : null)
+                    ?? throw new InvalidOperationException("Socket returned no delete result for the container.");
+
+                return result.Status switch
+                {
+                    DeleteContainerStatus.Deleted => DeviceContainerCommandResult.Success(),
+                    DeleteContainerStatus.NotFound => DeviceContainerCommandResult.ContainerNotFound(),
+                    _ => throw new InvalidOperationException(result.Error ?? "Socket failed to delete the container."),
+                };
+            },
+            "delete",
             cancellationToken);
 
     private async Task<DeviceContainerCommandResult> ExecuteAsync(
         string deviceName,
         string containerId,
-        Func<IDomeSocketApi, string, CancellationToken, Task> operation,
+        Func<IDomeSocketApi, string, CancellationToken, Task<DeviceContainerCommandResult>> operation,
         string action,
         CancellationToken cancellationToken)
     {
@@ -65,8 +101,7 @@ public sealed class DeviceContainerCommandService : IDeviceContainerCommandServi
         try
         {
             var api = _socketApiFactory.Create(socket.Address);
-            await operation(api, containerId, cancellationToken);
-            return DeviceContainerCommandResult.Success();
+            return await operation(api, containerId, cancellationToken);
         }
         catch (ApiException ex) when (ex.StatusCode == HttpStatusCode.NotFound)
         {
