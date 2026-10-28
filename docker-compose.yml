@@ -22,7 +22,6 @@ services:
       - ${DOME_COMPOSE_ROOT:-/var/lib/dome/compose}:/var/lib/dome/compose
     environment:
       ASPNETCORE_ENVIRONMENT: Production
-      Docker__Endpoint: unix:///var/run/docker.sock
     restart: unless-stopped
 
   client:
