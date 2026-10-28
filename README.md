@@ -47,6 +47,8 @@ create, edit, and deploy Compose stacks.
 - Delete stacks from their details panel. Managed stacks are brought down and
   removed; unmanaged stack containers are force-deleted. Volumes can
   optionally be removed
+- First-launch onboarding explains anonymous usage tracking and offers a
+  choice to enable it; Settings lets you change the setting or reopen onboarding
 - Volume name, mount destination, size and read-only/read-write details
 - Multi-host support through one Socket agent per Docker host
 - SQLite persistence with automatic EF Core migration at Server startup
@@ -289,12 +291,9 @@ DOME can send anonymous usage statistics to PostHog so the maintainers can see
 how many installations, Sockets and Stacks are in use. Privacy is a priority for DOME, 
 so telemetry is **off by default**.
 
-The setting takes effect without a restart. Until a settings page exists, turn
-it on or off with:
-
-```sql
-UPDATE SystemSettings SET Value = 'True' WHERE Key = 'TelemetryEnabled';
-```
+First-launch onboarding explains telemetry and lets you choose whether to
+enable it. Change the setting any time from **Settings**; it takes effect
+without a restart. You can reopen onboarding from Settings.
 
 When enabled, the Server sends the events below at startup and then every 24
 hours. Nothing else is tracked: no page views, no clicks and no API request
