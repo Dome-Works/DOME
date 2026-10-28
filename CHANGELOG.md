@@ -11,6 +11,12 @@ application. Changes are grouped by release.
   the action cannot be undone and can optionally remove the container's
   anonymous volumes as well. Named volumes and bind mounts are always kept,
   and running containers are force-stopped.
+- Delete a stack from its details pane. For stacks managed by DOME this runs
+  `docker compose down`, which removes the stack's containers and networks,
+  its compose file on the device and its configuration in DOME. Its volumes
+  can optionally be removed too. For unmanaged stacks only the containers
+  are force-deleted, and their anonymous volumes can optionally be removed.
+  Networks, named volumes and the compose file are left in place.
 
 ## [v0.4.1] - 2026-10-22
 

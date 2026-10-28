@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useId, useState, type ReactNode } from 'react'
 
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
@@ -12,21 +12,26 @@ import {
 } from '@/components/ui/dialog'
 import { Label } from '@/components/ui/label'
 
-type DeleteContainerDialogProps = {
+type ConfirmDeleteDialogProps = {
   open: boolean
-  containerName: string
+  title: string
+  description: ReactNode
+  volumesLabel: string
   isPending: boolean
   onOpenChange: (open: boolean) => void
   onConfirm: (removeVolumes: boolean) => void
 }
 
-export function DeleteContainerDialog({
+export function ConfirmDeleteDialog({
   open,
-  containerName,
+  title,
+  description,
+  volumesLabel,
   isPending,
   onOpenChange,
   onConfirm,
-}: DeleteContainerDialogProps) {
+}: ConfirmDeleteDialogProps) {
+  const volumesId = useId()
   const [removeVolumes, setRemoveVolumes] = useState(false)
   const [wasOpen, setWasOpen] = useState(open)
 
@@ -41,21 +46,16 @@ export function DeleteContainerDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Delete container?</DialogTitle>
-          <DialogDescription>
-            This permanently deletes {containerName}. Running containers are
-            force-stopped. This action cannot be undone.
-          </DialogDescription>
+          <DialogTitle>{title}</DialogTitle>
+          <DialogDescription>{description}</DialogDescription>
         </DialogHeader>
         <div className="flex items-center gap-2">
           <Checkbox
-            id="delete-container-volumes"
+            id={volumesId}
             checked={removeVolumes}
             onCheckedChange={(checked) => setRemoveVolumes(checked === true)}
           />
-          <Label htmlFor="delete-container-volumes">
-            Also delete anonymous volumes
-          </Label>
+          <Label htmlFor={volumesId}>{volumesLabel}</Label>
         </div>
         <DialogFooter>
           <Button

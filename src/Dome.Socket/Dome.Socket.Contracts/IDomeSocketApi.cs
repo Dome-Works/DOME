@@ -30,6 +30,11 @@ public interface IDomeSocketApi
         [Body] ComposeUpRequest request,
         CancellationToken cancellationToken = default);
 
+    [Post("/api/compose/down")]
+    Task DownComposeAsync(
+        [Body] ComposeDownRequest request,
+        CancellationToken cancellationToken = default);
+
     [Post("/api/images/version-checks")]
     Task<CheckImageVersionsResponse> CheckImageVersionsAsync(
         [Body] CheckImageVersionsRequest request,

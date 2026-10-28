@@ -114,6 +114,83 @@ public sealed class DockerComposeClientTests
         Assert.Equal("Docker Compose could not be started.", result.Error);
     }
 
+    [Fact]
+    public async Task DownAsync_rejects_invalid_project_name()
+    {
+        var runner = new RecordingProcessRunner();
+        var client = CreateClient(runner);
+
+        var result = await client.DownAsync("My Stack", false, TestContext.Current.CancellationToken);
+
+        Assert.True(result.IsInvalid);
+        Assert.Equal(0, runner.CallCount);
+    }
+
+    [Fact]
+    public async Task DownAsync_omits_file_and_volumes_when_nothing_deployed()
+    {
+        var workingRoot = CreateWorkingRoot();
+        var runner = new RecordingProcessRunner();
+        var client = CreateClient(runner, workingRoot);
+
+        var result = await client.DownAsync("my-stack", false, TestContext.Current.CancellationToken);
+
+        Assert.True(result.Succeeded);
+        Assert.Equal(
+            ["compose", "--project-name", "my-stack", "down", "--remove-orphans"],
+            runner.Arguments);
+    }
+
+    [Fact]
+    public async Task DownAsync_uses_file_and_volumes_and_deletes_directory_on_success()
+    {
+        var workingRoot = CreateWorkingRoot();
+        var projectDirectory = Path.GetFullPath(Path.Join(workingRoot, "my-stack"));
+        Directory.CreateDirectory(projectDirectory);
+        var composeFile = Path.Join(projectDirectory, "docker-compose.yml");
+        await File.WriteAllTextAsync(composeFile, "services: {}\n", TestContext.Current.CancellationToken);
+        var runner = new RecordingProcessRunner();
+        var client = CreateClient(runner, workingRoot);
+
+        var result = await client.DownAsync("my-stack", true, TestContext.Current.CancellationToken);
+
+        Assert.True(result.Succeeded);
+        Assert.Equal(
+            [
+                "compose",
+                "--project-name",
+                "my-stack",
+                "--project-directory",
+                projectDirectory,
+                "--file",
+                composeFile,
+                "down",
+                "--remove-orphans",
+                "--volumes"
+            ],
+            runner.Arguments);
+        Assert.False(Directory.Exists(projectDirectory));
+    }
+
+    [Fact]
+    public async Task DownAsync_keeps_directory_when_compose_exits_nonzero()
+    {
+        var workingRoot = CreateWorkingRoot();
+        var projectDirectory = Path.Join(workingRoot, "my-stack");
+        Directory.CreateDirectory(projectDirectory);
+        var runner = new RecordingProcessRunner
+        {
+            Result = new() { ExitCode = 1, StandardOutput = string.Empty, StandardError = "boom" }
+        };
+        var client = CreateClient(runner, workingRoot);
+
+        var result = await client.DownAsync("my-stack", false, TestContext.Current.CancellationToken);
+
+        Assert.False(result.Succeeded);
+        Assert.Equal("boom", result.Error);
+        Assert.True(Directory.Exists(projectDirectory));
+    }
+
     private static DockerComposeClient CreateClient(
         RecordingProcessRunner runner,
         string? workingRoot = null)

@@ -6,4 +6,9 @@ public interface IDockerComposeClient
         string projectName,
         string composeYaml,
         CancellationToken cancellationToken = default);
+
+    Task<DockerComposeResult> DownAsync(
+        string projectName,
+        bool removeVolumes,
+        CancellationToken cancellationToken = default);
 }

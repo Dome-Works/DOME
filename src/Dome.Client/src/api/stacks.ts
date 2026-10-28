@@ -91,3 +91,40 @@ export async function deployDeviceStack(
     )
   }
 }
+
+export async function deleteDeviceStack(
+  deviceName: string,
+  stackId: string,
+  removeVolumes: boolean,
+): Promise<void> {
+  await deleteStack(
+    `/api/devices/${encodeURIComponent(deviceName)}/stacks/${encodeURIComponent(stackId)}`,
+    removeVolumes,
+  )
+}
+
+export async function deleteDeviceUnmanagedStack(
+  deviceName: string,
+  projectName: string,
+  removeVolumes: boolean,
+): Promise<void> {
+  await deleteStack(
+    `/api/devices/${encodeURIComponent(deviceName)}/unmanaged-stacks/${encodeURIComponent(projectName)}`,
+    removeVolumes,
+  )
+}
+
+async function deleteStack(url: string, removeVolumes: boolean): Promise<void> {
+  const response = await fetch(`${url}?removeVolumes=${removeVolumes}`, {
+    method: 'DELETE',
+  })
+
+  if (!response.ok) {
+    throw new Error(
+      await readApiError(
+        response,
+        `Failed to delete stack (${response.status})`,
+      ),
+    )
+  }
+}

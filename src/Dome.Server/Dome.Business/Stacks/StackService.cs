@@ -76,19 +76,6 @@ public sealed class StackService : IStackService
             : await UpdateForSocketAsync(socket.Id, stackId, projectName, composeYaml, cancellationToken);
     }
 
-    public async Task<bool?> DeleteAsync(
-        string socketName,
-        Guid stackId,
-        CancellationToken cancellationToken = default)
-    {
-        ArgumentException.ThrowIfNullOrWhiteSpace(socketName);
-
-        var socket = await _socketRepository.GetByNameAsync(socketName, cancellationToken);
-        return socket is null
-            ? null
-            : await DeleteForSocketAsync(socket.Id, stackId, cancellationToken);
-    }
-
     private async Task<IReadOnlyList<StackDto>> ListForSocketAsync(
         Guid socketId,
         CancellationToken cancellationToken)
@@ -185,21 +172,6 @@ public sealed class StackService : IStackService
         stack.UpdatedAt = DateTimeOffset.UtcNow;
         await _stackRepository.UpdateAsync(stack, cancellationToken);
         return StackMutationResult.Success(Map(stack));
-    }
-
-    private async Task<bool> DeleteForSocketAsync(
-        Guid socketId,
-        Guid stackId,
-        CancellationToken cancellationToken)
-    {
-        var stack = await _stackRepository.GetByIdAsync(stackId, cancellationToken);
-        if (stack is null || stack.SocketId != socketId)
-        {
-            return false;
-        }
-
-        await _stackRepository.DeleteAsync(stack, cancellationToken);
-        return true;
     }
 
     private static string? ValidateComposeYaml(string? composeYaml, out string storedYaml)

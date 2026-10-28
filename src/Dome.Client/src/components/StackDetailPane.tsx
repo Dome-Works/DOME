@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react'
-import { Pencil, Rocket, XIcon } from 'lucide-react'
+import { Pencil, Rocket, Trash2, XIcon } from 'lucide-react'
 import { toast } from 'sonner'
 
 import { fetchDeviceStack, updateDeviceStack } from '@/api/stacks'
 import { ComposeEditorDialog } from '@/components/ComposeEditorDialog'
+import { ConfirmDeleteDialog } from '@/components/ConfirmDeleteDialog'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import {
@@ -24,6 +25,7 @@ type StackDetailPaneProps = {
   onClose: () => void
   isActionPending: boolean
   onDeploy: () => void
+  onDelete: (removeVolumes: boolean) => Promise<void>
 }
 
 type StackLoadState =
@@ -38,10 +40,12 @@ export function StackDetailPane({
   onClose,
   isActionPending,
   onDeploy,
+  onDelete,
 }: StackDetailPaneProps) {
   const [loadState, setLoadState] = useState<StackLoadState>({ status: 'idle' })
   const [isEditorOpen, setIsEditorOpen] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false)
   const isManaged = stack.kind === 'managed' && stack.id !== null
   const stackKey = isManaged && stack.id !== null ? `${deviceName}:${stack.id}` : null
   const [loadedKey, setLoadedKey] = useState<string | null>(null)
@@ -142,40 +146,77 @@ export function StackDetailPane({
               </Badge>
               <Badge variant="outline">{formatBytes(stack.totalBytes ?? 0)}</Badge>
             </div>
-            {isManaged ? (
-              <div className="container-detail-actions">
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="icon-sm"
-                      disabled={isActionPending || isSaving || !canEdit}
-                      onClick={() => setIsEditorOpen(true)}
-                      aria-label="Edit compose file"
-                    >
-                      <Pencil />
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent side="top">Edit</TooltipContent>
-                </Tooltip>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="icon-sm"
-                      disabled={isActionPending || isSaving || !canDeploy}
-                      onClick={onDeploy}
-                      aria-label="Deploy stack"
-                    >
-                      <Rocket />
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent side="top">Deploy</TooltipContent>
-                </Tooltip>
-              </div>
-            ) : null}
+            <div className="container-detail-actions">
+              {isManaged ? (
+                <>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="icon-sm"
+                        disabled={isActionPending || isSaving || !canEdit}
+                        onClick={() => setIsEditorOpen(true)}
+                        aria-label="Edit compose file"
+                      >
+                        <Pencil />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent side="top">Edit</TooltipContent>
+                  </Tooltip>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="icon-sm"
+                        disabled={isActionPending || isSaving || !canDeploy}
+                        onClick={onDeploy}
+                        aria-label="Deploy stack"
+                      >
+                        <Rocket />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent side="top">Deploy</TooltipContent>
+                  </Tooltip>
+                </>
+              ) : null}
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    type="button"
+                    variant="destructive"
+                    size="icon-sm"
+                    disabled={isActionPending || isSaving}
+                    onClick={() => setIsDeleteOpen(true)}
+                    aria-label="Delete stack"
+                  >
+                    <Trash2 />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent side="top">Delete</TooltipContent>
+              </Tooltip>
+              <ConfirmDeleteDialog
+                open={isDeleteOpen}
+                onOpenChange={setIsDeleteOpen}
+                title={isManaged ? 'Delete stack?' : 'Delete unmanaged stack?'}
+                description={
+                  isManaged
+                    ? `This runs docker compose down for ${stack.projectName} and permanently deletes the full stack: all of its containers (running ones are force-stopped), its networks, the compose file on the device and the stack configuration in DOME. This action cannot be undone.`
+                    : `${stack.projectName} is not managed by DOME, so DOME can't run docker compose down for it. Only its containers are force-deleted (running ones are stopped); its networks, named volumes and compose file are left in place. This action cannot be undone.`
+                }
+                volumesLabel={
+                  isManaged
+                    ? 'Also delete volumes (named volumes declared by this stack and anonymous volumes — all data stored in them is lost)'
+                    : 'Also delete anonymous volumes'
+                }
+                isPending={isActionPending || isSaving}
+                onConfirm={async (removeVolumes) => {
+                  await onDelete(removeVolumes)
+                  setIsDeleteOpen(false)
+                }}
+              />
+            </div>
           </CardHeader>
           <CardContent className="container-detail-content">
             {stack.kind === 'readonly' ? (

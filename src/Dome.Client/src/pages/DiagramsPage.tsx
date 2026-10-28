@@ -9,7 +9,12 @@ import {
 } from '@/api/containers'
 import { fetchDeviceImageVersionChecks } from '@/api/imageVersionChecks'
 import { fetchDevices } from '@/api/devices'
-import { createDeviceStack, deployDeviceStack } from '@/api/stacks'
+import {
+  createDeviceStack,
+  deleteDeviceStack,
+  deleteDeviceUnmanagedStack,
+  deployDeviceStack,
+} from '@/api/stacks'
 import { ContainerDetailPane } from '@/components/ContainerDetailPane'
 import { ContainerDiagram } from '@/components/ContainerDiagram'
 import { DiagramDetailSlot } from '@/components/DiagramDetailSlot'
@@ -456,6 +461,37 @@ export function DiagramsPage() {
     [loadDiagram, selectedDeviceName],
   )
 
+  const deleteStack = useCallback(
+    async (stack: DiagramStack, removeVolumes: boolean) => {
+      if (!selectedDeviceName) {
+        return
+      }
+
+      setIsActionPending(true)
+      try {
+        if (stack.kind === 'managed' && stack.id !== null) {
+          await deleteDeviceStack(selectedDeviceName, stack.id, removeVolumes)
+        } else {
+          await deleteDeviceUnmanagedStack(
+            selectedDeviceName,
+            stack.projectName,
+            removeVolumes,
+          )
+        }
+        toast.success(`Deleted ${stack.projectName}.`)
+        setSelectedStackCanvasId(null)
+        await loadDiagram(selectedDeviceName)
+      } catch (error) {
+        toast.error(
+          error instanceof Error ? error.message : 'Unable to delete stack.',
+        )
+      } finally {
+        setIsActionPending(false)
+      }
+    },
+    [loadDiagram, selectedDeviceName],
+  )
+
   return (
     <div className="app-page">
       <div className="flex shrink-0 items-center justify-end gap-2 border-b px-4 py-2">
@@ -565,6 +601,9 @@ export function DiagramsPage() {
                   )
                 }
               }}
+              onDelete={(removeVolumes) =>
+                deleteStack(renderedDetail.stack, removeVolumes)
+              }
             />
           ) : null}
         </DiagramDetailSlot>

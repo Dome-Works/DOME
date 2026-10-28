@@ -55,6 +55,81 @@ internal sealed class DockerComposeClient : IDockerComposeClient
         var composeFilePath = Path.Join(projectDirectory, ComposeFileName);
         await File.WriteAllTextAsync(composeFilePath, composeYaml, Encoding.UTF8, cancellationToken);
 
+        return await RunComposeAsync(
+            trimmedProjectName,
+            [
+                "compose",
+                "--project-name",
+                trimmedProjectName,
+                "--project-directory",
+                projectDirectory,
+                "--file",
+                composeFilePath,
+                "up",
+                "--detach"
+            ],
+            projectDirectory,
+            "up",
+            cancellationToken);
+    }
+
+    public async Task<DockerComposeResult> DownAsync(
+        string projectName,
+        bool removeVolumes,
+        CancellationToken cancellationToken = default)
+    {
+        if (!ComposeProjectName.IsValid(projectName))
+        {
+            return DockerComposeResult.Invalid("Project name is not a valid Compose project name.");
+        }
+
+        var trimmedProjectName = projectName.Trim();
+        var projectDirectory = ResolveProjectDirectory(trimmedProjectName);
+        if (projectDirectory is null)
+        {
+            return DockerComposeResult.Invalid("Compose working directory is invalid.");
+        }
+
+        var args = new List<string> { "compose", "--project-name", trimmedProjectName };
+        var composeFilePath = Path.Join(projectDirectory, ComposeFileName);
+        if (File.Exists(composeFilePath))
+        {
+            args.AddRange(["--project-directory", projectDirectory, "--file", composeFilePath]);
+        }
+
+        args.AddRange(["down", "--remove-orphans"]);
+        if (removeVolumes)
+        {
+            args.Add("--volumes");
+        }
+
+        var directoryExists = Directory.Exists(projectDirectory);
+        var workingDirectory = directoryExists
+            ? projectDirectory
+            : Path.GetDirectoryName(projectDirectory)!;
+
+        var result = await RunComposeAsync(
+            trimmedProjectName,
+            args,
+            workingDirectory,
+            "down",
+            cancellationToken);
+
+        if (result.Succeeded && directoryExists)
+        {
+            Directory.Delete(projectDirectory, recursive: true);
+        }
+
+        return result;
+    }
+
+    private async Task<DockerComposeResult> RunComposeAsync(
+        string projectName,
+        IReadOnlyList<string> args,
+        string workingDirectory,
+        string verb,
+        CancellationToken cancellationToken)
+    {
         var dockerCli = string.IsNullOrWhiteSpace(_composeOptions.DockerCliPath)
             ? "docker"
             : _composeOptions.DockerCliPath.Trim();
@@ -64,18 +139,8 @@ internal sealed class DockerComposeClient : IDockerComposeClient
         {
             processResult = await _processRunner.RunAsync(
                 dockerCli,
-                [
-                    "compose",
-                    "--project-name",
-                    trimmedProjectName,
-                    "--project-directory",
-                    projectDirectory,
-                    "--file",
-                    composeFilePath,
-                    "up",
-                    "--detach"
-                ],
-                projectDirectory,
+                args,
+                workingDirectory,
                 new Dictionary<string, string>
                 {
                     ["DOCKER_HOST"] = _dockerEndpoint.Endpoint
@@ -90,8 +155,9 @@ internal sealed class DockerComposeClient : IDockerComposeClient
         {
             _logger.LogError(
                 ex,
-                "Failed to start docker compose for project '{ProjectName}'.",
-                trimmedProjectName);
+                "Failed to start docker compose {Verb} for project '{ProjectName}'.",
+                verb,
+                projectName);
             return DockerComposeResult.Failed("Docker Compose could not be started.");
         }
 
@@ -102,8 +168,9 @@ internal sealed class DockerComposeClient : IDockerComposeClient
 
         var error = CombineOutput(processResult);
         _logger.LogWarning(
-            "docker compose up failed for project '{ProjectName}' with exit code {ExitCode}. {Error}",
-            trimmedProjectName,
+            "docker compose {Verb} failed for project '{ProjectName}' with exit code {ExitCode}. {Error}",
+            verb,
+            projectName,
             processResult.ExitCode,
             error);
 

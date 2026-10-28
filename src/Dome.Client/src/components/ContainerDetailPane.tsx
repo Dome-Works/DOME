@@ -6,7 +6,7 @@ import type { ContainerImageVersionCheck } from '@/types/imageVersionChecks'
 import { ImageVersionCheckIcon } from './ImageVersionCheckIcon'
 import { imageVersionCheckDescription, isVisibleImageVersionCheck } from '@/lib/imageVersionChecks'
 import { formatBytes } from '@/lib/bytes'
-import { DeleteContainerDialog } from './DeleteContainerDialog'
+import { ConfirmDeleteDialog } from './ConfirmDeleteDialog'
 import { Badge } from './ui/badge'
 import { Button } from './ui/button'
 import {
@@ -201,10 +201,12 @@ export function ContainerDetailPane({
                     </TooltipTrigger>
                     <TooltipContent side="top">Delete</TooltipContent>
                   </Tooltip>
-                  <DeleteContainerDialog
+                  <ConfirmDeleteDialog
                     open={isDeleteOpen}
                     onOpenChange={setIsDeleteOpen}
-                    containerName={container.name}
+                    title="Delete container?"
+                    description={`This permanently deletes ${container.name}. Running containers are force-stopped. This action cannot be undone.`}
+                    volumesLabel="Also delete anonymous volumes"
                     isPending={isActionPending}
                     onConfirm={async (removeVolumes) => {
                       await onDelete(removeVolumes)

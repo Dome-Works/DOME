@@ -24,9 +24,4 @@ public interface IStackService
         string projectName,
         string composeYaml,
         CancellationToken cancellationToken = default);
-
-    Task<bool?> DeleteAsync(
-        string socketName,
-        Guid stackId,
-        CancellationToken cancellationToken = default);
 }
