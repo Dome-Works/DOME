@@ -1,5 +1,6 @@
 using FastEndpoints;
 using FastEndpoints.Swagger;
+using Dome.Api.Telemetry;
 using Dome.Business;
 using Dome.Domain;
 using Dome.Domain.Seeding;
@@ -22,9 +23,15 @@ builder.Services.SwaggerDocument();
 builder.Services.AddDomeBusiness();
 builder.Services.AddDomeDomain(builder.Configuration);
 
-if (!string.IsNullOrWhiteSpace(builder.Configuration["PostHog:ProjectToken"]))
+if (TelemetryBuildInfo.ProjectToken.Length > 0)
 {
     builder.AddPostHog();
+    builder.Services.PostConfigure<PostHogOptions>(options =>
+    {
+        options.ProjectToken = TelemetryBuildInfo.ProjectToken;
+        options.HostUrl = TelemetryBuildInfo.HostUrl;
+    });
+    builder.Services.AddHostedService<TelemetryReporter>();
 }
 
 var app = builder.Build();

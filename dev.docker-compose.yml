@@ -3,6 +3,8 @@ services:
     build:
       context: .
       dockerfile: src/Dome.Server/Dome.Api/Dockerfile
+      args:
+        DOME_ENVIRONMENT: Test
       no_cache: true
     image: dome/server:local
     ports:

@@ -268,8 +268,6 @@ environment variables.
 | Component | Setting | Environment variable | Default |
 | --- | --- | --- | --- |
 | Server | `ConnectionStrings:Dome` | `ConnectionStrings__Dome` | Local app-data path in Development; `/var/lib/dome/dome.db` otherwise |
-| Server | `PostHog:ProjectToken` | `PostHog__ProjectToken` | Empty (telemetry is never sent) |
-| Server | `PostHog:HostUrl` | `PostHog__HostUrl` | `https://eu.i.posthog.com` |
 | Socket | `Docker:Endpoint` | `Docker__Endpoint` | `unix:///var/run/docker.sock` |
 | Socket | `Docker:Compose:WorkingRoot` | `Docker__Compose__WorkingRoot` | `/var/lib/dome/compose` |
 | Compose host | Docker socket mount source | `DOCKER_SOCKET_PATH` | `/var/run/docker.sock` |
@@ -287,9 +285,56 @@ docker compose up -d
 
 ### Telemetry
 
-DOME initializes the PostHog client when `PostHog:ProjectToken` is set, but it
-does not send any events yet. Telemetry is off by default; the
-`TelemetryEnabled` flag lives in the `SystemSettings` table.
+DOME can send anonymous usage statistics to PostHog so the maintainers can see
+how many installations, Sockets and Stacks are in use. Privacy is a priority for DOME, 
+so telemetry is **off by default**.
+
+The setting takes effect without a restart. Until a settings page exists, turn
+it on or off with:
+
+```sql
+UPDATE SystemSettings SET Value = 'True' WHERE Key = 'TelemetryEnabled';
+```
+
+When enabled, the Server sends the events below at startup and then every 24
+hours. Nothing else is tracked: no page views, no clicks and no API request
+logs.
+
+| Event | Extra properties | Purpose |
+| --- | --- | --- |
+| `instance_heartbeat` | `socket_count`, `stack_count` | Unique Server instances |
+| `socket_heartbeat` | `socket_id` | Unique Sockets (one event per Socket) |
+| `stack_heartbeat` | `stack_id` | Unique Stacks (one event per Stack) |
+
+Every event also carries these properties:
+
+| Property | Value |
+| --- | --- |
+| `distinct_id` | A random GUID generated on first start and stored as `InstallationId` in `SystemSettings`. It identifies the installation, not a person. |
+| `environment` | `Dev`, `Test` or `Release` (see below), so maintainers can filter out development usage. |
+| `app_version` | The DOME version, for example `0.5.0`. |
+
+`socket_id` and `stack_id` are the random GUIDs DOME generated for the record.
+Socket names and addresses, stack project names, compose files, container and
+image names, and host names are never sent. PostHog's SDK also adds
+`$lib`, `$lib_version`, `$is_server` and `$geoip_disable` to each event. The
+request still reaches PostHog from the Server's public IP address, as any
+HTTPS request does. DOME does not add the IP address to the event, and
+`$geoip_disable` asks PostHog not to derive a location from it.
+
+#### Environment
+
+The `environment` property is baked into the build:
+
+| Value | Where it comes from |
+| --- | --- |
+| `Dev` | Local runs (for example from Rider) and any build that does not set it |
+| `Test` | Local Docker builds with `dev.docker-compose.yml` |
+| `Release` | Images published from GitHub Releases |
+
+Every build contains the token, so a local or source build also sends events
+once `TelemetryEnabled` is `True`; its `Dev` or `Test` environment lets the
+maintainers filter that usage out.
 
 ## Persistence and backups
 

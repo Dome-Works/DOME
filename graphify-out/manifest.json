@@ -42,9 +42,9 @@
     "semantic_hash": ""
   },
   ".github/workflows/release.yml": {
-    "mtime": 1793011448.5727346,
-    "seen": 1793017882.7198458,
-    "ast_hash": "f5e51579917999218f7f00ebf9d60e73",
+    "mtime": 1793195594.830597,
+    "seen": 1793195605.8385909,
+    "ast_hash": "300db03329a36b9ef7a5e4a77060ff98",
     "semantic_hash": ""
   },
   ".github/workflows/scorecard.yml": {
@@ -66,15 +66,15 @@
     "semantic_hash": ""
   },
   "dev.docker-compose.yml": {
-    "mtime": 1793179757.3833048,
-    "seen": 1793193188.319443,
-    "ast_hash": "9f9d857f44dbcaf5b361f1493b3edfdb",
+    "mtime": 1793195594.83049,
+    "seen": 1793195605.838599,
+    "ast_hash": "60ed55dc0ae0b02f24f15ac867da38c7",
     "semantic_hash": ""
   },
   "docker-compose.yml": {
-    "mtime": 1793193181.8088453,
-    "seen": 1793193188.319444,
-    "ast_hash": "35d599a837ae97a028cd59743d9a49e8",
+    "mtime": 1793194942.794895,
+    "seen": 1793195082.174742,
+    "ast_hash": "7c29d8e25b1041f0a20d58003b993e57",
     "semantic_hash": ""
   },
   "global.json": {
@@ -426,9 +426,9 @@
     "semantic_hash": ""
   },
   "src/Dome.Server/Dome.Api/Dome.Api.csproj": {
-    "mtime": 1793193037.7071085,
-    "seen": 1793193188.3191931,
-    "ast_hash": "a6d30f1d2e5a74830d0a0d7f586f200b",
+    "mtime": 1793195594.8298492,
+    "seen": 1793195605.8383482,
+    "ast_hash": "d16bf1dbecab5bb4cced150c1329a23b",
     "semantic_hash": ""
   },
   "src/Dome.Server/Dome.Api/Endpoints/Devices/ContainerImageVersionCheckViewModel.cs": {
@@ -642,9 +642,9 @@
     "semantic_hash": ""
   },
   "src/Dome.Server/Dome.Api/Program.cs": {
-    "mtime": 1793193139.538643,
-    "seen": 1793193188.3192341,
-    "ast_hash": "076431d7c235adba7c3bc2e7075f40a1",
+    "mtime": 1793195594.8308942,
+    "seen": 1793195605.83839,
+    "ast_hash": "40581788c379e546269a0197c848417a",
     "semantic_hash": ""
   },
   "src/Dome.Server/Dome.Api/Properties/launchSettings.json": {
@@ -660,9 +660,9 @@
     "semantic_hash": ""
   },
   "src/Dome.Server/Dome.Api/appsettings.json": {
-    "mtime": 1793193083.8227844,
-    "seen": 1793193188.319238,
-    "ast_hash": "6e02caa0db32f05119fa057e34a4aee9",
+    "mtime": 1793194962.0117202,
+    "seen": 1793195082.1745338,
+    "ast_hash": "56495c6f26f4c2d06add8a07efe00eeb",
     "semantic_hash": ""
   },
   "src/Dome.Server/Dome.Business/AssemblyApplicationVersion.cs": {
@@ -1650,9 +1650,9 @@
     "semantic_hash": "9b31786b637be3c13978bec4c2330752"
   },
   "CHANGELOG.md": {
-    "mtime": 1793193181.807184,
-    "seen": 1793193188.319438,
-    "ast_hash": "6dbf7ac797380c6cec65df56431fd29f",
+    "mtime": 1793195594.831592,
+    "seen": 1793195605.838594,
+    "ast_hash": "1d60978401b3e196f05e4530c9a2fd73",
     "semantic_hash": ""
   },
   "CLAUDE.md": {
@@ -1668,9 +1668,9 @@
     "semantic_hash": ""
   },
   "README.md": {
-    "mtime": 1793193181.8051453,
-    "seen": 1793193188.3194408,
-    "ast_hash": "7f2b37973f5aa4db83827b339c098805",
+    "mtime": 1793195594.8312476,
+    "seen": 1793195605.838597,
+    "ast_hash": "151fd13d72468092da3eca49ca459825",
     "semantic_hash": ""
   },
   "SECURITY.md": {
@@ -1919,12 +1919,6 @@
     "ast_hash": "a08818f40cac075a295890cbdb57d626",
     "semantic_hash": ""
   },
-  "src/Dome.Server/Dome.Api/Telemetry/TelemetryMiddleware.cs": {
-    "mtime": 1793193083.7790296,
-    "seen": 1793193188.319236,
-    "ast_hash": "5f196632361bae8bab9aafbe71a4016e",
-    "semantic_hash": ""
-  },
   "src/Dome.Server/Dome.Business/Settings/ISystemSettingsService.cs": {
     "mtime": 1793193037.6740716,
     "seen": 1793193188.319259,
@@ -1995,6 +1989,18 @@
     "mtime": 1793179757.523259,
     "seen": 1793193188.3194041,
     "ast_hash": "5fc94b33a1b8f3b856eda679593059ac",
+    "semantic_hash": ""
+  },
+  "src/Dome.Server/Dome.Api/Telemetry/TelemetryReporter.cs": {
+    "mtime": 1793194962.0111837,
+    "seen": 1793195082.1745331,
+    "ast_hash": "9bb34aa11dbca9898f1d9324b1969f60",
+    "semantic_hash": ""
+  },
+  "src/Dome.Server/Dome.Api/Telemetry/TelemetryBuildInfo.cs": {
+    "mtime": 1793195594.8293817,
+    "seen": 1793195605.838392,
+    "ast_hash": "b9d1f28f6f4e54bbe061ccc7ff7c8879",
     "semantic_hash": ""
   }
 }
