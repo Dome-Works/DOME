@@ -54,6 +54,21 @@ namespace Dome.Domain.Migrations
                     b.ToTable("ImageVersionCaches", (string)null);
                 });
 
+            modelBuilder.Entity("Dome.Domain.Settings.SystemSetting", b =>
+                {
+                    b.Property<string>("Key")
+                        .HasMaxLength(128)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Value")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Key");
+
+                    b.ToTable("SystemSettings", (string)null);
+                });
+
             modelBuilder.Entity("Dome.Domain.Sockets.Socket", b =>
                 {
                     b.Property<Guid>("Id")

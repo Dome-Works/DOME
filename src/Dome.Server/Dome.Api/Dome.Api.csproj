@@ -3,6 +3,7 @@
   <ItemGroup>
     <PackageReference Include="FastEndpoints" />
     <PackageReference Include="FastEndpoints.Swagger" />
+    <PackageReference Include="PostHog.AspNetCore" />
   </ItemGroup>
 
   <ItemGroup>

@@ -3,6 +3,7 @@ using FastEndpoints.Swagger;
 using Dome.Business;
 using Dome.Domain;
 using Dome.Domain.Seeding;
+using PostHog;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,6 +21,11 @@ builder.Services.AddFastEndpoints();
 builder.Services.SwaggerDocument();
 builder.Services.AddDomeBusiness();
 builder.Services.AddDomeDomain(builder.Configuration);
+
+if (!string.IsNullOrWhiteSpace(builder.Configuration["PostHog:ProjectToken"]))
+{
+    builder.AddPostHog();
+}
 
 var app = builder.Build();
 

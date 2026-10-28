@@ -268,6 +268,8 @@ environment variables.
 | Component | Setting | Environment variable | Default |
 | --- | --- | --- | --- |
 | Server | `ConnectionStrings:Dome` | `ConnectionStrings__Dome` | Local app-data path in Development; `/var/lib/dome/dome.db` otherwise |
+| Server | `PostHog:ProjectToken` | `PostHog__ProjectToken` | Empty (telemetry is never sent) |
+| Server | `PostHog:HostUrl` | `PostHog__HostUrl` | `https://eu.i.posthog.com` |
 | Socket | `Docker:Endpoint` | `Docker__Endpoint` | `unix:///var/run/docker.sock` |
 | Socket | `Docker:Compose:WorkingRoot` | `Docker__Compose__WorkingRoot` | `/var/lib/dome/compose` |
 | Compose host | Docker socket mount source | `DOCKER_SOCKET_PATH` | `/var/run/docker.sock` |
@@ -282,6 +284,12 @@ export DOCKER_SOCKET_PATH=/path/to/docker.sock
 export DOME_COMPOSE_ROOT=/path/to/dome/compose
 docker compose up -d
 ```
+
+### Telemetry
+
+DOME initializes the PostHog client when `PostHog:ProjectToken` is set, but it
+does not send any events yet. Telemetry is off by default; the
+`TelemetryEnabled` flag lives in the `SystemSettings` table.
 
 ## Persistence and backups
 

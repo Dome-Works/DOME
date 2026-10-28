@@ -1,4 +1,5 @@
 using Dome.Domain.Images;
+using Dome.Domain.Settings;
 using Dome.Domain.Sockets;
 using Dome.Domain.Stacks;
 using Microsoft.EntityFrameworkCore;
@@ -17,6 +18,8 @@ public sealed class DomeDbContext : DbContext
     public DbSet<Stack> Stacks => Set<Stack>();
 
     public DbSet<ImageVersionCache> ImageVersionCaches => Set<ImageVersionCache>();
+
+    public DbSet<SystemSetting> SystemSettings => Set<SystemSetting>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

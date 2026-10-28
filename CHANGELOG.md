@@ -5,6 +5,11 @@ application. Changes are grouped by release.
 
 ## [Unreleased]
 
+### Added
+
+- PostHog client setup (no events are sent yet) and a new `SystemSettings`
+  table that holds the telemetry flag, off by default.
+
 ## [v0.5.0] - 2026-10-28
 
 ### Added

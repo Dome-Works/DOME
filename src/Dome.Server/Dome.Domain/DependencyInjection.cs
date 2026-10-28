@@ -1,5 +1,6 @@
 using Dome.Domain.Images;
 using Dome.Domain.Seeding;
+using Dome.Domain.Settings;
 using Dome.Domain.Sockets;
 using Dome.Domain.Stacks;
 using Dome.Domain.Sqlite;
@@ -25,6 +26,7 @@ public static class DependencyInjection
         services.AddScoped<ISocketRepository, SocketRepository>();
         services.AddScoped<IStackRepository, StackRepository>();
         services.AddScoped<IImageVersionCacheRepository, ImageVersionCacheRepository>();
+        services.AddScoped<ISystemSettingRepository, SystemSettingRepository>();
 
         return services;
     }
