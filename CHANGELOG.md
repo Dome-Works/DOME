@@ -5,6 +5,8 @@ application. Changes are grouped by release.
 
 ## [Unreleased]
 
+## [v0.5.0] - 2026-10-28
+
 ### Added
 
 - Delete a container from its details pane. A confirmation dialog warns that
