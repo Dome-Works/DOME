@@ -311,7 +311,7 @@ Every event also carries these properties:
 | Property | Value |
 | --- | --- |
 | `distinct_id` | A random GUID generated on first start and stored as `InstallationId` in `SystemSettings`. It identifies the installation, not a person. |
-| `environment` | `Dev`, `Test` or `Release` (see below), so maintainers can filter out development usage. |
+| `environment` | `Development`, `Test` or `Release` (see below), so maintainers can filter out development usage. |
 | `app_version` | The DOME version, for example `0.5.0`. |
 
 `socket_id` and `stack_id` are the random GUIDs DOME generated for the record.
@@ -328,12 +328,12 @@ The `environment` property is baked into the build:
 
 | Value | Where it comes from |
 | --- | --- |
-| `Dev` | Local runs (for example from Rider) and any build that does not set it |
+| `Development` | Local runs (for example from Rider) and any build that does not set it |
 | `Test` | Local Docker builds with `dev.docker-compose.yml` |
 | `Release` | Images published from GitHub Releases |
 
 Every build contains the token, so a local or source build also sends events
-once `TelemetryEnabled` is `True`; its `Dev` or `Test` environment lets the
+once `TelemetryEnabled` is `True`; its `Development` or `Test` environment lets the
 maintainers filter that usage out.
 
 ## Persistence and backups

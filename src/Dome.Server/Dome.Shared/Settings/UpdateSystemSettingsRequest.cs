@@ -2,5 +2,8 @@ namespace Dome.Shared.Settings;
 
 public sealed record UpdateSystemSettingsRequest
 {
-    public bool TelemetryEnabled { get; init; }
+    // Null fields are left unchanged.
+    public bool? TelemetryEnabled { get; init; }
+
+    public bool? OnboardingCompleted { get; init; }
 }

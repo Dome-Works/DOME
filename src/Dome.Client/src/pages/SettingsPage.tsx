@@ -1,8 +1,11 @@
 import { useEffect, useState } from 'react'
 import { Info } from 'lucide-react'
-import { toast } from 'sonner'
+import { useNavigate } from 'react-router'
 
-import { fetchSettings, updateSettings } from '@/api/settings'
+import { fetchSettings } from '@/api/settings'
+import { AboutCard } from '@/components/settings/AboutCard'
+import { TelemetryToggle } from '@/components/settings/TelemetryToggle'
+import { Button } from '@/components/ui/button'
 import {
   Card,
   CardContent,
@@ -10,12 +13,8 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
-import { Label } from '@/components/ui/label'
 import { Skeleton } from '@/components/ui/skeleton'
-import { Switch } from '@/components/ui/switch'
 import type { SystemSettings } from '@/types/settings'
-
-const clientVersion = __APP_VERSION__
 
 type SettingsState =
   | { status: 'loading' }
@@ -23,6 +22,7 @@ type SettingsState =
   | { status: 'error'; message: string }
 
 export function SettingsPage() {
+  const navigate = useNavigate()
   const [state, setState] = useState<SettingsState>({ status: 'loading' })
 
   useEffect(() => {
@@ -39,20 +39,8 @@ export function SettingsPage() {
     return () => controller.abort()
   }, [])
 
-  async function handleTelemetryChange(
-    settings: SystemSettings,
-    telemetryEnabled: boolean,
-  ) {
-    setState({ status: 'ready', settings: { ...settings, telemetryEnabled } })
-    try {
-      const saved = await updateSettings({ telemetryEnabled })
-      setState({ status: 'ready', settings: saved })
-    } catch (error) {
-      setState({ status: 'ready', settings })
-      toast.error(
-        error instanceof Error ? error.message : 'Failed to update settings',
-      )
-    }
+  function setSettings(settings: SystemSettings) {
+    setState({ status: 'ready', settings })
   }
 
   return (
@@ -84,44 +72,28 @@ export function SettingsPage() {
               </div>
             </CardHeader>
             <CardContent>
-              <div className="flex items-center justify-between gap-4">
-                <div className="space-y-1">
-                  <Label htmlFor="telemetry">Anonymous usage tracking</Label>
-                  <p className="text-sm text-muted-foreground">
-                    Send a daily anonymous heartbeat with the version and the
-                    number of sockets and stacks.
-                  </p>
-                </div>
-                <Switch
-                  id="telemetry"
-                  checked={state.settings.telemetryEnabled}
-                  onCheckedChange={(checked) =>
-                    void handleTelemetryChange(state.settings, checked)
-                  }
-                />
-              </div>
+              <TelemetryToggle
+                settings={state.settings}
+                onSettingsChange={setSettings}
+              />
             </CardContent>
           </Card>
 
           <Card className="max-w-2xl">
             <CardHeader>
-              <CardTitle>About</CardTitle>
+              <CardTitle>Onboarding</CardTitle>
+              <CardDescription>
+                Walk through the welcome steps shown on first launch again.
+              </CardDescription>
             </CardHeader>
             <CardContent>
-              <dl className="grid grid-cols-[10rem_1fr] gap-y-2 text-sm">
-                <dt className="text-muted-foreground">Server version</dt>
-                <dd>{state.settings.version}</dd>
-                <dt className="text-muted-foreground">Client version</dt>
-                <dd>{clientVersion}</dd>
-                <dt className="text-muted-foreground">Environment</dt>
-                <dd>{state.settings.environment}</dd>
-                <dt className="text-muted-foreground">Installation ID</dt>
-                <dd className="font-mono break-all">
-                  {state.settings.installationId}
-                </dd>
-              </dl>
+              <Button variant="outline" onClick={() => navigate('/onboarding')}>
+                Re-run onboarding
+              </Button>
             </CardContent>
           </Card>
+
+          <AboutCard settings={state.settings} />
         </>
       )}
     </div>

@@ -12,8 +12,12 @@ application. Changes are grouped by release.
   toggled without a restart. When enabled, the Server sends a daily heartbeat, 
   tracking the amount of unique users, stacks and sockets through an anonymous Id. Every event
   carries `distinct_id` (a random installation GUID generated on installation), `environment`
-  (`Dev`, `Test` or `Release`) and `app_version`. Data that may identify the user
+  (`Development`, `Test` or `Release`) and `app_version`. Data that may identify the user
   such as ip's, networks, stack-contents or user-data will never be sent. See the README for details.
+- First-launch onboarding that welcomes new users, links to GitHub Issues and
+  explains anonymous usage tracking, with the option to enable it. Completion is
+  stored as a new `OnboardingCompleted` system setting, so existing installations
+  see it once after upgrading. It can be re-run from Settings.
 
 ## [v0.5.0] - 2026-10-28
 

@@ -85,16 +85,20 @@ public sealed class DatabaseInitializerTests
             Assert.Equal(bool.FalseString, await GetSettingAsync(provider, SystemSettingKeys.TelemetryEnabled));
             var installationId = await GetSettingAsync(provider, SystemSettingKeys.InstallationId);
             Assert.True(Guid.TryParse(installationId, out _));
+            Assert.Equal(bool.FalseString, await GetSettingAsync(provider, SystemSettingKeys.OnboardingCompleted));
 
             await using (var scope = provider.CreateAsyncScope())
             {
                 await scope.ServiceProvider.GetRequiredService<ISystemSettingRepository>()
                     .SetAsync(SystemSettingKeys.TelemetryEnabled, bool.TrueString, TestContext.Current.CancellationToken);
+                await scope.ServiceProvider.GetRequiredService<ISystemSettingRepository>()
+                    .SetAsync(SystemSettingKeys.OnboardingCompleted, bool.TrueString, TestContext.Current.CancellationToken);
             }
 
             await InitializeAsync(provider);
             Assert.Equal(bool.TrueString, await GetSettingAsync(provider, SystemSettingKeys.TelemetryEnabled));
             Assert.Equal(installationId, await GetSettingAsync(provider, SystemSettingKeys.InstallationId));
+            Assert.Equal(bool.TrueString, await GetSettingAsync(provider, SystemSettingKeys.OnboardingCompleted));
         }
         finally
         {

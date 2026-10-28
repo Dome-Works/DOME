@@ -20,6 +20,7 @@ internal sealed class DatabaseInitializer : IDatabaseInitializer
         {
             [SystemSettingKeys.TelemetryEnabled] = bool.FalseString,
             [SystemSettingKeys.InstallationId] = Guid.NewGuid().ToString(),
+            [SystemSettingKeys.OnboardingCompleted] = bool.FalseString,
         };
         var existing = await _db.SystemSettings
             .Where(setting => defaults.Keys.Contains(setting.Key))

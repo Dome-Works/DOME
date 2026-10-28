@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <DomeEnvironment Condition="'$(DomeEnvironment)' == ''">Dev</DomeEnvironment>
+    <DomeEnvironment Condition="'$(DomeEnvironment)' == ''">Development</DomeEnvironment>
   </PropertyGroup>
 
   <ItemGroup>

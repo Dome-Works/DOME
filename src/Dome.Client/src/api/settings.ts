@@ -19,7 +19,9 @@ export async function fetchSettings(
 }
 
 export async function updateSettings(
-  request: Pick<SystemSettings, 'telemetryEnabled'>,
+  request: Partial<
+    Pick<SystemSettings, 'telemetryEnabled' | 'onboardingCompleted'>
+  >,
 ): Promise<SystemSettings> {
   const response = await fetch('/api/settings', {
     method: 'PUT',

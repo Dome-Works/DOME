@@ -2,7 +2,7 @@
 FROM mcr.microsoft.com/dotnet/sdk:10.0@sha256:35d40304542c8689331f8cab17c65926cdf48fe711e289321d71924b230a7d29 AS build
 ARG VERSION
 # Telemetry environment label, baked into the assembly (not runtime configuration).
-ARG DOME_ENVIRONMENT=Dev
+ARG DOME_ENVIRONMENT=Development
 WORKDIR /build
 
 COPY Directory.Build.props Directory.Packages.props global.json ./

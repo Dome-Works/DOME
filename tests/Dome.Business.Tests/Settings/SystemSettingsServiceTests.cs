@@ -43,4 +43,31 @@ public sealed class SystemSettingsServiceTests
         A.CallTo(() => repository.SetAsync(SystemSettingKeys.TelemetryEnabled, expected, A<CancellationToken>._))
             .MustHaveHappenedOnceExactly();
     }
+
+    [Theory]
+    [InlineData("True", true)]
+    [InlineData("False", false)]
+    [InlineData(null, false)]
+    [InlineData("yes", false)]
+    public async Task GetOnboardingCompletedAsync_is_true_only_for_true(string? completed, bool expected)
+    {
+        var repository = A.Fake<ISystemSettingRepository>();
+        A.CallTo(() => repository.GetAsync(SystemSettingKeys.OnboardingCompleted, A<CancellationToken>._))
+            .Returns(completed);
+
+        var result = await new SystemSettingsService(repository).GetOnboardingCompletedAsync(TestContext.Current.CancellationToken);
+
+        Assert.Equal(expected, result);
+    }
+
+    [Fact]
+    public async Task SetOnboardingCompletedAsync_stores_the_flag()
+    {
+        var repository = A.Fake<ISystemSettingRepository>();
+
+        await new SystemSettingsService(repository).SetOnboardingCompletedAsync(true, TestContext.Current.CancellationToken);
+
+        A.CallTo(() => repository.SetAsync(SystemSettingKeys.OnboardingCompleted, "True", A<CancellationToken>._))
+            .MustHaveHappenedOnceExactly();
+    }
 }

@@ -27,12 +27,23 @@ public sealed class UpdateSystemSettingsEndpoint : Endpoint<UpdateSystemSettings
 
     public override async Task HandleAsync(UpdateSystemSettingsRequest req, CancellationToken ct)
     {
-        await _settingsService.SetTelemetryEnabledAsync(req.TelemetryEnabled, ct);
+        if (req.TelemetryEnabled is { } telemetryEnabled)
+        {
+            await _settingsService.SetTelemetryEnabledAsync(telemetryEnabled, ct);
+        }
+
+        if (req.OnboardingCompleted is { } completed)
+        {
+            await _settingsService.SetOnboardingCompletedAsync(completed, ct);
+        }
+
         var telemetry = await _settingsService.GetTelemetryAsync(ct);
+        var onboardingCompleted = await _settingsService.GetOnboardingCompletedAsync(ct);
         await Send.OkAsync(
             new SystemSettingsResponse
             {
                 TelemetryEnabled = telemetry.Enabled,
+                OnboardingCompleted = onboardingCompleted,
                 InstallationId = telemetry.InstallationId,
                 Version = _applicationVersion.Current,
                 Environment = TelemetryBuildInfo.Environment

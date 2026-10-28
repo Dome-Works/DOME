@@ -12,7 +12,7 @@ internal static class TelemetryBuildInfo
 
     public const string ProjectToken = "phc_wQy7jJafVGJFJzFLf6J5vfcLj7XqP4DyZKNu5kWhdzoJ";
 
-    public static string Environment { get; } = Read("DomeEnvironment") is { Length: > 0 } value ? value : "Dev";
+    public static string Environment { get; } = Read("DomeEnvironment") is { Length: > 0 } value ? value : "Development";
 
     private static string Read(string key)
         => typeof(TelemetryBuildInfo).Assembly

@@ -24,4 +24,13 @@ internal sealed class SystemSettingsService : ISystemSettingsService
 
     public Task SetTelemetryEnabledAsync(bool enabled, CancellationToken cancellationToken = default)
         => _repository.SetAsync(SystemSettingKeys.TelemetryEnabled, enabled.ToString(), cancellationToken);
+
+    public async Task<bool> GetOnboardingCompletedAsync(CancellationToken cancellationToken = default)
+    {
+        var completed = await _repository.GetAsync(SystemSettingKeys.OnboardingCompleted, cancellationToken);
+        return bool.TryParse(completed, out var parsed) && parsed;
+    }
+
+    public Task SetOnboardingCompletedAsync(bool completed, CancellationToken cancellationToken = default)
+        => _repository.SetAsync(SystemSettingKeys.OnboardingCompleted, completed.ToString(), cancellationToken);
 }

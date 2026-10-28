@@ -28,10 +28,12 @@ public sealed class GetSystemSettingsEndpoint : EndpointWithoutRequest<SystemSet
     public override async Task HandleAsync(CancellationToken ct)
     {
         var telemetry = await _settingsService.GetTelemetryAsync(ct);
+        var onboardingCompleted = await _settingsService.GetOnboardingCompletedAsync(ct);
         await Send.OkAsync(
             new SystemSettingsResponse
             {
                 TelemetryEnabled = telemetry.Enabled,
+                OnboardingCompleted = onboardingCompleted,
                 InstallationId = telemetry.InstallationId,
                 Version = _applicationVersion.Current,
                 Environment = TelemetryBuildInfo.Environment
