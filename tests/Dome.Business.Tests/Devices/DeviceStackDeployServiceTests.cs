@@ -249,7 +249,7 @@ public sealed class DeviceStackDeployServiceTests
         Assert.True(result.IsSuccess);
         A.CallTo(() => socketApi.DeleteContainersAsync(
                 A<DeleteContainersRequest>.That.Matches(r =>
-                    r.RemoveVolumes && r.ContainerIds.SequenceEqual(new[] { "a" })),
+                    r.RemoveVolumes && r.ContainerIds.Count == 1 && r.ContainerIds[0] == "a"),
                 A<CancellationToken>._))
             .MustHaveHappenedOnceExactly();
     }
