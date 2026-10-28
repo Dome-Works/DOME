@@ -25,7 +25,7 @@ public sealed class SystemSettingsServiceTests
         A.CallTo(() => repository.GetAsync(SystemSettingKeys.InstallationId, A<CancellationToken>._))
             .Returns(installationId);
 
-        var result = await new SystemSettingsService(repository).GetTelemetryAsync();
+        var result = await new SystemSettingsService(repository).GetTelemetryAsync(TestContext.Current.CancellationToken);
 
         Assert.Equal(expected, result.Enabled);
         Assert.Equal(installationId ?? string.Empty, result.InstallationId);
@@ -38,7 +38,7 @@ public sealed class SystemSettingsServiceTests
     {
         var repository = A.Fake<ISystemSettingRepository>();
 
-        await new SystemSettingsService(repository).SetTelemetryEnabledAsync(enabled);
+        await new SystemSettingsService(repository).SetTelemetryEnabledAsync(enabled, TestContext.Current.CancellationToken);
 
         A.CallTo(() => repository.SetAsync(SystemSettingKeys.TelemetryEnabled, expected, A<CancellationToken>._))
             .MustHaveHappenedOnceExactly();

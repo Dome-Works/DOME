@@ -17,7 +17,7 @@ public sealed class DeviceContainerCommandServiceTests
     {
         var service = CreateService(socket: null, socketApi: A.Fake<IDomeSocketApi>());
 
-        var result = await service.StartAsync("local", "container-1");
+        var result = await service.StartAsync("local", "container-1", TestContext.Current.CancellationToken);
 
         Assert.True(result.IsDeviceNotFound);
         Assert.False(result.IsSuccess);
@@ -29,7 +29,7 @@ public sealed class DeviceContainerCommandServiceTests
         var socketApi = A.Fake<IDomeSocketApi>();
         var service = CreateService(CreateSocket(), socketApi);
 
-        var result = await service.StartAsync("local", "container-1");
+        var result = await service.StartAsync("local", "container-1", TestContext.Current.CancellationToken);
 
         Assert.True(result.IsSuccess);
         A.CallTo(() => socketApi.StartContainerAsync("container-1", A<CancellationToken>._))
@@ -42,7 +42,7 @@ public sealed class DeviceContainerCommandServiceTests
         var socketApi = A.Fake<IDomeSocketApi>();
         var service = CreateService(CreateSocket(), socketApi);
 
-        var result = await service.StopAsync("local", "container-1");
+        var result = await service.StopAsync("local", "container-1", TestContext.Current.CancellationToken);
 
         Assert.True(result.IsSuccess);
         A.CallTo(() => socketApi.StopContainerAsync("container-1", A<CancellationToken>._))
@@ -58,7 +58,7 @@ public sealed class DeviceContainerCommandServiceTests
 
         var service = CreateService(CreateSocket(), socketApi);
 
-        var result = await service.StartAsync("local", "missing");
+        var result = await service.StartAsync("local", "missing", TestContext.Current.CancellationToken);
 
         Assert.True(result.IsContainerNotFound);
         Assert.False(result.IsSuccess);

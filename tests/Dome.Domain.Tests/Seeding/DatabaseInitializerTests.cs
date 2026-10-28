@@ -89,7 +89,7 @@ public sealed class DatabaseInitializerTests
             await using (var scope = provider.CreateAsyncScope())
             {
                 await scope.ServiceProvider.GetRequiredService<ISystemSettingRepository>()
-                    .SetAsync(SystemSettingKeys.TelemetryEnabled, bool.TrueString);
+                    .SetAsync(SystemSettingKeys.TelemetryEnabled, bool.TrueString, TestContext.Current.CancellationToken);
             }
 
             await InitializeAsync(provider);
