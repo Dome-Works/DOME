@@ -40,8 +40,13 @@ create, edit, and deploy Compose stacks.
 - Container state, current image, and total mounted-volume size
 - Update icon on container nodes when a newer public Docker Hub or GHCR image tag is available
 - Start and stop containers from the container details panel
+- Delete containers from their details panel, optionally removing anonymous
+  volumes; running containers are force-stopped
 - Create, edit and deploy Compose stacks from the Diagrams page
 - Stack details with managed or read-only status and total used volume size
+- Delete stacks from their details panel. Managed stacks are brought down and
+  removed; unmanaged stack containers are force-deleted. Volumes can
+  optionally be removed
 - Volume name, mount destination, size and read-only/read-write details
 - Multi-host support through one Socket agent per Docker host
 - SQLite persistence with automatic EF Core migration at Server startup
@@ -394,7 +399,6 @@ Restart Rider after updating the certificate.
 - No remote Docker Engine `tcp://` support
 - Networks and arbitrary container-to-container dependencies are not yet visualized
 - Compose stacks discovered from Docker are read-only and cannot be edited or deployed
-- Managed stacks cannot be deleted from the UI
 - Image version checks are anonymous and only cover Docker Hub and public GHCR.
   Other registries, private images, and `:latest` tags that have not moved show
   no update icon. Update status is cached for 24 hours.
