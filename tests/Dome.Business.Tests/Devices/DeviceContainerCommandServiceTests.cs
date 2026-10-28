@@ -69,7 +69,7 @@ public sealed class DeviceContainerCommandServiceTests
     {
         var service = CreateService(socket: null, socketApi: A.Fake<IDomeSocketApi>());
 
-        var result = await service.DeleteAsync("local", "container-1", removeVolumes: false);
+        var result = await service.DeleteAsync("local", "container-1", removeVolumes: false, TestContext.Current.CancellationToken);
 
         Assert.True(result.IsDeviceNotFound);
     }
@@ -80,12 +80,12 @@ public sealed class DeviceContainerCommandServiceTests
         var socketApi = FakeDeleteResult(DeleteContainerStatus.Deleted);
         var service = CreateService(CreateSocket(), socketApi);
 
-        var result = await service.DeleteAsync("local", "container-1", removeVolumes: true);
+        var result = await service.DeleteAsync("local", "container-1", removeVolumes: true, TestContext.Current.CancellationToken);
 
         Assert.True(result.IsSuccess);
         A.CallTo(() => socketApi.DeleteContainersAsync(
                 A<DeleteContainersRequest>.That.Matches(r =>
-                    r.ContainerIds.SequenceEqual(new[] { "container-1" }) && r.RemoveVolumes),
+                    r.ContainerIds.Count == 1 && r.ContainerIds[0] == "container-1" && r.RemoveVolumes),
                 A<CancellationToken>._))
             .MustHaveHappenedOnceExactly();
     }
@@ -95,7 +95,7 @@ public sealed class DeviceContainerCommandServiceTests
     {
         var service = CreateService(CreateSocket(), FakeDeleteResult(DeleteContainerStatus.NotFound));
 
-        var result = await service.DeleteAsync("local", "container-1", removeVolumes: false);
+        var result = await service.DeleteAsync("local", "container-1", removeVolumes: false, TestContext.Current.CancellationToken);
 
         Assert.True(result.IsContainerNotFound);
     }
@@ -106,7 +106,7 @@ public sealed class DeviceContainerCommandServiceTests
         var service = CreateService(CreateSocket(), FakeDeleteResult(DeleteContainerStatus.Failed, "boom"));
 
         var ex = await Assert.ThrowsAsync<InvalidOperationException>(
-            () => service.DeleteAsync("local", "container-1", removeVolumes: false));
+            () => service.DeleteAsync("local", "container-1", removeVolumes: false, TestContext.Current.CancellationToken));
 
         Assert.Equal("boom", ex.Message);
     }
