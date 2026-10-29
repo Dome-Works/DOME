@@ -36,15 +36,15 @@
     "semantic_hash": ""
   },
   ".github/workflows/docker.yml": {
-    "mtime": 1793011448.5724313,
-    "seen": 1793017882.719845,
-    "ast_hash": "74e2c15eacea85664c1ba8d47fad8e16",
+    "mtime": 1793282855.0580382,
+    "seen": 1793282931.185258,
+    "ast_hash": "f2f6276ce978cd2c04d884bc34d78d5e",
     "semantic_hash": ""
   },
   ".github/workflows/release.yml": {
-    "mtime": 1793204818.5698316,
-    "seen": 1793205218.824098,
-    "ast_hash": "300db03329a36b9ef7a5e4a77060ff98",
+    "mtime": 1793282855.075118,
+    "seen": 1793282931.185259,
+    "ast_hash": "6d4644cb8702112737aaac6bd34b510e",
     "semantic_hash": ""
   },
   ".github/workflows/scorecard.yml": {
@@ -96,9 +96,9 @@
     "semantic_hash": ""
   },
   "src/Dome.Client/package.json": {
-    "mtime": 1793204818.6239116,
-    "seen": 1793205218.8237922,
-    "ast_hash": "c3713f4c9430b55753d0d5947b0e68a7",
+    "mtime": 1793281181.4532151,
+    "seen": 1793282931.184934,
+    "ast_hash": "87747cf0975cf7b3d92c769e42f650be",
     "semantic_hash": ""
   },
   "src/Dome.Client/src/App.tsx": {
@@ -1650,9 +1650,9 @@
     "semantic_hash": "9b31786b637be3c13978bec4c2330752"
   },
   "CHANGELOG.md": {
-    "mtime": 1793204818.5728285,
-    "seen": 1793205218.824102,
-    "ast_hash": "c7f61618fb7976808b4ee61891862fdb",
+    "mtime": 1793281181.4291384,
+    "seen": 1793282931.1852632,
+    "ast_hash": "890205de06ca907e29cd6ae76016cb95",
     "semantic_hash": ""
   },
   "CLAUDE.md": {
@@ -1668,9 +1668,9 @@
     "semantic_hash": ""
   },
   "README.md": {
-    "mtime": 1793204818.5800185,
-    "seen": 1793205218.824105,
-    "ast_hash": "5f6597dd0b5e87443f47df5cda60c877",
+    "mtime": 1793262669.8507679,
+    "seen": 1793282931.185266,
+    "ast_hash": "d3638ddbcef5e11e14249f2852d80d5e",
     "semantic_hash": ""
   },
   "SECURITY.md": {
@@ -1992,9 +1992,9 @@
     "semantic_hash": ""
   },
   "src/Dome.Server/Dome.Api/Telemetry/TelemetryReporter.cs": {
-    "mtime": 1793204818.680273,
-    "seen": 1793205218.823901,
-    "ast_hash": "9bb34aa11dbca9898f1d9324b1969f60",
+    "mtime": 1793262669.8502507,
+    "seen": 1793282931.185048,
+    "ast_hash": "643a07fd8976701fd7269e33fd552619",
     "semantic_hash": ""
   },
   "src/Dome.Server/Dome.Api/Telemetry/TelemetryBuildInfo.cs": {

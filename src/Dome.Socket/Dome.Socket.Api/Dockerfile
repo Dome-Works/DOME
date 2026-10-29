@@ -1,5 +1,5 @@
 # Build context: repository root
-FROM mcr.microsoft.com/dotnet/sdk:10.0@sha256:35d40304542c8689331f8cab17c65926cdf48fe711e289321d71924b230a7d29 AS build
+FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:10.0@sha256:35d40304542c8689331f8cab17c65926cdf48fe711e289321d71924b230a7d29 AS build
 ARG VERSION
 WORKDIR /build
 
@@ -17,13 +17,15 @@ RUN if [ -n "$VERSION" ]; then \
         -c Release \
         -o /app/publish \
         --no-restore \
+        /p:UseAppHost=false \
         /p:Version="$VERSION" \
         /p:InformationalVersion="$VERSION"; \
     else \
       dotnet publish src/Dome.Socket/Dome.Socket.Api/Dome.Socket.Api.csproj \
         -c Release \
         -o /app/publish \
-        --no-restore; \
+        --no-restore \
+        /p:UseAppHost=false; \
     fi
 
 FROM mcr.microsoft.com/dotnet/aspnet:10.0@sha256:2d584d8147faddb0d678c5748d47953e5b8e18621ed4fb7049a91381d9d7746f AS final
