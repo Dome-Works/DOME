@@ -4,3 +4,6 @@
 .git/
 .github/
 src/Dome.Client/
+graphify-out/
+tests/
+TestResults/
