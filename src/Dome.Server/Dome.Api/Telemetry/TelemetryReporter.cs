@@ -7,8 +7,8 @@ using PostHog;
 namespace Dome.Api.Telemetry;
 
 /// <summary>
-/// Sends daily heartbeat events so PostHog can count unique Server instances,
-/// Sockets and Stacks per week. Which data is sent is documented in the README.
+/// Sends a daily heartbeat event so PostHog can count unique Server instances
+/// and read how many Sockets and Stacks each one manages. Which data is sent is documented in the README.
 /// </summary>
 public sealed class TelemetryReporter : BackgroundService
 {
@@ -70,26 +70,17 @@ public sealed class TelemetryReporter : BackgroundService
                 .GetRequiredService<ISocketRepository>()
                 .ListAsync(cancellationToken);
             var stackRepository = scope.ServiceProvider.GetRequiredService<IStackRepository>();
-            var stacks = new List<Stack>();
+            var stacksAmount = 0;
             foreach (var socket in sockets)
             {
-                stacks.AddRange(await stackRepository.ListBySocketIdAsync(socket.Id, cancellationToken));
+                stacksAmount += (await stackRepository.ListBySocketIdAsync(socket.Id, cancellationToken)).Count;
             }
 
             Capture(telemetry.InstallationId, "instance_heartbeat", new()
             {
-                ["socket_count"] = sockets.Count,
-                ["stack_count"] = stacks.Count,
+                ["socketsAmount"] = sockets.Count,
+                ["stacksAmount"] = stacksAmount,
             });
-            foreach (var socket in sockets)
-            {
-                Capture(telemetry.InstallationId, "socket_heartbeat", new() { ["socket_id"] = socket.Id });
-            }
-
-            foreach (var stack in stacks)
-            {
-                Capture(telemetry.InstallationId, "stack_heartbeat", new() { ["stack_id"] = stack.Id });
-            }
         }
         catch (Exception exception) when (exception is not OperationCanceledException)
         {

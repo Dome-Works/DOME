@@ -295,15 +295,13 @@ First-launch onboarding explains telemetry and lets you choose whether to
 enable it. Change the setting any time from **Settings**; it takes effect
 without a restart. You can reopen onboarding from Settings.
 
-When enabled, the Server sends the events below at startup and then every 24
+When enabled, the Server sends the event below at startup and then every 24
 hours. Nothing else is tracked: no page views, no clicks and no API request
 logs.
 
 | Event | Extra properties | Purpose |
 | --- | --- | --- |
-| `instance_heartbeat` | `socket_count`, `stack_count` | Unique Server instances |
-| `socket_heartbeat` | `socket_id` | Unique Sockets (one event per Socket) |
-| `stack_heartbeat` | `stack_id` | Unique Stacks (one event per Stack) |
+| `instance_heartbeat` | `socketsAmount`, `stacksAmount` | Unique Server instances and the number of Sockets and Stacks they manage |
 
 Every event also carries these properties:
 
