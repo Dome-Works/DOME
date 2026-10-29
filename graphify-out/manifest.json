@@ -42,9 +42,9 @@
     "semantic_hash": ""
   },
   ".github/workflows/release.yml": {
-    "mtime": 1793204818.5698316,
-    "seen": 1793205218.824098,
-    "ast_hash": "300db03329a36b9ef7a5e4a77060ff98",
+    "mtime": 1793280827.8096611,
+    "seen": 1793280907.984849,
+    "ast_hash": "f6376068c5773416b11c0be7e2e0c6a0",
     "semantic_hash": ""
   },
   ".github/workflows/scorecard.yml": {
@@ -96,9 +96,9 @@
     "semantic_hash": ""
   },
   "src/Dome.Client/package.json": {
-    "mtime": 1793204818.6239116,
-    "seen": 1793205218.8237922,
-    "ast_hash": "c3713f4c9430b55753d0d5947b0e68a7",
+    "mtime": 1793262268.224678,
+    "seen": 1793280907.984517,
+    "ast_hash": "3f9dfd86a09ad5a2f642cb29ac7aace2",
     "semantic_hash": ""
   },
   "src/Dome.Client/src/App.tsx": {
@@ -1650,9 +1650,9 @@
     "semantic_hash": "9b31786b637be3c13978bec4c2330752"
   },
   "CHANGELOG.md": {
-    "mtime": 1793204818.5728285,
-    "seen": 1793205218.824102,
-    "ast_hash": "c7f61618fb7976808b4ee61891862fdb",
+    "mtime": 1793262268.2110863,
+    "seen": 1793280907.984852,
+    "ast_hash": "ef43cbde8aeea0abbe8733d5478e9080",
     "semantic_hash": ""
   },
   "CLAUDE.md": {
@@ -1668,9 +1668,9 @@
     "semantic_hash": ""
   },
   "README.md": {
-    "mtime": 1793204818.5800185,
-    "seen": 1793205218.824105,
-    "ast_hash": "5f6597dd0b5e87443f47df5cda60c877",
+    "mtime": 1793262669.8507679,
+    "seen": 1793280907.984855,
+    "ast_hash": "d3638ddbcef5e11e14249f2852d80d5e",
     "semantic_hash": ""
   },
   "SECURITY.md": {
@@ -1992,9 +1992,9 @@
     "semantic_hash": ""
   },
   "src/Dome.Server/Dome.Api/Telemetry/TelemetryReporter.cs": {
-    "mtime": 1793204818.680273,
-    "seen": 1793205218.823901,
-    "ast_hash": "9bb34aa11dbca9898f1d9324b1969f60",
+    "mtime": 1793262669.8502507,
+    "seen": 1793280907.984632,
+    "ast_hash": "643a07fd8976701fd7269e33fd552619",
     "semantic_hash": ""
   },
   "src/Dome.Server/Dome.Api/Telemetry/TelemetryBuildInfo.cs": {
