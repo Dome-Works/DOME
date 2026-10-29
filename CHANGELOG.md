@@ -5,6 +5,13 @@ application. Changes are grouped by release.
 
 ## [Unreleased]
 
+## [v0.6.1] - 2026-10-29
+
+### Fixed
+
+- Correct anonymous usage tracking so heartbeat data reports accurate Socket
+  and Stack counts.
+
 ## [v0.6.0] - 2026-10-28
 
 ### Added
