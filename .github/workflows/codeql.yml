@@ -26,13 +26,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - language: actions
-            build-mode: none
-          - language: csharp
-            build-mode: manual
-          - language: javascript-typescript
-            build-mode: none
+        language: [actions, csharp, javascript-typescript]
 
     steps:
       - name: Checkout
@@ -41,7 +35,7 @@ jobs:
           persist-credentials: false
 
       - name: Setup .NET
-        if: matrix.build-mode == 'manual'
+        if: matrix.language == 'csharp'
         uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6
         with:
           global-json-file: global.json
@@ -50,13 +44,7 @@ jobs:
         uses: github/codeql-action/init@2892aa5e19bbd11bc0cff5427e3b750a04d9e3c2 # v4.38.2
         with:
           languages: ${{ matrix.language }}
-          build-mode: ${{ matrix.build-mode }}
-
-      - name: Build .NET
-        if: matrix.build-mode == 'manual'
-        run: |
-          dotnet restore Dome.slnx
-          dotnet build Dome.slnx --configuration Release --no-restore
+          build-mode: none
 
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@2892aa5e19bbd11bc0cff5427e3b750a04d9e3c2 # v4.38.2

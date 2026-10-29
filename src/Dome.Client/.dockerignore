@@ -1,9 +1,12 @@
 node_modules
 dist
+coverage
+.vite
 .git
 .gitignore
 .DS_Store
 *.md
+*.log
 .oxlintrc.json
 Dockerfile*
 .dockerignore
