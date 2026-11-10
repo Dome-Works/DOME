@@ -5,10 +5,9 @@ namespace Dome.Business.Tests.Sockets;
 public sealed class SocketAddressValidatorTests
 {
     [Theory]
-    [InlineData("http://socket:8080")]
     [InlineData("https://socket.local:8443")]
-    [InlineData("HTTP://127.0.0.1:5110")]
-    public void TryValidate_accepts_http_and_https(string address)
+    [InlineData("HTTPS://127.0.0.1:5110")]
+    public void TryValidate_accepts_https(string address)
     {
         Assert.True(SocketAddressValidator.TryValidate(address, out var error));
         Assert.Equal(string.Empty, error);
@@ -25,12 +24,20 @@ public sealed class SocketAddressValidatorTests
     }
 
     [Theory]
+    [InlineData("http://socket:8080")]
     [InlineData("unix:///var/run/docker.sock")]
     [InlineData("tcp://192.168.1.10:2375")]
     [InlineData("not-a-uri")]
-    public void TryValidate_rejects_non_http_addresses(string address)
+    public void TryValidate_rejects_non_https_addresses(string address)
     {
         Assert.False(SocketAddressValidator.TryValidate(address, out var error));
         Assert.False(string.IsNullOrWhiteSpace(error));
+    }
+
+    [Fact]
+    public void TryValidate_explains_https_requirement_for_http()
+    {
+        Assert.False(SocketAddressValidator.TryValidate("http://socket:5110", out var error));
+        Assert.Contains("https://", error);
     }
 }

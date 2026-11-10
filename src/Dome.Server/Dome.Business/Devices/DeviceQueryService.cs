@@ -47,7 +47,7 @@ public sealed class DeviceQueryService : IDeviceQueryService
 
         try
         {
-            var api = _socketApiFactory.Create(socket.Address);
+            var api = _socketApiFactory.Create(socket);
             var response = await api.GetContainersAsync(cancellationToken);
             return response.Containers
                 .Select(Map)

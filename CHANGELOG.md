@@ -5,6 +5,28 @@ application. Changes are grouped by release.
 
 ## [Unreleased]
 
+### Added
+
+- Sign-in for DOME. Onboarding asks you to create an admin account, and every
+  page and API call now requires signing in. Sessions last 7 days of use, and
+  login attempts are limited to 5 per minute. To reset a forgotten password,
+  start the Server with `DOME_RESET_ADMIN=true`.
+- Socket keys. Registering a Socket shows a key once; set it on the Socket as
+  `DOME_SOCKET_KEY`. Sockets refuse requests without their key. Generate a new
+  key from the Socket's menu at any time.
+- Encrypted Server-to-Socket traffic. Sockets serve HTTPS with their own
+  certificate, which the Server pins during automatic pairing. The key is
+  never sent before the certificate is verified.
+
+### Changed
+
+- **Breaking:** update the Server, Client and every Socket together. After
+  updating, create the admin account, then generate a key for each Socket on
+  the Sockets page and set it as `DOME_SOCKET_KEY` on that Socket. Socket
+  addresses now use `https://`; existing addresses are switched automatically.
+- The Socket stores its certificate in a new `socket-data` volume. Add it to
+  your Compose file if you do not use the one from this repository.
+
 ## [v0.6.1] - 2026-10-29
 
 ### Fixed

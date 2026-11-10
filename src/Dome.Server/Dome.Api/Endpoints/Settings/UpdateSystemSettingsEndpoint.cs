@@ -22,7 +22,6 @@ public sealed class UpdateSystemSettingsEndpoint : Endpoint<UpdateSystemSettings
     public override void Configure()
     {
         Put("/api/settings");
-        AllowAnonymous();
     }
 
     public override async Task HandleAsync(UpdateSystemSettingsRequest req, CancellationToken ct)

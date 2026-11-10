@@ -131,7 +131,7 @@ public sealed class DeviceContainerCommandServiceTests
 
         A.CallTo(() => socketRepository.GetByNameAsync("local", A<CancellationToken>._))
             .Returns(socket);
-        A.CallTo(() => socketApiFactory.Create(A<string>._))
+        A.CallTo(() => socketApiFactory.Create(A<SocketEntity>._))
             .Returns(socketApi);
 
         return new DeviceContainerCommandService(

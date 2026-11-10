@@ -16,7 +16,6 @@ public sealed class UpdateDeviceStackEndpoint
     public override void Configure()
     {
         Put("/api/devices/{SocketName}/stacks/{StackId}");
-        AllowAnonymous();
     }
 
     public override async Task HandleAsync(UpdateDeviceStackRequest req, CancellationToken ct)

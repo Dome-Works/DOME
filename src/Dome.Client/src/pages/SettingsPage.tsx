@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react'
 import { Info } from 'lucide-react'
 import { useNavigate } from 'react-router'
+import { toast } from 'sonner'
 
+import { fetchAuthStatus, logout } from '@/api/auth'
 import { fetchSettings } from '@/api/settings'
 import { AboutCard } from '@/components/settings/AboutCard'
 import { TelemetryToggle } from '@/components/settings/TelemetryToggle'
@@ -24,6 +26,8 @@ type SettingsState =
 export function SettingsPage() {
   const navigate = useNavigate()
   const [state, setState] = useState<SettingsState>({ status: 'loading' })
+  const [username, setUsername] = useState<string | null>(null)
+  const [loggingOut, setLoggingOut] = useState(false)
 
   useEffect(() => {
     const controller = new AbortController()
@@ -36,8 +40,22 @@ export function SettingsPage() {
           message: error instanceof Error ? error.message : 'Failed to load settings',
         })
       })
+    fetchAuthStatus(controller.signal)
+      .then((status) => setUsername(status.username))
+      .catch(() => {})
     return () => controller.abort()
   }, [])
+
+  async function handleLogout() {
+    setLoggingOut(true)
+    try {
+      await logout()
+      void navigate('/login', { replace: true })
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'Failed to log out')
+      setLoggingOut(false)
+    }
+  }
 
   function setSettings(settings: SystemSettings) {
     setState({ status: 'ready', settings })
@@ -46,6 +64,20 @@ export function SettingsPage() {
   return (
     <div className="flex-1 space-y-4 overflow-auto p-6">
       <h1 className="text-xl font-semibold">Settings</h1>
+
+      <Card className="max-w-2xl">
+        <CardHeader>
+          <CardTitle>Account</CardTitle>
+          <CardDescription>
+            {username ? `Signed in as ${username}.` : 'Signed in.'}
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Button variant="outline" onClick={handleLogout} disabled={loggingOut}>
+            Log out
+          </Button>
+        </CardContent>
+      </Card>
 
       {state.status === 'loading' && <Skeleton className="h-40 w-full max-w-2xl" />}
       {state.status === 'error' && (

@@ -16,7 +16,6 @@ public sealed class GetSocketStatusesEndpoint : EndpointWithoutRequest<GetSocket
     public override void Configure()
     {
         Get("/api/sockets/statuses");
-        AllowAnonymous();
     }
 
     public override async Task HandleAsync(CancellationToken ct)

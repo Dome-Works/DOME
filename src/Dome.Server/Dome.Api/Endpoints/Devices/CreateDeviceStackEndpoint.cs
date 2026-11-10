@@ -16,7 +16,6 @@ public sealed class CreateDeviceStackEndpoint
     public override void Configure()
     {
         Post("/api/devices/{SocketName}/stacks");
-        AllowAnonymous();
     }
 
     public override async Task HandleAsync(CreateDeviceStackRequest req, CancellationToken ct)

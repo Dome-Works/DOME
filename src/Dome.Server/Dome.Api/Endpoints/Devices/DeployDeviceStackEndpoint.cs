@@ -15,7 +15,6 @@ public sealed class DeployDeviceStackEndpoint : Endpoint<GetDeviceStackRequest>
     public override void Configure()
     {
         Post("/api/devices/{SocketName}/stacks/{StackId}/deploy");
-        AllowAnonymous();
     }
 
     public override async Task HandleAsync(GetDeviceStackRequest req, CancellationToken ct)

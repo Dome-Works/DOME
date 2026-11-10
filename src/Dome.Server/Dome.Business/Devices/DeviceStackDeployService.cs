@@ -101,7 +101,7 @@ public sealed class DeviceStackDeployService : IDeviceStackDeployService
 
         try
         {
-            var api = _socketApiFactory.Create(socket.Address);
+            var api = _socketApiFactory.Create(socket);
             var containers = await api.GetContainersAsync(cancellationToken);
             var ids = containers.Containers
                 .Where(c => string.Equals(c.Stack?.Trim(), project, StringComparison.OrdinalIgnoreCase))
@@ -166,7 +166,7 @@ public sealed class DeviceStackDeployService : IDeviceStackDeployService
 
         try
         {
-            var api = _socketApiFactory.Create(socket.Address);
+            var api = _socketApiFactory.Create(socket);
             await socketCall(api, stack, cancellationToken);
             return DeviceStackDeployResult.Success();
         }

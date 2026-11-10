@@ -2,6 +2,7 @@ import type {
   CreateSocketRequest,
   GetSocketsResponse,
   GetSocketStatusesResponse,
+  SocketCreated,
   SocketRecord,
   UpdateSocketRequest,
 } from '../types/sockets'
@@ -43,7 +44,7 @@ export async function fetchSocketStatuses(
 
 export async function createSocket(
   request: CreateSocketRequest,
-): Promise<SocketRecord> {
+): Promise<SocketCreated> {
   const response = await fetch('/api/sockets', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -59,7 +60,25 @@ export async function createSocket(
     )
   }
 
-  return (await response.json()) as SocketRecord
+  return (await response.json()) as SocketCreated
+}
+
+export async function rotateSocketKey(id: string): Promise<SocketCreated> {
+  const response = await fetch(
+    `/api/sockets/${encodeURIComponent(id)}/key`,
+    { method: 'POST' },
+  )
+
+  if (!response.ok) {
+    throw new Error(
+      await readApiError(
+        response,
+        `Failed to generate socket key (${response.status})`,
+      ),
+    )
+  }
+
+  return (await response.json()) as SocketCreated
 }
 
 export async function updateSocket(

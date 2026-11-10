@@ -7,4 +7,8 @@ public static class SystemSettingKeys
     public const string InstallationId = "InstallationId";
 
     public const string OnboardingCompleted = "OnboardingCompleted";
+
+    public const string AdminUsername = "AdminUsername";
+
+    public const string AdminPasswordHash = "AdminPasswordHash";
 }

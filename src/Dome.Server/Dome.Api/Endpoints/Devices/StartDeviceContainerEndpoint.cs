@@ -15,7 +15,6 @@ public sealed class StartDeviceContainerEndpoint : Endpoint<DeviceContainerLifec
     public override void Configure()
     {
         Post("/api/devices/{Name}/containers/{ContainerId}/start");
-        AllowAnonymous();
     }
 
     public override async Task HandleAsync(

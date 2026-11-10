@@ -30,8 +30,10 @@ services:
     volumes:
       - ${DOCKER_SOCKET_PATH:-/var/run/docker.sock}:/var/run/docker.sock
       - ${DOME_COMPOSE_ROOT:-/var/lib/dome/compose}:/var/lib/dome/compose
+      - socket-data:/var/lib/dome-socket
     environment:
       ASPNETCORE_ENVIRONMENT: Production
+      DOME_SOCKET_KEY: ${DOME_SOCKET_KEY:-}
     restart: unless-stopped
 
   client:
@@ -48,3 +50,4 @@ services:
 
 volumes:
   dome-data:
+  socket-data:

@@ -16,7 +16,6 @@ public sealed class GetDevicesEndpoint : EndpointWithoutRequest<GetDevicesRespon
     public override void Configure()
     {
         Get("/api/devices");
-        AllowAnonymous();
     }
 
     public override async Task HandleAsync(CancellationToken ct)

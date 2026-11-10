@@ -16,10 +16,9 @@ public static class SocketAddressValidator
             return false;
         }
 
-        if (!string.Equals(uri.Scheme, Uri.UriSchemeHttp, StringComparison.OrdinalIgnoreCase)
-            && !string.Equals(uri.Scheme, Uri.UriSchemeHttps, StringComparison.OrdinalIgnoreCase))
+        if (!string.Equals(uri.Scheme, Uri.UriSchemeHttps, StringComparison.OrdinalIgnoreCase))
         {
-            error = "Address must use http or https.";
+            error = "Socket addresses use https://, for example https://host:5110.";
             return false;
         }
 

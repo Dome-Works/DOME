@@ -4,7 +4,7 @@ using Dome.Shared.Sockets;
 
 namespace Dome.Api.Endpoints.Sockets;
 
-public sealed class CreateSocketEndpoint : Endpoint<CreateSocketRequest, SocketResponse>
+public sealed class CreateSocketEndpoint : Endpoint<CreateSocketRequest, SocketCreatedResponse>
 {
     private readonly ISocketService _socketService;
 
@@ -16,7 +16,6 @@ public sealed class CreateSocketEndpoint : Endpoint<CreateSocketRequest, SocketR
     public override void Configure()
     {
         Post("/api/sockets");
-        AllowAnonymous();
     }
 
     public override async Task HandleAsync(CreateSocketRequest req, CancellationToken ct)
@@ -38,7 +37,7 @@ public sealed class CreateSocketEndpoint : Endpoint<CreateSocketRequest, SocketR
 
         await Send.CreatedAtAsync<GetSocketEndpoint>(
             new { result.Socket!.Id },
-            result.Socket,
+            SocketCreatedResponse.From(result.Socket!, result.ApiKey!),
             cancellation: ct);
     }
 }

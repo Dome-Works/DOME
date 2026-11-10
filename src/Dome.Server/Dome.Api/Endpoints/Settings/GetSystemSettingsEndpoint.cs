@@ -22,7 +22,6 @@ public sealed class GetSystemSettingsEndpoint : EndpointWithoutRequest<SystemSet
     public override void Configure()
     {
         Get("/api/settings");
-        AllowAnonymous();
     }
 
     public override async Task HandleAsync(CancellationToken ct)

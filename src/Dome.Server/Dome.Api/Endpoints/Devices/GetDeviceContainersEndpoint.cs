@@ -16,7 +16,6 @@ public sealed class GetDeviceContainersEndpoint
     public override void Configure()
     {
         Get("/api/devices/{Name}/containers");
-        AllowAnonymous();
     }
 
     public override async Task HandleAsync(

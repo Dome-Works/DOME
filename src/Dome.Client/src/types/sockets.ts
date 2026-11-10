@@ -5,9 +5,16 @@ export type SocketRecord = {
   createdAt: string
 }
 
+export type SocketCreated = SocketRecord & {
+  apiKey: string
+}
+
+export type SocketState = 'Online' | 'Offline' | 'NeedsPairing' | 'Unauthorized'
+
 export type SocketStatusRecord = {
   id: string
   isReachable: boolean
+  state: SocketState
   version: string | null
   needsUpdate: boolean
 }

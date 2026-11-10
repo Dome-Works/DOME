@@ -62,7 +62,7 @@ public sealed class DeviceQueryServiceTests
 
         A.CallTo(() => socketRepository.GetByNameAsync("local", A<CancellationToken>._))
             .Returns(socket);
-        A.CallTo(() => socketApiFactory.Create(socket.Address))
+        A.CallTo(() => socketApiFactory.Create(socket))
             .Returns(socketApi);
         A.CallTo(() => socketApi.GetContainersAsync(A<CancellationToken>._))
             .Returns(new GetContainersResponse { Containers = containers });

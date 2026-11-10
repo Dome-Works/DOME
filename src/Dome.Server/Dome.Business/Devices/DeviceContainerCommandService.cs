@@ -100,7 +100,7 @@ public sealed class DeviceContainerCommandService : IDeviceContainerCommandServi
 
         try
         {
-            var api = _socketApiFactory.Create(socket.Address);
+            var api = _socketApiFactory.Create(socket);
             return await operation(api, containerId, cancellationToken);
         }
         catch (ApiException ex) when (ex.StatusCode == HttpStatusCode.NotFound)

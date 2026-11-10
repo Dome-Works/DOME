@@ -16,7 +16,6 @@ public sealed class DeleteSocketEndpoint : Endpoint<GetSocketRequest>
     public override void Configure()
     {
         Delete("/api/sockets/{Id}");
-        AllowAnonymous();
     }
 
     public override async Task HandleAsync(GetSocketRequest req, CancellationToken ct)

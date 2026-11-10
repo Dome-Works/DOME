@@ -15,7 +15,6 @@ public sealed class DeleteDeviceUnmanagedStackEndpoint : Endpoint<DeleteDeviceUn
     public override void Configure()
     {
         Delete("/api/devices/{SocketName}/unmanaged-stacks/{ProjectName}");
-        AllowAnonymous();
     }
 
     public override async Task HandleAsync(DeleteDeviceUnmanagedStackRequest req, CancellationToken ct)

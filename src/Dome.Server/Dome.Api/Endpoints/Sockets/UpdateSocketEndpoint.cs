@@ -16,7 +16,6 @@ public sealed class UpdateSocketEndpoint : Endpoint<UpdateSocketRequest, SocketR
     public override void Configure()
     {
         Put("/api/sockets/{Id}");
-        AllowAnonymous();
     }
 
     public override async Task HandleAsync(UpdateSocketRequest req, CancellationToken ct)

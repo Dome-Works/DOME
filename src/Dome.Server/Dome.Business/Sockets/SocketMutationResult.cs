@@ -6,6 +6,8 @@ public sealed record SocketMutationResult
 {
     public SocketResponse? Socket { get; init; }
 
+    public string? ApiKey { get; init; }
+
     public string? Error { get; init; }
 
     public bool IsConflict { get; init; }
@@ -14,8 +16,8 @@ public sealed record SocketMutationResult
 
     public bool IsSuccess => Socket is not null && Error is null && !IsNotFound;
 
-    public static SocketMutationResult Success(SocketResponse socket)
-        => new() { Socket = socket };
+    public static SocketMutationResult Success(SocketResponse socket, string? apiKey = null)
+        => new() { Socket = socket, ApiKey = apiKey };
 
     public static SocketMutationResult Invalid(string error)
         => new() { Error = error };

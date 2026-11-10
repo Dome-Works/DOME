@@ -7,8 +7,11 @@ import {
   deleteSocket,
   fetchSockets,
   fetchSocketStatuses,
+  rotateSocketKey,
   updateSocket,
 } from '@/api/sockets'
+import { SocketKeyDialog } from '@/components/SocketKeyDialog'
+import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -41,7 +44,12 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip'
-import type { SocketRecord, SocketStatusRecord } from '@/types/sockets'
+import type {
+  SocketCreated,
+  SocketRecord,
+  SocketState,
+  SocketStatusRecord,
+} from '@/types/sockets'
 
 type SocketsState =
   | { status: 'loading' }
@@ -58,10 +66,29 @@ type SocketStatuses = Record<string, SocketStatusRecord>
 const socketUpdateMessage =
   'Updating the socket is essential to prevent errors.'
 
+const keyStateBadges: Partial<
+  Record<SocketState, { label: string; tooltip: string }>
+> = {
+  NeedsPairing: {
+    label: 'Needs pairing',
+    tooltip: "Set the socket's key and make sure it's reachable over https.",
+  },
+  Unauthorized: {
+    label: 'Key rejected',
+    tooltip:
+      'The socket refuses this key. Generate a new key and update the socket.',
+  },
+}
+
+function keyStateBadge(status: SocketStatusRecord | undefined) {
+  return status ? keyStateBadges[status.state] : undefined
+}
+
 function unreachableStatus(id: string): SocketStatusRecord {
   return {
     id,
     isReachable: false,
+    state: 'Offline',
     version: null,
     needsUpdate: false,
   }
@@ -93,6 +120,11 @@ export function SocketsPage() {
   const [formError, setFormError] = useState<string | null>(null)
   const [isSaving, setIsSaving] = useState(false)
   const [isDeleting, setIsDeleting] = useState(false)
+  const [socketToRotate, setSocketToRotate] = useState<SocketRecord | null>(
+    null,
+  )
+  const [isRotating, setIsRotating] = useState(false)
+  const [shownKey, setShownKey] = useState<SocketCreated | null>(null)
 
   const loadSockets = useCallback(async (signal?: AbortSignal) => {
     try {
@@ -210,11 +242,12 @@ export function SocketsPage() {
         })
         toast.success('Socket updated.')
       } else {
-        await createSocket({
+        const created = await createSocket({
           name: trimmedName,
           address: trimmedAddress,
         })
         toast.success('Socket registered.')
+        setShownKey(created)
       }
 
       closeEditor()
@@ -249,7 +282,31 @@ export function SocketsPage() {
     }
   }
 
+  const confirmRotate = async () => {
+    if (!socketToRotate) {
+      return
+    }
+
+    setIsRotating(true)
+
+    try {
+      const rotated = await rotateSocketKey(socketToRotate.id)
+      setSocketToRotate(null)
+      setShownKey(rotated)
+      await loadSockets()
+    } catch (error) {
+      toast.error(
+        error instanceof Error ? error.message : 'Unable to generate a key.',
+      )
+    } finally {
+      setIsRotating(false)
+    }
+  }
+
   const sockets = state.status === 'ready' ? state.sockets : []
+  const socketsNeedingKey = sockets.filter((socket) =>
+    keyStateBadge(socketStatuses[socket.id]),
+  ).length
 
   return (
     <div className="flex flex-1 flex-col gap-4 overflow-auto p-6">
@@ -264,6 +321,20 @@ export function SocketsPage() {
           Register socket
         </Button>
       </div>
+
+      {socketsNeedingKey > 0 ? (
+        <div className="rounded-lg border border-chart-3/50 bg-chart-3/10 p-4 text-sm">
+          <p className="font-medium">
+            {socketsNeedingKey === 1
+              ? '1 socket needs a key'
+              : `${socketsNeedingKey} sockets need a key`}
+          </p>
+          <p className="text-muted-foreground">
+            Use Generate new key in each socket's actions menu, then set
+            DOME_SOCKET_KEY on that socket and restart it.
+          </p>
+        </div>
+      ) : null}
 
       {state.status === 'loading' ? (
         <p className="text-sm text-muted-foreground">Loading sockets…</p>
@@ -313,23 +384,38 @@ export function SocketsPage() {
                 sockets.map((socket) => (
                   <TableRow key={socket.id}>
                     <TableCell>
-                      <span
-                        aria-label={
-                          socketStatuses[socket.id] === undefined
-                            ? 'Checking status'
-                            : socketStatuses[socket.id].isReachable
-                              ? 'Socket reachable'
-                              : 'Socket unreachable'
-                        }
-                        className={cn(
-                          'inline-flex h-2.5 w-2.5 rounded-full',
-                          socketStatuses[socket.id] === undefined
-                            ? 'bg-muted-foreground/40'
-                            : socketStatuses[socket.id].isReachable
-                              ? 'bg-emerald-500'
-                              : 'bg-destructive',
-                        )}
-                      />
+                      {keyStateBadge(socketStatuses[socket.id]) ? (
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Badge variant="destructive">
+                                {keyStateBadge(socketStatuses[socket.id])?.label}
+                              </Badge>
+                            </TooltipTrigger>
+                            <TooltipContent side="top">
+                              {keyStateBadge(socketStatuses[socket.id])?.tooltip}
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                      ) : (
+                        <span
+                          aria-label={
+                            socketStatuses[socket.id] === undefined
+                              ? 'Checking status'
+                              : socketStatuses[socket.id].isReachable
+                                ? 'Socket reachable'
+                                : 'Socket unreachable'
+                          }
+                          className={cn(
+                            'inline-flex h-2.5 w-2.5 rounded-full',
+                            socketStatuses[socket.id] === undefined
+                              ? 'bg-muted-foreground/40'
+                              : socketStatuses[socket.id].isReachable
+                                ? 'bg-emerald-500'
+                                : 'bg-destructive',
+                          )}
+                        />
+                      )}
                     </TableCell>
                     <TableCell className="font-medium">{socket.name}</TableCell>
                     <TableCell>{socket.address}</TableCell>
@@ -377,6 +463,11 @@ export function SocketsPage() {
                             Edit
                           </DropdownMenuItem>
                           <DropdownMenuItem
+                            onClick={() => setSocketToRotate(socket)}
+                          >
+                            Generate new key
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
                             variant="destructive"
                             onClick={() => setSocketToDelete(socket)}
                           >
@@ -408,7 +499,7 @@ export function SocketsPage() {
             </DialogTitle>
             <DialogDescription>
               Name is unique and used as the device label. Address must be an
-              absolute http or https URL.
+              https URL, for example https://host:5110.
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4">
@@ -427,7 +518,7 @@ export function SocketsPage() {
                 id="socket-address"
                 value={address}
                 onChange={(event) => setAddress(event.target.value)}
-                placeholder="http://127.0.0.1:5110"
+                placeholder="https://host:5110"
               />
             </div>
             {formError ? (
@@ -481,6 +572,46 @@ export function SocketsPage() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      <Dialog
+        open={socketToRotate !== null}
+        onOpenChange={(open) => {
+          if (!open) {
+            setSocketToRotate(null)
+          }
+        }}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Generate new key</DialogTitle>
+            <DialogDescription>
+              {socketToRotate
+                ? `Generate a new key for ${socketToRotate.name}? The current key stops working immediately.`
+                : null}
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button
+              type="button"
+              variant="outline"
+              disabled={isRotating}
+              onClick={() => setSocketToRotate(null)}
+            >
+              Cancel
+            </Button>
+            <Button
+              type="button"
+              variant="destructive"
+              disabled={isRotating}
+              onClick={() => void confirmRotate()}
+            >
+              {isRotating ? 'Generating…' : 'Generate'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <SocketKeyDialog socket={shownKey} onClose={() => setShownKey(null)} />
     </div>
   )
 }
