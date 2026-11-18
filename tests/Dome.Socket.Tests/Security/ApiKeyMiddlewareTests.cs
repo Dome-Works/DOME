@@ -1,17 +1,32 @@
 using System.Text;
 using Dome.Socket.Api.Security;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace Dome.Socket.Tests.Security;
 
-public sealed class ApiKeyMiddlewareTests
+public sealed class ApiKeyMiddlewareTests : IDisposable
 {
-    private static async Task<(int Status, bool NextCalled)> InvokeAsync(
+    private readonly string _directory = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N"));
+
+    public void Dispose()
+    {
+        if (Directory.Exists(_directory))
+        {
+            Directory.Delete(_directory, true);
+        }
+    }
+
+    private async Task<(int Status, bool NextCalled)> InvokeAsync(
         string configuredKey, string method, string path, string? authorization)
     {
         var nextCalled = false;
         var security = new SocketSecurity(null!, [], Encoding.UTF8.GetBytes(configuredKey));
-        var middleware = new ApiKeyMiddleware(_ => { nextCalled = true; return Task.CompletedTask; }, security);
+        var middleware = new ApiKeyMiddleware(
+            _ => { nextCalled = true; return Task.CompletedTask; },
+            security,
+            SocketKey.LoadOrCreate(_directory, configuredKey),
+            NullLogger<ApiKeyMiddleware>.Instance);
         var context = new DefaultHttpContext();
         context.Request.Method = method;
         context.Request.Path = path;
@@ -64,5 +79,21 @@ public sealed class ApiKeyMiddlewareTests
     {
         var result = await InvokeAsync("", "GET", "/api/health", "Bearer ");
         Assert.Equal((401, false), result);
+    }
+
+    [Fact]
+    public async Task RightKey_MarksSocketPaired()
+    {
+        await InvokeAsync("secret", "GET", "/api/health", "Bearer secret");
+
+        Assert.True(SocketKey.LoadOrCreate(_directory, "secret").IsPaired);
+    }
+
+    [Fact]
+    public async Task WrongKey_DoesNotMarkSocketPaired()
+    {
+        await InvokeAsync("secret", "GET", "/api/health", "Bearer wrong");
+
+        Assert.False(SocketKey.LoadOrCreate(_directory, "secret").IsPaired);
     }
 }

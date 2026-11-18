@@ -22,7 +22,6 @@
   "58": "Dependabot Config",
   "59": "Dependency Review Workflow",
   "67": "Release Workflow",
-  "68": "Vite and Tailwind Config",
   "79": "README Feature Summary",
   "80": "Release Notes Highlights",
   "82": "Publish Workflow Attestations",
@@ -34,7 +33,6 @@
   "102": "Client npm Scripts",
   "103": "Graphify Rules and Workflow",
   "106": "Docker Env Variables",
-  "107": "Client Dependency Overrides",
   "108": "TypeScript Project References",
   "109": "Graphify Skill Docs",
   "110": "Favicon Icon"

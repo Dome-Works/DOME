@@ -11,9 +11,11 @@ application. Changes are grouped by release.
   page and API call now requires signing in. Sessions last 7 days of use, and
   login attempts are limited to 5 per minute. To reset a forgotten password,
   start the Server with `DOME_RESET_ADMIN=true`.
-- Socket keys. Registering a Socket shows a key once; set it on the Socket as
-  `DOME_SOCKET_KEY`. Sockets refuse requests without their key. Generate a new
-  key from the Socket's menu at any time.
+- Socket keys. Each Socket generates its own key and prints it in its logs at
+  every start until DOME has paired with it. Enter the key when you register
+  the Socket; **How to get the socket key?** explains where to find it. Sockets
+  refuse requests without their key. Set `DOME_SOCKET_KEY` to choose the key
+  yourself.
 - Encrypted Server-to-Socket traffic. Sockets serve HTTPS with their own
   certificate, which the Server pins during automatic pairing. The key is
   never sent before the certificate is verified.
@@ -21,10 +23,10 @@ application. Changes are grouped by release.
 ### Changed
 
 - **Breaking:** update the Server, Client and every Socket together. After
-  updating, create the admin account, then generate a key for each Socket on
-  the Sockets page and set it as `DOME_SOCKET_KEY` on that Socket. Socket
+  updating, create the admin account, then use **Change key** on the Sockets
+  page to enter the key from each Socket's logs. Socket
   addresses now use `https://`; existing addresses are switched automatically.
-- The Socket stores its certificate in a new `socket-data` volume. Add it to
+- The Socket stores its certificate and key in a new `socket-data` volume. Add it to
   your Compose file if you do not use the one from this repository.
 
 ## [v0.6.1] - 2026-10-29

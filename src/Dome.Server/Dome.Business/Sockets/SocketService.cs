@@ -47,9 +47,10 @@ public sealed class SocketService : ISocketService
     public async Task<SocketMutationResult> CreateAsync(
         string name,
         string address,
+        string key,
         CancellationToken cancellationToken = default)
     {
-        var validationError = Validate(name, address);
+        var validationError = Validate(name, address) ?? ValidateKey(key);
         if (validationError is not null)
         {
             return SocketMutationResult.Invalid(validationError);
@@ -64,36 +65,41 @@ public sealed class SocketService : ISocketService
                 $"A socket named '{trimmedName}' already exists.");
         }
 
-        var apiKey = _apiKeys.Generate();
         var socket = new SocketEntity
         {
             Id = Guid.NewGuid(),
             Name = trimmedName,
             Address = trimmedAddress,
-            ProtectedApiKey = _apiKeys.Protect(apiKey),
+            ProtectedApiKey = _apiKeys.Protect(key.Trim()),
             CertificateFingerprint = null,
             CreatedAt = DateTimeOffset.UtcNow
         };
 
         await _socketRepository.AddAsync(socket, cancellationToken);
-        return SocketMutationResult.Success(Map(socket), apiKey);
+        return SocketMutationResult.Success(Map(socket));
     }
 
-    public async Task<SocketMutationResult> RotateKeyAsync(
+    public async Task<SocketMutationResult> SetKeyAsync(
         Guid id,
+        string key,
         CancellationToken cancellationToken = default)
     {
+        var validationError = ValidateKey(key);
+        if (validationError is not null)
+        {
+            return SocketMutationResult.Invalid(validationError);
+        }
+
         var socket = await _socketRepository.GetByIdAsync(id, cancellationToken);
         if (socket is null)
         {
             return SocketMutationResult.NotFound();
         }
 
-        var apiKey = _apiKeys.Generate();
-        socket.ProtectedApiKey = _apiKeys.Protect(apiKey);
+        socket.ProtectedApiKey = _apiKeys.Protect(key.Trim());
         socket.CertificateFingerprint = null;
         await _socketRepository.UpdateAsync(socket, cancellationToken);
-        return SocketMutationResult.Success(Map(socket), apiKey);
+        return SocketMutationResult.Success(Map(socket));
     }
 
     public async Task<SocketMutationResult> UpdateAsync(
@@ -172,6 +178,16 @@ public sealed class SocketService : ISocketService
         return SocketAddressValidator.TryValidate(address, out var error)
             ? null
             : error;
+    }
+
+    private static string? ValidateKey(string key)
+    {
+        if (string.IsNullOrWhiteSpace(key))
+        {
+            return "Key is required. Copy it from the socket's logs.";
+        }
+
+        return key.Trim().Length > 256 ? "Key must be at most 256 characters." : null;
     }
 
     private static SocketResponse Map(SocketEntity socket)

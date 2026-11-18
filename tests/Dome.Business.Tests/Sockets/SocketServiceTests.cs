@@ -19,7 +19,7 @@ public sealed class SocketServiceTests
     private readonly SocketApiKeys _apiKeys = new(new EphemeralDataProtectionProvider());
 
     [Fact]
-    public async Task CreateAsync_returns_key_and_stores_only_protected_form()
+    public async Task CreateAsync_stores_only_protected_form_of_the_socket_key()
     {
         SocketEntity? stored = null;
         A.CallTo(() => _socketRepository.AddAsync(A<SocketEntity>._, A<CancellationToken>._))
@@ -29,14 +29,33 @@ public sealed class SocketServiceTests
         var result = await service.CreateAsync(
             "local",
             "https://127.0.0.1:5110",
+            " socket-key ",
             TestContext.Current.CancellationToken);
 
         Assert.True(result.IsSuccess);
-        Assert.False(string.IsNullOrWhiteSpace(result.ApiKey));
         Assert.NotNull(stored);
-        Assert.NotEqual(result.ApiKey, stored.ProtectedApiKey);
-        Assert.Equal(result.ApiKey, _apiKeys.Unprotect(stored.ProtectedApiKey));
+        Assert.NotEqual("socket-key", stored.ProtectedApiKey);
+        Assert.Equal("socket-key", _apiKeys.Unprotect(stored.ProtectedApiKey));
         Assert.Null(stored.CertificateFingerprint);
+    }
+
+    [Theory]
+    [InlineData("")]
+    [InlineData("   ")]
+    public async Task CreateAsync_requires_a_key(string key)
+    {
+        var service = CreateService("0.3.2");
+
+        var result = await service.CreateAsync(
+            "local",
+            "https://127.0.0.1:5110",
+            key,
+            TestContext.Current.CancellationToken);
+
+        Assert.False(result.IsSuccess);
+        Assert.NotNull(result.Error);
+        A.CallTo(() => _socketRepository.AddAsync(A<SocketEntity>._, A<CancellationToken>._))
+            .MustNotHaveHappened();
     }
 
     [Fact]
@@ -48,7 +67,7 @@ public sealed class SocketServiceTests
     }
 
     [Fact]
-    public async Task RotateKeyAsync_returns_new_key_and_clears_pin()
+    public async Task SetKeyAsync_stores_new_key_and_clears_pin()
     {
         var socket = CreateSocket();
         socket.ProtectedApiKey = _apiKeys.Protect("old-key");
@@ -56,26 +75,36 @@ public sealed class SocketServiceTests
             .Returns(socket);
         var service = CreateService("0.3.2");
 
-        var result = await service.RotateKeyAsync(socket.Id, TestContext.Current.CancellationToken);
+        var result = await service.SetKeyAsync(socket.Id, "new-key", TestContext.Current.CancellationToken);
 
         Assert.True(result.IsSuccess);
-        Assert.NotEqual("old-key", result.ApiKey);
-        Assert.Equal(result.ApiKey, _apiKeys.Unprotect(socket.ProtectedApiKey));
+        Assert.Equal("new-key", _apiKeys.Unprotect(socket.ProtectedApiKey));
         Assert.Null(socket.CertificateFingerprint);
         A.CallTo(() => _socketRepository.UpdateAsync(socket, A<CancellationToken>._))
             .MustHaveHappenedOnceExactly();
     }
 
     [Fact]
-    public async Task RotateKeyAsync_returns_not_found_for_unknown_socket()
+    public async Task SetKeyAsync_returns_not_found_for_unknown_socket()
     {
         A.CallTo(() => _socketRepository.GetByIdAsync(A<Guid>._, A<CancellationToken>._))
             .Returns((SocketEntity?)null);
         var service = CreateService("0.3.2");
 
-        var result = await service.RotateKeyAsync(Guid.NewGuid(), TestContext.Current.CancellationToken);
+        var result = await service.SetKeyAsync(Guid.NewGuid(), "key", TestContext.Current.CancellationToken);
 
         Assert.True(result.IsNotFound);
+    }
+
+    [Fact]
+    public async Task SetKeyAsync_rejects_blank_key()
+    {
+        var service = CreateService("0.3.2");
+
+        var result = await service.SetKeyAsync(Guid.NewGuid(), " ", TestContext.Current.CancellationToken);
+
+        Assert.False(result.IsSuccess);
+        Assert.False(result.IsNotFound);
     }
 
     [Fact]

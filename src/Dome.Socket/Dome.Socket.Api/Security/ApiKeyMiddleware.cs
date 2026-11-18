@@ -8,17 +8,35 @@ public sealed class ApiKeyMiddleware
     private const string BearerPrefix = "Bearer ";
     private readonly RequestDelegate _next;
     private readonly SocketSecurity _security;
+    private readonly SocketKey _socketKey;
+    private readonly ILogger<ApiKeyMiddleware> _logger;
 
-    public ApiKeyMiddleware(RequestDelegate next, SocketSecurity security)
+    public ApiKeyMiddleware(
+        RequestDelegate next,
+        SocketSecurity security,
+        SocketKey socketKey,
+        ILogger<ApiKeyMiddleware> logger)
     {
         _next = next;
         _security = security;
+        _socketKey = socketKey;
+        _logger = logger;
     }
 
     public Task InvokeAsync(HttpContext context)
     {
-        if (IsExempt(context.Request) || IsAuthorized(context.Request))
+        if (IsExempt(context.Request))
         {
+            return _next(context);
+        }
+
+        if (IsAuthorized(context.Request))
+        {
+            if (_socketKey.MarkPaired())
+            {
+                _logger.LogInformation("Paired with DOME. The socket key is no longer shown at startup.");
+            }
+
             return _next(context);
         }
 

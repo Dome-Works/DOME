@@ -5,8 +5,6 @@ namespace Dome.Business.Sockets;
 
 public interface ISocketApiKeys
 {
-    string Generate();
-
     string Protect(string key);
 
     string? Unprotect(string protectedKey);
@@ -19,14 +17,6 @@ public sealed class SocketApiKeys : ISocketApiKeys
     public SocketApiKeys(IDataProtectionProvider dataProtectionProvider)
     {
         _protector = dataProtectionProvider.CreateProtector("Dome.Sockets.ApiKey");
-    }
-
-    public string Generate()
-    {
-        return Convert.ToBase64String(RandomNumberGenerator.GetBytes(32))
-            .TrimEnd('=')
-            .Replace('+', '-')
-            .Replace('/', '_');
     }
 
     public string Protect(string key)

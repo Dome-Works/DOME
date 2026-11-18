@@ -166,10 +166,9 @@ choose **Register socket**, and enter:
 | --- | --- |
 | Name | `Local` |
 | Address | `https://localhost:5110` |
+| Key | The key in the `DOME SOCKET KEY` block of the Socket's run console |
 
-Copy the key DOME shows, add it as the environment variable `DOME_SOCKET_KEY`
-to the `Dome.Socket.Api: https` run configuration and restart the Socket. DOME
-pairs with it automatically.
+DOME pairs with the Socket automatically.
 
 Open **Diagrams** to view the local Docker containers.
 
@@ -202,19 +201,15 @@ Socket named `Local`, and use this address:
 https://socket:8080
 ```
 
-Then pair the Socket:
+For **Key**, copy the key from the Socket's logs:
 
-1. Copy the key DOME shows after you register the Socket. It is shown only
-   once; you can generate a new one from the Socket's menu at any time.
-2. Put it in a `.env` file next to the Compose file:
+```bash
+docker compose -f dev.docker-compose.yml logs socket
+```
 
-   ```text
-   DOME_SOCKET_KEY=<the key>
-   ```
-
-3. Recreate the Socket: `docker compose -f dev.docker-compose.yml up -d socket`.
-
-The Server pairs with the Socket automatically and the status turns green.
+Look for the `DOME SOCKET KEY` block. The Socket prints it at every start
+until DOME has paired with it. The Server then pairs automatically and the
+status turns green.
 
 Use the Compose service address—not `localhost:5110`—because the Server is
 also running inside Docker. From the Server container, `localhost` refers to the
@@ -257,19 +252,15 @@ Open [http://localhost:5200/sockets](http://localhost:5200/sockets) and register
 | Name | `Local` |
 | Address | `https://socket:8080` |
 
-Then pair the Socket:
+For **Key**, copy the key from the Socket's logs:
 
-1. Copy the key DOME shows after you register the Socket. It is shown only
-   once; you can generate a new one from the Socket's menu at any time.
-2. Put it in a `.env` file next to the Compose file:
+```bash
+docker compose logs socket
+```
 
-   ```text
-   DOME_SOCKET_KEY=<the key>
-   ```
-
-3. Recreate the Socket: `docker compose up -d socket`.
-
-The Server pairs with the Socket automatically and the status turns green.
+Look for the `DOME SOCKET KEY` block. The Socket prints it at every start
+until DOME has paired with it. The Server then pairs automatically and the
+status turns green.
 
 Stable releases publish the exact semantic version, `MAJOR.MINOR`, `MAJOR` and
 `latest` tags. Pre-releases publish only their exact version tag. For a
@@ -291,8 +282,8 @@ from Dome.Server over HTTPS.
 
 Register every Socket from the Sockets page using a unique name and an
 `https://` address that is reachable from the Server. The name becomes the
-device label and diagram tab. Set the key DOME shows on that host as
-`DOME_SOCKET_KEY` and restart the Socket. A green status indicator means the
+device label and diagram tab. Enter the key from that Socket's logs. A green
+status indicator means the
 Server has paired with the Socket and can reach its health endpoint.
 
 ## Authentication
@@ -305,15 +296,18 @@ limited to 5 per minute.
 Until the admin account exists, anyone who can open DOME can create it, so
 finish onboarding right after installing.
 
-**Sockets** only accept requests carrying their own key. The Server generates
-the key when you register a Socket (or when you choose **Generate new key**),
-and you set it on the Socket as `DOME_SOCKET_KEY`. A Socket without a key
-refuses every request. The Socket serves HTTPS with a self-signed certificate
+**Sockets** only accept requests carrying their own key. Each Socket generates
+its key on first start, stores it in the `socket-data` volume as `socket.key`
+and prints it in its logs at every start until DOME has paired with it. You
+enter that key when you register the Socket. If the logs no longer show it,
+read it with `docker compose exec socket cat /var/lib/dome-socket/socket.key`.
+To choose the key yourself, set `DOME_SOCKET_KEY` on the Socket. The Socket
+serves HTTPS with a self-signed certificate
 that it creates on first start and keeps in the `socket-data` volume. When the
 Server first connects, it checks that the Socket holds the right key without
 sending the key, then pins that certificate. Later connections to a different
-certificate are refused. Generating a new key, or changing the Socket's
-address, starts pairing again.
+certificate are refused. Entering a new key with **Change key**, or changing
+the Socket's address, starts pairing again.
 
 **Browser to Server traffic** uses plain HTTP unless you put DOME behind a
 reverse proxy with TLS, such as Caddy or Traefik, in front of the Client on
@@ -327,9 +321,9 @@ afterwards. Sockets, stacks and settings are kept.
 
 1. Update the Server, Client **and every Socket** to the same version.
 2. Open DOME and create the admin account. Your existing data is kept.
-3. On the Sockets page, choose **Generate key** for each Socket, set it as
-   `DOME_SOCKET_KEY` on that Socket and restart it. Existing Socket addresses
-   are switched from `http://` to `https://` automatically.
+3. On the Sockets page, choose **Change key** for each Socket and enter the
+   key from that Socket's logs. Existing Socket addresses are switched from
+   `http://` to `https://` automatically.
 
 ## Configuration
 
@@ -340,7 +334,7 @@ environment variables.
 | --- | --- | --- | --- |
 | Server | `ConnectionStrings:Dome` | `ConnectionStrings__Dome` | Local app-data path in Development; `/var/lib/dome/dome.db` otherwise |
 | Server | `DOME_RESET_ADMIN` | `DOME_RESET_ADMIN` | Unset. `true` clears the admin account at startup |
-| Socket | `DOME_SOCKET_KEY` | `DOME_SOCKET_KEY` | Unset, so the Socket refuses every request |
+| Socket | `DOME_SOCKET_KEY` | `DOME_SOCKET_KEY` | Unset, so the Socket generates a key and stores it as `socket.key` |
 | Socket | `Socket:CertificateDirectory` | `Socket__CertificateDirectory` | `/var/lib/dome-socket` in Docker; local app-data path otherwise |
 | Socket | `Docker:Endpoint` | `Docker__Endpoint` | `unix:///var/run/docker.sock` |
 | Socket | `Docker:Compose:WorkingRoot` | `Docker__Compose__WorkingRoot` | `/var/lib/dome/compose` |
@@ -486,12 +480,12 @@ Without the CLI the rest of DOME works as normal. The search hooks do nothing, a
 - For the full Compose stack, use `https://socket:8080`.
 - For a fully local Rider run, use `https://localhost:5110`.
 - Check firewalls and routing when the Socket runs on another host.
-- **Needs pairing:** set the Socket's key as `DOME_SOCKET_KEY`, restart the
-  Socket and make sure it runs the same DOME version as the Server.
-- **Key rejected:** the Socket has a different key. Generate a new key and
-  update the Socket.
-- If the Socket's `socket-data` volume was removed, it creates a new
-  certificate. Generate a new key so DOME pairs again.
+- **Needs pairing:** check that DOME has the key from the Socket's logs and
+  that the Socket runs the same DOME version as the Server.
+- **Key rejected:** the Socket has a different key. Use **Change key** with the
+  key from the Socket's logs.
+- If the Socket's `socket-data` volume was removed, it creates a new key and
+  certificate. Use **Change key** with the new key from its logs.
 
 ### The Socket cannot list containers
 

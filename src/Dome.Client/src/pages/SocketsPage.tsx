@@ -7,10 +7,10 @@ import {
   deleteSocket,
   fetchSockets,
   fetchSocketStatuses,
-  rotateSocketKey,
+  setSocketKey,
   updateSocket,
 } from '@/api/sockets'
-import { SocketKeyDialog } from '@/components/SocketKeyDialog'
+import { SocketKeyHelpDialog } from '@/components/SocketKeyHelpDialog'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import {
@@ -45,7 +45,6 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip'
 import type {
-  SocketCreated,
   SocketRecord,
   SocketState,
   SocketStatusRecord,
@@ -71,12 +70,13 @@ const keyStateBadges: Partial<
 > = {
   NeedsPairing: {
     label: 'Needs pairing',
-    tooltip: "Set the socket's key and make sure it's reachable over https.",
+    tooltip:
+      "Check the key from the socket's logs and make sure the socket is reachable over https.",
   },
   Unauthorized: {
     label: 'Key rejected',
     tooltip:
-      'The socket refuses this key. Generate a new key and update the socket.',
+      "The socket refuses this key. Use Change key with the key from the socket's logs.",
   },
 }
 
@@ -117,14 +117,16 @@ export function SocketsPage() {
   const [socketStatuses, setSocketStatuses] = useState<SocketStatuses>({})
   const [name, setName] = useState('')
   const [address, setAddress] = useState('')
+  const [key, setKey] = useState('')
+  const [isKeyHelpOpen, setIsKeyHelpOpen] = useState(false)
   const [formError, setFormError] = useState<string | null>(null)
   const [isSaving, setIsSaving] = useState(false)
   const [isDeleting, setIsDeleting] = useState(false)
-  const [socketToRotate, setSocketToRotate] = useState<SocketRecord | null>(
+  const [socketToRekey, setSocketToRekey] = useState<SocketRecord | null>(
     null,
   )
-  const [isRotating, setIsRotating] = useState(false)
-  const [shownKey, setShownKey] = useState<SocketCreated | null>(null)
+  const [isSavingKey, setIsSavingKey] = useState(false)
+  const [keyError, setKeyError] = useState<string | null>(null)
 
   const loadSockets = useCallback(async (signal?: AbortSignal) => {
     try {
@@ -205,6 +207,7 @@ export function SocketsPage() {
   const openCreate = () => {
     setName('')
     setAddress('')
+    setKey('')
     setFormError(null)
     setEditor({ mode: 'create' })
   }
@@ -225,8 +228,15 @@ export function SocketsPage() {
     const trimmedName = name.trim()
     const trimmedAddress = address.trim()
 
+    const trimmedKey = key.trim()
+
     if (!trimmedName || !trimmedAddress) {
       setFormError('Name and address are required.')
+      return
+    }
+
+    if (editor.mode === 'create' && !trimmedKey) {
+      setFormError("Key is required. Copy it from the socket's logs.")
       return
     }
 
@@ -242,12 +252,12 @@ export function SocketsPage() {
         })
         toast.success('Socket updated.')
       } else {
-        const created = await createSocket({
+        await createSocket({
           name: trimmedName,
           address: trimmedAddress,
+          key: trimmedKey,
         })
         toast.success('Socket registered.')
-        setShownKey(created)
       }
 
       closeEditor()
@@ -282,24 +292,37 @@ export function SocketsPage() {
     }
   }
 
-  const confirmRotate = async () => {
-    if (!socketToRotate) {
+  const openRekey = (socket: SocketRecord) => {
+    setKey('')
+    setKeyError(null)
+    setSocketToRekey(socket)
+  }
+
+  const saveKey = async () => {
+    if (!socketToRekey) {
       return
     }
 
-    setIsRotating(true)
+    const trimmedKey = key.trim()
+    if (!trimmedKey) {
+      setKeyError("Key is required. Copy it from the socket's logs.")
+      return
+    }
+
+    setIsSavingKey(true)
+    setKeyError(null)
 
     try {
-      const rotated = await rotateSocketKey(socketToRotate.id)
-      setSocketToRotate(null)
-      setShownKey(rotated)
+      await setSocketKey({ id: socketToRekey.id, key: trimmedKey })
+      toast.success(`Key changed for ${socketToRekey.name}.`)
+      setSocketToRekey(null)
       await loadSockets()
     } catch (error) {
-      toast.error(
-        error instanceof Error ? error.message : 'Unable to generate a key.',
+      setKeyError(
+        error instanceof Error ? error.message : 'Unable to change the key.',
       )
     } finally {
-      setIsRotating(false)
+      setIsSavingKey(false)
     }
   }
 
@@ -330,8 +353,16 @@ export function SocketsPage() {
               : `${socketsNeedingKey} sockets need a key`}
           </p>
           <p className="text-muted-foreground">
-            Use Generate new key in each socket's actions menu, then set
-            DOME_SOCKET_KEY on that socket and restart it.
+            Copy the key from each socket's logs and enter it with Change key
+            in that socket's actions menu.{' '}
+            <Button
+              type="button"
+              variant="link"
+              size="xs"
+              onClick={() => setIsKeyHelpOpen(true)}
+            >
+              How to get the socket key?
+            </Button>
           </p>
         </div>
       ) : null}
@@ -462,10 +493,8 @@ export function SocketsPage() {
                           <DropdownMenuItem onClick={() => openEdit(socket)}>
                             Edit
                           </DropdownMenuItem>
-                          <DropdownMenuItem
-                            onClick={() => setSocketToRotate(socket)}
-                          >
-                            Generate new key
+                          <DropdownMenuItem onClick={() => openRekey(socket)}>
+                            Change key
                           </DropdownMenuItem>
                           <DropdownMenuItem
                             variant="destructive"
@@ -521,6 +550,28 @@ export function SocketsPage() {
                 placeholder="https://host:5110"
               />
             </div>
+            {editor.mode === 'create' ? (
+              <div className="grid gap-2">
+                <Label htmlFor="socket-key">Key</Label>
+                <Input
+                  id="socket-key"
+                  value={key}
+                  onChange={(event) => setKey(event.target.value)}
+                  autoComplete="off"
+                  spellCheck={false}
+                  placeholder="Paste the key from the socket's logs"
+                />
+                <Button
+                  type="button"
+                  variant="link"
+                  size="xs"
+                  className="justify-self-start"
+                  onClick={() => setIsKeyHelpOpen(true)}
+                >
+                  How to get the socket key?
+                </Button>
+              </div>
+            ) : null}
             {formError ? (
               <p className="text-sm text-destructive">{formError}</p>
             ) : null}
@@ -574,44 +625,71 @@ export function SocketsPage() {
       </Dialog>
 
       <Dialog
-        open={socketToRotate !== null}
+        open={socketToRekey !== null}
         onOpenChange={(open) => {
           if (!open) {
-            setSocketToRotate(null)
+            setSocketToRekey(null)
           }
         }}
       >
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Generate new key</DialogTitle>
+            <DialogTitle>Change key</DialogTitle>
             <DialogDescription>
-              {socketToRotate
-                ? `Generate a new key for ${socketToRotate.name}? The current key stops working immediately.`
+              {socketToRekey
+                ? `Enter the key that ${socketToRekey.name} shows in its logs. DOME pairs with the socket again.`
                 : null}
             </DialogDescription>
           </DialogHeader>
+          <div className="grid gap-4">
+            <div className="grid gap-2">
+              <Label htmlFor="socket-new-key">Key</Label>
+              <Input
+                id="socket-new-key"
+                value={key}
+                onChange={(event) => setKey(event.target.value)}
+                autoComplete="off"
+                spellCheck={false}
+                placeholder="Paste the key from the socket's logs"
+              />
+              <Button
+                type="button"
+                variant="link"
+                size="xs"
+                className="justify-self-start"
+                onClick={() => setIsKeyHelpOpen(true)}
+              >
+                How to get the socket key?
+              </Button>
+            </div>
+            {keyError ? (
+              <p className="text-sm text-destructive">{keyError}</p>
+            ) : null}
+          </div>
           <DialogFooter>
             <Button
               type="button"
               variant="outline"
-              disabled={isRotating}
-              onClick={() => setSocketToRotate(null)}
+              disabled={isSavingKey}
+              onClick={() => setSocketToRekey(null)}
             >
               Cancel
             </Button>
             <Button
               type="button"
-              variant="destructive"
-              disabled={isRotating}
-              onClick={() => void confirmRotate()}
+              disabled={isSavingKey}
+              onClick={() => void saveKey()}
             >
-              {isRotating ? 'Generating…' : 'Generate'}
+              {isSavingKey ? 'Saving…' : 'Save'}
             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
 
-      <SocketKeyDialog socket={shownKey} onClose={() => setShownKey(null)} />
+      <SocketKeyHelpDialog
+        open={isKeyHelpOpen}
+        onOpenChange={setIsKeyHelpOpen}
+      />
     </div>
   )
 }

@@ -47,7 +47,7 @@ Out of scope (unless they cause an unexpected security impact beyond the documen
 DOME is intended for trusted homelab or private networks.
 
 - Do not expose the Server, Socket, or UI to the public internet without additional access controls (reverse proxy auth, VPN, firewall rules, and so on).
-- Treat Dome.Socket as highly privileged: it mounts the local Docker socket. Anyone who has its `DOME_SOCKET_KEY` controls that Engine. Keep the key out of public repositories and issue reports.
+- Treat Dome.Socket as highly privileged: it mounts the local Docker socket. Anyone who has its key (`socket.key` in the `socket-data` volume, or `DOME_SOCKET_KEY`) controls that Engine. The Socket prints the key in its logs until DOME has paired, so keep those logs private and the key out of public repositories and issue reports.
 - The Server and Socket communicate over HTTPS with a pinned certificate. The Server stores Socket keys encrypted with ASP.NET Core Data Protection; the keys for that live next to the database, so back up and protect the whole data volume.
 - Put the Client behind a TLS reverse proxy when it is reachable from other machines, so passwords and session cookies are not sent in plain text.
 - Keep `.env`, `appsettings*.json` overrides, and Compose secrets out of public repositories and issue reports.

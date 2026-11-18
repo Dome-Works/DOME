@@ -202,7 +202,7 @@ export function OnboardingPage() {
     icon: CircleCheckBig,
     title: "You're all set",
     description: isUpgrade
-      ? 'Your DOME is secured. Open the Sockets page to add the key for each socket.'
+      ? "Your DOME is secured. Open the Sockets page and enter each socket's key from its logs."
       : 'Onboarding is finished. You can revisit these steps at any time from Settings.',
   }
 
