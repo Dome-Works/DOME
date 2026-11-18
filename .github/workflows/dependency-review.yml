@@ -13,3 +13,6 @@ jobs:
     steps:
       - name: Dependency Review
         uses: actions/dependency-review-action@a1d282b36b6f3519aa1f3fc636f609c47dddb294 # v5.0.0
+        with:
+          # GPL-3.0 compatible only
+          allow-licenses: MIT, ISC, 0BSD, BSD-2-Clause, BSD-3-Clause, Apache-2.0, MPL-2.0, OFL-1.1, CC0-1.0, BlueOak-1.0.0, GPL-3.0-only, GPL-3.0-or-later
