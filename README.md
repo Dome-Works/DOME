@@ -204,7 +204,7 @@ https://socket:8080
 For **Key**, copy the key from the Socket's logs:
 
 ```bash
-docker compose -f dev.docker-compose.yml logs socket
+docker logs dome-socket
 ```
 
 Look for the `DOME SOCKET KEY` block. The Socket prints it at every start
@@ -255,7 +255,7 @@ Open [http://localhost:5200/sockets](http://localhost:5200/sockets) and register
 For **Key**, copy the key from the Socket's logs:
 
 ```bash
-docker compose logs socket
+docker logs dome-socket
 ```
 
 Look for the `DOME SOCKET KEY` block. The Socket prints it at every start
@@ -300,7 +300,9 @@ finish onboarding right after installing.
 its key on first start, stores it in the `socket-data` volume as `socket.key`
 and prints it in its logs at every start until DOME has paired with it. You
 enter that key when you register the Socket. If the logs no longer show it,
-read it with `docker compose exec socket cat /var/lib/dome-socket/socket.key`.
+read it with `docker exec dome-socket cat /var/lib/dome-socket/socket.key`.
+The commands assume the container name `dome-socket` from the Compose files;
+use your own name if you changed it.
 To choose the key yourself, set `DOME_SOCKET_KEY` on the Socket. The Socket
 serves HTTPS with a self-signed certificate
 that it creates on first start and keeps in the `socket-data` volume. When the

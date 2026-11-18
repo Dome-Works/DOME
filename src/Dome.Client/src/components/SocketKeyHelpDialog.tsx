@@ -15,19 +15,9 @@ type SocketKeyHelpDialogProps = {
   onOpenChange: (open: boolean) => void
 }
 
-const logsCommand = 'docker compose logs socket'
+const logsCommand = 'docker logs dome-socket'
 const keyFileCommand =
-  'docker compose exec socket cat /var/lib/dome-socket/socket.key'
-const exampleBanner = `################################################################
-#  DOME SOCKET KEY
-#
-#  Paste this key into DOME when you register this socket:
-#
-#      q3Zx…the key…8Fk
-#
-#  This message repeats at every start until DOME has paired.
-################################################################`
-
+  'docker exec dome-socket cat /var/lib/dome-socket/socket.key'
 async function copyText(text: string) {
   try {
     await navigator.clipboard.writeText(text)
@@ -61,49 +51,18 @@ export function SocketKeyHelpDialog({
 }: SocketKeyHelpDialogProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-xl">
+      <DialogContent>
         <DialogHeader>
           <DialogTitle>How to get the socket key</DialogTitle>
           <DialogDescription>
-            Each socket creates its own key on first start and prints it in its
-            logs at every start until DOME has paired with it.
+            The key is in the socket container's logs, under DOME SOCKET KEY.
           </DialogDescription>
         </DialogHeader>
-        <ol className="grid list-decimal gap-4 pl-5 text-sm marker:text-muted-foreground">
-          <li className="grid gap-2">
-            <span>
-              Open a terminal on the host where the socket runs, in the folder
-              with its compose file.
-            </span>
-          </li>
-          <li className="grid gap-2">
-            <span>Show the socket's logs:</span>
-            <Command command={logsCommand} />
-            <span className="text-muted-foreground">
-              Without Compose, use <code>docker logs &lt;container&gt;</code>.
-              Running from Rider? Check the Dome.Socket.Api run console.
-            </span>
-          </li>
-          <li className="grid gap-2">
-            <span>
-              Find the <strong>DOME SOCKET KEY</strong> block and copy the key
-              in it:
-            </span>
-            <pre className="overflow-x-auto rounded-md border bg-muted p-3 font-mono text-xs">
-              {exampleBanner}
-            </pre>
-          </li>
-          <li>
-            Paste the key into the Key field and save. DOME pairs with the
-            socket automatically.
-          </li>
-        </ol>
-        <div className="grid gap-2 rounded-md border p-3 text-sm">
-          <p className="font-medium">No key in the logs?</p>
+        <div className="grid gap-3 text-sm">
+          <Command command={logsCommand} />
           <p className="text-muted-foreground">
-            A socket that has paired before stops printing its key. Read it
-            from the socket's data volume instead. If you set{' '}
-            <code>DOME_SOCKET_KEY</code> on the socket yourself, use that value.
+            Key not in the logs? Restart the socket container and check again.
+            If it still isn't there, read it directly:
           </p>
           <Command command={keyFileCommand} />
         </div>

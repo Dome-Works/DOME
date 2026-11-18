@@ -54,7 +54,10 @@ internal sealed class SocketRepository : ISocketRepository
     }
 
     public Task UpdateAsync(Socket socket, CancellationToken cancellationToken = default)
-        => _db.SaveChangesAsync(cancellationToken);
+    {
+        _db.Sockets.Update(socket);
+        return _db.SaveChangesAsync(cancellationToken);
+    }
 
     public async Task DeleteAsync(Socket socket, CancellationToken cancellationToken = default)
     {

@@ -26,6 +26,8 @@ application. Changes are grouped by release.
   updating, create the admin account, then use **Change key** on the Sockets
   page to enter the key from each Socket's logs. Socket
   addresses now use `https://`; existing addresses are switched automatically.
+- The Compose files name the containers `dome-server`, `dome-socket` and
+  `dome-client`, so `docker logs dome-socket` shows the Socket's key.
 - The Socket stores its certificate and key in a new `socket-data` volume. Add it to
   your Compose file if you do not use the one from this repository.
 
