@@ -37,7 +37,7 @@ public sealed class SetupAdminEndpoint : Endpoint<SetupAdminRequest>
             return;
         }
 
-        await HttpContext.SignInAdminAsync(req.Username.Trim());
+        await HttpContext.SignInAdminAsync(req.Username.Trim(), await _adminAccountService.GetSessionVersionAsync(ct));
         await Send.NoContentAsync(ct);
     }
 }

@@ -94,4 +94,20 @@ public sealed class AdminAccountServiceTests
         Assert.True(await service.IsSetupRequiredAsync(ct));
         Assert.Null(await service.ValidateAsync("admin", Password, ct));
     }
+
+    [Fact]
+    public async Task Reset_rotates_session_version()
+    {
+        var service = CreateService();
+        var ct = TestContext.Current.CancellationToken;
+        await service.SetupAsync("admin", Password, ct);
+        var before = await service.GetSessionVersionAsync(ct);
+
+        await service.ResetAsync(ct);
+        var afterFirst = await service.GetSessionVersionAsync(ct);
+        await service.ResetAsync(ct);
+
+        Assert.NotEqual(before, afterFirst);
+        Assert.NotEqual(afterFirst, await service.GetSessionVersionAsync(ct));
+    }
 }

@@ -11,4 +11,6 @@ public static class SystemSettingKeys
     public const string AdminUsername = "AdminUsername";
 
     public const string AdminPasswordHash = "AdminPasswordHash";
+
+    public const string AdminSessionVersion = "AdminSessionVersion";
 }

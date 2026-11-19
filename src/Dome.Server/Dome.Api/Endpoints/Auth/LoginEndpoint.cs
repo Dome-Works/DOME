@@ -30,7 +30,7 @@ public sealed class LoginEndpoint : Endpoint<LoginRequest>
             return;
         }
 
-        await HttpContext.SignInAdminAsync(username);
+        await HttpContext.SignInAdminAsync(username, await _adminAccountService.GetSessionVersionAsync(ct));
         await Send.NoContentAsync(ct);
     }
 }

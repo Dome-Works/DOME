@@ -8,5 +8,7 @@ public interface IAdminAccountService
 
     Task<string?> ValidateAsync(string username, string password, CancellationToken cancellationToken = default);
 
+    Task<string> GetSessionVersionAsync(CancellationToken cancellationToken = default);
+
     Task ResetAsync(CancellationToken cancellationToken = default);
 }

@@ -10,7 +10,8 @@ application. Changes are grouped by release.
 - Sign-in for DOME. Onboarding asks you to create an admin account, and every
   page and API call now requires signing in. Sessions last 7 days of use, and
   login attempts are limited to 5 per minute. To reset a forgotten password,
-  start the Server with `DOME_RESET_ADMIN=true`.
+  start the Server with `DOME_RESET_ADMIN=true`; this also signs out every
+  existing session.
 - Socket keys. Each Socket generates its own key and prints it in its logs at
   every start until DOME has paired with it. Enter the key when you register
   the Socket; **How to get the socket key?** explains where to find it. Sockets
