@@ -1,6 +1,8 @@
+using System.Net;
 using Dome.Domain.Sockets;
 using Dome.Shared.Sockets;
 using Microsoft.Extensions.Logging;
+using Refit;
 using SocketEntity = Dome.Domain.Sockets.Socket;
 
 namespace Dome.Business.Sockets;
@@ -10,14 +12,17 @@ public sealed class SocketService : ISocketService
     private readonly ISocketRepository _socketRepository;
     private readonly IDomeSocketApiFactory _socketApiFactory;
     private readonly IApplicationVersion _applicationVersion;
+    private readonly ISocketApiKeys _apiKeys;
     private readonly ILogger<SocketService> _logger;
 
     public SocketService(
         ISocketRepository socketRepository,
         IDomeSocketApiFactory socketApiFactory,
         IApplicationVersion applicationVersion,
+        ISocketApiKeys apiKeys,
         ILogger<SocketService> logger)
     {
+        _apiKeys = apiKeys;
         _socketRepository = socketRepository;
         _socketApiFactory = socketApiFactory;
         _applicationVersion = applicationVersion;
@@ -42,9 +47,10 @@ public sealed class SocketService : ISocketService
     public async Task<SocketMutationResult> CreateAsync(
         string name,
         string address,
+        string key,
         CancellationToken cancellationToken = default)
     {
-        var validationError = Validate(name, address);
+        var validationError = Validate(name, address) ?? ValidateKey(key);
         if (validationError is not null)
         {
             return SocketMutationResult.Invalid(validationError);
@@ -64,10 +70,35 @@ public sealed class SocketService : ISocketService
             Id = Guid.NewGuid(),
             Name = trimmedName,
             Address = trimmedAddress,
+            ProtectedApiKey = _apiKeys.Protect(key.Trim()),
+            CertificateFingerprint = null,
             CreatedAt = DateTimeOffset.UtcNow
         };
 
         await _socketRepository.AddAsync(socket, cancellationToken);
+        return SocketMutationResult.Success(Map(socket));
+    }
+
+    public async Task<SocketMutationResult> SetKeyAsync(
+        Guid id,
+        string key,
+        CancellationToken cancellationToken = default)
+    {
+        var validationError = ValidateKey(key);
+        if (validationError is not null)
+        {
+            return SocketMutationResult.Invalid(validationError);
+        }
+
+        var socket = await _socketRepository.GetByIdAsync(id, cancellationToken);
+        if (socket is null)
+        {
+            return SocketMutationResult.NotFound();
+        }
+
+        socket.ProtectedApiKey = _apiKeys.Protect(key.Trim());
+        socket.CertificateFingerprint = null;
+        await _socketRepository.UpdateAsync(socket, cancellationToken);
         return SocketMutationResult.Success(Map(socket));
     }
 
@@ -98,6 +129,11 @@ public sealed class SocketService : ISocketService
                 $"A socket named '{trimmedName}' already exists.");
         }
 
+        if (!string.Equals(socket.Address, trimmedAddress, StringComparison.Ordinal))
+        {
+            socket.CertificateFingerprint = null;
+        }
+
         socket.Name = trimmedName;
         socket.Address = trimmedAddress;
         await _socketRepository.UpdateAsync(socket, cancellationToken);
@@ -108,8 +144,19 @@ public sealed class SocketService : ISocketService
         CancellationToken cancellationToken = default)
     {
         var sockets = await _socketRepository.ListAsync(cancellationToken);
+        var unpinned = sockets.Where(socket => socket.CertificateFingerprint is null).ToArray();
         var statuses = await Task.WhenAll(
             sockets.Select(socket => GetStatusAsync(socket, cancellationToken)));
+
+        foreach (var socket in unpinned.Where(socket => socket.CertificateFingerprint is not null))
+        {
+            await _socketRepository.TryPinCertificateAsync(
+                socket.Id,
+                socket.Address,
+                socket.ProtectedApiKey,
+                socket.CertificateFingerprint!,
+                cancellationToken);
+        }
 
         return statuses;
     }
@@ -138,6 +185,16 @@ public sealed class SocketService : ISocketService
             : error;
     }
 
+    private static string? ValidateKey(string key)
+    {
+        if (string.IsNullOrWhiteSpace(key))
+        {
+            return "Key is required. Copy it from the socket's logs.";
+        }
+
+        return key.Trim().Length > 256 ? "Key must be at most 256 characters." : null;
+    }
+
     private static SocketResponse Map(SocketEntity socket)
         => new()
         {
@@ -153,15 +210,36 @@ public sealed class SocketService : ISocketService
     {
         try
         {
-            var api = _socketApiFactory.Create(socket.Address);
+            if (socket.CertificateFingerprint is null)
+            {
+                var fingerprint = await _socketApiFactory.PairAsync(socket, cancellationToken);
+                if (fingerprint is null)
+                {
+                    return UnavailableStatus(socket, SocketState.NeedsPairing);
+                }
+
+                socket.CertificateFingerprint = fingerprint;
+            }
+
+            var api = _socketApiFactory.Create(socket);
             var health = await api.GetHealthAsync(cancellationToken);
             return new SocketStatusResponse
             {
                 Id = socket.Id,
                 IsReachable = true,
+                State = SocketState.Online,
                 Version = health.Version,
                 NeedsUpdate = NeedsUpdate(health.Version)
             };
+        }
+        catch (ApiException ex) when (ex.StatusCode == HttpStatusCode.Unauthorized)
+        {
+            _logger.LogWarning(
+                "Socket '{SocketName}' at '{Address}' rejected the API key.",
+                socket.Name,
+                socket.Address);
+
+            return UnavailableStatus(socket, SocketState.Unauthorized);
         }
         catch (Exception ex) when (ex is not OperationCanceledException)
         {
@@ -171,14 +249,18 @@ public sealed class SocketService : ISocketService
                 socket.Name,
                 socket.Address);
 
-            return new SocketStatusResponse
-            {
-                Id = socket.Id,
-                IsReachable = false,
-                NeedsUpdate = false
-            };
+            return UnavailableStatus(socket, SocketState.Offline);
         }
     }
+
+    private static SocketStatusResponse UnavailableStatus(SocketEntity socket, SocketState state)
+        => new()
+        {
+            Id = socket.Id,
+            IsReachable = false,
+            State = state,
+            NeedsUpdate = false
+        };
 
     private bool NeedsUpdate(string? socketVersion)
         => !string.Equals(

@@ -16,7 +16,6 @@ public sealed class GetDeviceImageVersionChecksEndpoint
     public override void Configure()
     {
         Get("/api/devices/{SocketName}/image-version-checks");
-        AllowAnonymous();
     }
 
     public override async Task HandleAsync(GetDeviceImageVersionChecksRequest req, CancellationToken ct)

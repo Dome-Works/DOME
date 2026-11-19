@@ -297,7 +297,7 @@ public sealed class DeviceStackDeployServiceTests
                 .Returns(stack);
         }
 
-        A.CallTo(() => socketApiFactory.Create(A<string>._))
+        A.CallTo(() => socketApiFactory.Create(A<SocketEntity>._))
             .Returns(socketApi);
 
         return new DeviceStackDeployService(

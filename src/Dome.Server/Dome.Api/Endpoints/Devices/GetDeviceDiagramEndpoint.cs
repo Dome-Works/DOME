@@ -16,7 +16,6 @@ public sealed class GetDeviceDiagramEndpoint
     public override void Configure()
     {
         Get("/api/devices/{SocketName}/diagram");
-        AllowAnonymous();
     }
 
     public override async Task HandleAsync(GetDeviceDiagramRequest req, CancellationToken ct)

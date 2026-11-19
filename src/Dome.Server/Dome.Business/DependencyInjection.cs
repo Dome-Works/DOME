@@ -1,3 +1,4 @@
+using Dome.Business.Auth;
 using Dome.Business.Devices;
 using Dome.Business.Images;
 using Dome.Business.Settings;
@@ -11,10 +12,7 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddDomeBusiness(this IServiceCollection services)
     {
-        services.AddHttpClient(nameof(DomeSocketApiFactory), client =>
-        {
-            client.Timeout = TimeSpan.FromMinutes(15);
-        });
+        services.AddSingleton<ISocketApiKeys, SocketApiKeys>();
         services.AddSingleton<IDomeSocketApiFactory, DomeSocketApiFactory>();
         services.AddSingleton<IApplicationVersion, AssemblyApplicationVersion>();
         services.AddScoped<ISocketService, SocketService>();
@@ -25,6 +23,7 @@ public static class DependencyInjection
         services.AddScoped<IStackService, StackService>();
         services.AddScoped<IDeviceImageVersionChecker, DeviceImageVersionChecker>();
         services.AddScoped<ISystemSettingsService, SystemSettingsService>();
+        services.AddScoped<IAdminAccountService, AdminAccountService>();
 
         return services;
     }

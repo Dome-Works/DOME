@@ -2,6 +2,7 @@ using Dome.Socket.Contracts.Compose;
 using Dome.Socket.Contracts.Containers;
 using Dome.Socket.Contracts.Health;
 using Dome.Socket.Contracts.Images;
+using Dome.Socket.Contracts.Pairing;
 using Refit;
 
 namespace Dome.Socket.Contracts;
@@ -38,5 +39,10 @@ public interface IDomeSocketApi
     [Post("/api/images/version-checks")]
     Task<CheckImageVersionsResponse> CheckImageVersionsAsync(
         [Body] CheckImageVersionsRequest request,
+        CancellationToken cancellationToken = default);
+
+    [Post("/api/pair")]
+    Task<PairResponse> PairAsync(
+        [Body] PairRequest request,
         CancellationToken cancellationToken = default);
 }

@@ -11,6 +11,7 @@ public interface ISocketService
     Task<SocketMutationResult> CreateAsync(
         string name,
         string address,
+        string key,
         CancellationToken cancellationToken = default);
 
     Task<SocketMutationResult> UpdateAsync(
@@ -18,6 +19,8 @@ public interface ISocketService
         string name,
         string address,
         CancellationToken cancellationToken = default);
+
+    Task<SocketMutationResult> SetKeyAsync(Guid id, string key, CancellationToken cancellationToken = default);
 
     Task<IReadOnlyList<SocketStatusResponse>> GetStatusesAsync(
         CancellationToken cancellationToken = default);

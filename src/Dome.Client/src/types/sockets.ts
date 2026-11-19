@@ -5,9 +5,12 @@ export type SocketRecord = {
   createdAt: string
 }
 
+export type SocketState = 'Online' | 'Offline' | 'NeedsPairing' | 'Unauthorized'
+
 export type SocketStatusRecord = {
   id: string
   isReachable: boolean
+  state: SocketState
   version: string | null
   needsUpdate: boolean
 }
@@ -23,6 +26,12 @@ export type GetSocketStatusesResponse = {
 export type CreateSocketRequest = {
   name: string
   address: string
+  key: string
+}
+
+export type SetSocketKeyRequest = {
+  id: string
+  key: string
 }
 
 export type UpdateSocketRequest = {
