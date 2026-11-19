@@ -157,7 +157,8 @@ public sealed class SocketServiceTests
         Assert.Equal(SocketState.NeedsPairing, status.State);
         Assert.False(status.IsReachable);
         A.CallTo(() => socketApi.GetHealthAsync(A<CancellationToken>._)).MustNotHaveHappened();
-        A.CallTo(() => _socketRepository.UpdateAsync(A<SocketEntity>._, A<CancellationToken>._))
+        A.CallTo(() => _socketRepository.TryPinCertificateAsync(
+                A<Guid>._, A<string>._, A<string>._, A<string>._, A<CancellationToken>._))
             .MustNotHaveHappened();
     }
 
@@ -177,9 +178,11 @@ public sealed class SocketServiceTests
             await service.GetStatusesAsync(TestContext.Current.CancellationToken));
 
         Assert.Equal(SocketState.Online, status.State);
-        Assert.Equal("cd", socket.CertificateFingerprint);
-        A.CallTo(() => _socketRepository.UpdateAsync(socket, A<CancellationToken>._))
+        A.CallTo(() => _socketRepository.TryPinCertificateAsync(
+                socket.Id, socket.Address, socket.ProtectedApiKey, "cd", A<CancellationToken>._))
             .MustHaveHappenedOnceExactly();
+        A.CallTo(() => _socketRepository.UpdateAsync(A<SocketEntity>._, A<CancellationToken>._))
+            .MustNotHaveHappened();
     }
 
     [Fact]

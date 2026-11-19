@@ -47,4 +47,48 @@ public sealed class SocketRepositoryTests : IAsyncDisposable
             Assert.Equal("pin", (await new SocketRepository(db).GetByIdAsync(id, ct))!.CertificateFingerprint);
         }
     }
+
+    [Theory]
+    [InlineData("https://socket:8080", "protected-key", null, true)]
+    [InlineData("https://moved:8080", "protected-key", null, false)]
+    [InlineData("https://socket:8080", "rotated-key", null, false)]
+    [InlineData("https://socket:8080", "protected-key", "existing", false)]
+    public async Task TryPinCertificateAsync_pins_only_when_pairing_snapshot_still_matches(
+        string currentAddress,
+        string currentKey,
+        string? currentPin,
+        bool expectPinned)
+    {
+        var ct = TestContext.Current.CancellationToken;
+        var id = Guid.NewGuid();
+        await using (var db = await CreateContextAsync())
+        {
+            await new SocketRepository(db).AddAsync(
+                new Socket
+                {
+                    Id = id,
+                    Name = "local",
+                    Address = currentAddress,
+                    ProtectedApiKey = currentKey,
+                    CertificateFingerprint = currentPin,
+                    CreatedAt = DateTimeOffset.UtcNow
+                },
+                ct);
+        }
+
+        await using (var db = await CreateContextAsync())
+        {
+            var pinned = await new SocketRepository(db).TryPinCertificateAsync(
+                id, "https://socket:8080", "protected-key", "new-pin", ct);
+            Assert.Equal(expectPinned, pinned);
+        }
+
+        await using (var db = await CreateContextAsync())
+        {
+            var stored = (await new SocketRepository(db).GetByIdAsync(id, ct))!;
+            Assert.Equal(expectPinned ? "new-pin" : currentPin, stored.CertificateFingerprint);
+            Assert.Equal(currentAddress, stored.Address);
+            Assert.Equal(currentKey, stored.ProtectedApiKey);
+        }
+    }
 }

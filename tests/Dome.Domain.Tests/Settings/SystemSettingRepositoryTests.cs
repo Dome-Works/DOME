@@ -28,7 +28,7 @@ public sealed class SystemSettingRepositoryTests
             await using var provider = services.BuildServiceProvider();
 
             await using (var scope = provider.CreateAsyncScope())
-                await scope.ServiceProvider.GetRequiredService<IDatabaseInitializer>().InitializeAsync();
+                await scope.ServiceProvider.GetRequiredService<IDatabaseInitializer>().InitializeAsync(TestContext.Current.CancellationToken);
 
             var results = await Task.WhenAll(Enumerable.Range(0, 10).Select(i => Task.Run(async () =>
             {
@@ -43,7 +43,7 @@ public sealed class SystemSettingRepositoryTests
             await using (var scope = provider.CreateAsyncScope())
             {
                 var repository = scope.ServiceProvider.GetRequiredService<ISystemSettingRepository>();
-                Assert.Equal(await repository.GetAsync("Guard"), await repository.GetAsync("Owner"));
+                Assert.Equal(await repository.GetAsync("Guard", TestContext.Current.CancellationToken), await repository.GetAsync("Owner", TestContext.Current.CancellationToken));
             }
         }
         finally

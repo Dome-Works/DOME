@@ -1,17 +1,17 @@
 # Graph Report - DOME  (2026-11-19)
 
 ## Corpus Check
-- 371 files · ~69,734 words
+- 371 files · ~69,938 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 21 file(s) not represented in the graph (top: (none) 8, .xml 6, .css 3)
 
 ## Summary
-- 2753 nodes · 6603 edges · 158 communities (136 shown, 22 thin omitted)
-- Extraction: 92% EXTRACTED · 8% INFERRED · 0% AMBIGUOUS · INFERRED: 506 edges (avg confidence: 0.87)
+- 2756 nodes · 6623 edges · 146 communities (123 shown, 23 thin omitted)
+- Extraction: 92% EXTRACTED · 8% INFERRED · 0% AMBIGUOUS · INFERRED: 513 edges (avg confidence: 0.87)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `861b82e2`
+- Built from commit: `d46cb349`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -26,11 +26,11 @@
 - Design System Recipes
 - SocketService
 - Guid
-- Task
+- CancellationToken
 - SocketsPage.tsx
 - Design System Page
-- DomeSocketApiFactoryTests
-- Dome.Api.Endpoints.Auth
+- IStackRepository
+- DeviceContainerLifecycleRequest
 - ApiKeyMiddleware
 - Styling & Customization Rules
 - Solution and Packages
@@ -39,7 +39,7 @@
 - .CreateService
 - .AddDomeDomain
 - Image Tag Versioning
-- InlineData
+- DeleteDeviceStackRequest
 - Docker/DependencyInjection.cs
 - Socket Container Endpoints
 - EF Core Migrations
@@ -47,9 +47,9 @@
 - Dev Compose Config
 - Scorecard Workflow
 - .AddDomeBusiness
-- The Design System Page
-- Endpoint
-- Dome.Business.Devices
+- color-pair.tsx
+- Dome.Business.Stacks
+- Socket
 - Socket Service Tests
 - DomeSocketApiFactory.cs
 - Domain Persistence
@@ -58,18 +58,18 @@
 - shadcn Composition Rules
 - Design System Verification
 - Compose Sample Config
-- DeleteDeviceUnmanagedStackEndpoint
-- EndpointWithoutRequest
+- GetDeviceContainersEndpoint
+- .GetDevicesAsync
 - fastendpoints
 - Zizmor Workflow Config
 - OCI Registry Provider
 - Base vs Radix Rules
-- ISystemSettingRepository
+- GetDeviceStacksEndpoint
 - TypeScript App Config
 - Dome.Api.Endpoints.Devices
 - Release Documentation Skill
 - Tools
-- .SetupAsync
+- InlineData
 - ImageVersionCache
 - Cache Entity Configuration
 - Client Lint and Tooling
@@ -79,17 +79,17 @@
 - Dome.Socket.Contracts.Images
 - TypeScript Node Config
 - microsoft_extensions_configuration
-- ImageReference
+- CheckImageVersionsRequest
 - shadcn CLI Commands
 - shadcn Skill Docs Index
 - Docker Build Args
-- PairRequest
+- DeviceImageVersionChecker
 - Oxlint Config
-- Input
-- Dome.Domain.Settings
+- GetDeviceStackRequest
+- TelemetryReporter
 - Customization & Theming
-- SystemSettingsResponse
-- .Pattern
+- ISystemSettingsService
+- Regex
 - Client Dependencies
 - Diagram Service Tests
 - DOME Architecture Rules
@@ -97,23 +97,22 @@
 - Chat Component Mapping
 - shadcn CLI Reference
 - shadcn Component Rules
-- .AddDomeSocket
-- Dome.Business.Images
+- RecordingProcessRunner
+- ImageVersionCheckDto
 - Dependabot Config
 - Dependency Review Workflow
 - shadcn Skill Principles
 - Changelog Releases
 - Image Check View Model
 - Container View Model
-- SocketStatusResponse
+- RegistryVersionInfo
 - Container DTO
 - DeleteContainerStatus
-- Pairing Proof
 - Database Context
 - Dev Compose Services
 - Release Workflow
-- .InvokeAsync
-- DeviceDiagramDto
+- Fact
+- GetDeviceDiagramResponse
 - components.json
 - Socket Key Security
 - shadcn Skill
@@ -129,18 +128,15 @@
 - GitHub Release Changelog Config
 - Tag and Env Workflow Steps
 - Docker Image Matrix
-- .Validate
 - Chat & Messaging
 - Compose YAML Editor
-- OciAuthenticatedResponse
-- SocketCertificateTests
 - Client npm Scripts
-- IDeviceQueryService
+- .AddDomeBusiness
 - AGENTS.md Guidelines
 - Graphify Rules
 - .DownAsync
-- ComposeDownRequest
-- Dome.Business.Settings
+- IDockerComposeClient
+- Dome.Api/Program.cs
 - shadcn Logo Images
 - Supply Chain Scans
 - Docker Env Variables
@@ -152,31 +148,23 @@
 - Graphify Skill
 - Release Notes Categories
 - Favicon Icon
-- .Hash
-- UpdateSocketEndpoint
+- Endpoint
 - DockerHubRegistryProvider
 - Foundations
 - DeviceDiagramDto
-- Dome.Api/Program.cs
-- Dome.Shared.Auth
-- SocketResponse
+- IAdminAccountService
 - Step 4: Map Tokens to the Theme
-- GhcrRegistryProvider
 - ImageVersionCheckResponse
-- .LoadOrCreate
-- CreateSocketEndpoint
+- CreateSocketRequest
 - tailwind
 - DeleteDeviceContainerEndpoint
-- SetSocketKeyEndpoint
-- TelemetryBuildInfo
 - DatabaseInitializerTests
-- UpdateSystemSettingsRequest
 - DockerEndpointOptions
 - AuthStatusResponse
 
 ## God Nodes (most connected - your core abstractions)
 1. `cn()` - 92 edges
-2. `Socket` - 63 edges
+2. `Socket` - 64 edges
 3. `IDomeSocketApi` - 53 edges
 4. `Button()` - 44 edges
 5. `SocketsPage()` - 38 edges
@@ -193,10 +181,10 @@
   .agents/skills/shadcn/SKILL.md → src/Dome.Client/src/components/ui/breadcrumb.tsx
 - `Button / trigger as non-button element (base only)` --references--> `Button()`  [INFERRED]
   .agents/skills/shadcn/rules/base-vs-radix.md → src/Dome.Client/src/components/ui/button.tsx
-- `Option sets (2–7 choices) use ToggleGroup` --references--> `Button()`  [INFERRED]
-  .agents/skills/shadcn/rules/forms.md → src/Dome.Client/src/components/ui/button.tsx
 - `Icons → [icons.md](./rules/icons.md)` --references--> `Button()`  [INFERRED]
   .agents/skills/shadcn/SKILL.md → src/Dome.Client/src/components/ui/button.tsx
+- `Card structure` --references--> `CardContent()`  [INFERRED]
+  .agents/skills/shadcn/rules/composition.md → src/Dome.Client/src/components/ui/card.tsx
 
 ## Import Cycles
 - None detected.
@@ -210,67 +198,63 @@
 - **CI/CD supply-chain security checks** — _github_workflows_dependency_review_workflow, _github_workflows_scorecard_workflow, _github_workflows_zizmor_workflow, _github_dependabot_config, _github_workflows_release_build_provenance_attestation [INFERRED 0.85]
 - **Socket authentication and pairing** — readme_socket_key, readme_certificate_pinning, changelog_unreleased_encrypted_socket_traffic, docker_compose_socket_data_volume [INFERRED 0.85]
 
-## Communities (158 total, 22 thin omitted)
+## Communities (146 total, 23 thin omitted)
 
 ### Community 0 - "shadcn Skill Overview"
-Cohesion: 0.07
-Nodes (61): System notes and dividers use Marker, Items always inside their Group component, No sizing classes on icons inside components, Chat & Messaging → [chat.md](./rules/chat.md), class-variance-authority, lucide-react, radix-ui, react (+53 more)
+Cohesion: 0.06
+Nodes (69): Composition: asChild (radix) vs render (base), System notes and dividers use Marker, Items always inside their Group component, No sizing classes on icons inside components, Chat & Messaging → [chat.md](./rules/chat.md), CLI, Critical Rules, Icons → [icons.md](./rules/icons.md) (+61 more)
 
 ### Community 1 - "ImageReference"
-Cohesion: 0.14
-Nodes (10): IRegistryProvider, RegistryVersionInfo, RemoteDigest, Tags, ImageReference, Canonical, Digest, Host (+2 more)
+Cohesion: 0.12
+Nodes (12): GhcrRegistryProvider, DefaultTokenRealm, DefaultTokenService, RegistryApiHost, IRegistryProvider, ImageReference, Canonical, Digest (+4 more)
 
 ### Community 2 - "IReadOnlyCollection"
-Cohesion: 0.09
-Nodes (8): DockerContainerLifecycleResult, NotFound, Succeeded, DockerEngineClient, IDockerEngineClient, ImageVersionCheckService, DockerContainerLifecycleExceptionMapperTests, StubDockerEngineClient
+Cohesion: 0.07
+Nodes (16): DockerContainerLifecycleExceptionMapper, DockerContainerLifecycleResult, NotFound, Succeeded, DockerEngineClient, IDockerEngineClient, ContainerLifecycleRequest, Id (+8 more)
 
 ### Community 3 - "Client Auth and Routing"
-Cohesion: 0.12
+Cohesion: 0.11
 Nodes (42): Component Structure → [composition.md](./rules/composition.md), react-dom, react-router, sonner, fetchAuthStatus(), login(), logout(), postAuth() (+34 more)
 
 ### Community 4 - "Container Diagram Client"
 Cohesion: 0.07
-Nodes (49): @xyflow/react, deleteDeviceContainer(), fetchDeviceDiagram(), postContainerLifecycle(), startDeviceContainer(), stopDeviceContainer(), fetchDevices(), readApiError() (+41 more)
-
-### Community 5 - "RecordingProcessRunner"
-Cohesion: 0.21
-Nodes (9): DockerComposeClientTests, RecordingProcessRunner, Arguments, CallCount, Environment, Exception, FileName, Result (+1 more)
+Nodes (42): @xyflow/react, deleteDeviceContainer(), fetchDeviceDiagram(), postContainerLifecycle(), startDeviceContainer(), stopDeviceContainer(), fetchDevices(), fetchDeviceImageVersionChecks() (+34 more)
 
 ### Community 6 - "Socket Property Tests"
 Cohesion: 0.05
 Nodes (24): Dome.Socket.Tests.Docker.Clients, ContainerMapper, ImageDigestMapper, ContainerResponse, Digest, Id, Image, ImageId (+16 more)
 
 ### Community 7 - "Design System Recipes"
-Cohesion: 0.20
-Nodes (26): Coverage check, Known traps, Step 6: Build the Design System Page, ComposeEditorDialog(), ComposeEditorDialogProps, ComposeYamlEditor, ConfirmDeleteDialog(), ConfirmDeleteDialogProps (+18 more)
+Cohesion: 0.12
+Nodes (42): Known traps, Step 5: Map Component Recipes to Variants, Assistant activity uses Trace, Buttons inside inputs use InputGroup + InputGroupAddon, Contents, Field validation and disabled states, FieldSet + FieldLegend for grouping related fields, Forms & Inputs (+34 more)
 
 ### Community 8 - "SocketService"
-Cohesion: 0.19
-Nodes (8): ISocketApiKeys, SocketMutationResult, Error, IsConflict, IsNotFound, IsSuccess, Socket, SocketService
+Cohesion: 0.10
+Nodes (16): GetSocketStatusesEndpoint, SocketMutationResult, Error, IsConflict, IsNotFound, IsSuccess, Socket, SocketService (+8 more)
 
 ### Community 9 - "Guid"
-Cohesion: 0.07
-Nodes (26): IStackService, StackMutationResult, Error, IsConflict, IsNotFound, IsSuccess, Stack, StackService (+18 more)
-
-### Community 10 - "Task"
-Cohesion: 0.06
-Nodes (6): GetAuthStatusEndpoint, IAdminAccountService, ISystemSettingsService, SocketRepository, DeviceResponse, Name
+Cohesion: 0.05
+Nodes (34): CreateDeviceStackEndpoint, CreateDeviceStackRequest, ProjectName, SocketName, GetDeviceStackEndpoint, StackViewModel, ComposeYaml, CreatedAt (+26 more)
 
 ### Community 11 - "SocketsPage.tsx"
-Cohesion: 0.19
-Nodes (24): AccessIcon(), canStart(), canStop(), ContainerDetailPane(), ContainerDetailPaneProps, normalizedState(), stateBadgeClassName(), volumeName() (+16 more)
+Cohesion: 0.16
+Nodes (31): fetchDeviceStack(), updateDeviceStack(), AccessIcon(), canStart(), canStop(), ContainerDetailPane(), ContainerDetailPaneProps, normalizedState() (+23 more)
 
 ### Community 12 - "Design System Page"
-Cohesion: 0.21
-Nodes (12): DESIGN.md, Design System Page, Color Roles Contrast Pairs, ColorPair, Component Tiers, Do and Don't Pairs, preview-states.css data-preview Variants, previewState (+4 more)
+Cohesion: 0.12
+Nodes (20): DESIGN.md, Design System Page, Color Roles Contrast Pairs, ColorPair, Component Tiers, Do and Don't Pairs, preview-states.css data-preview Variants, previewState (+12 more)
+
+### Community 14 - "DeviceContainerLifecycleRequest"
+Cohesion: 0.24
+Nodes (5): DeviceContainerLifecycleRequest, ContainerId, Name, StartDeviceContainerEndpoint, StopDeviceContainerEndpoint
 
 ### Community 15 - "ApiKeyMiddleware"
-Cohesion: 0.23
-Nodes (6): ApiKeyMiddleware, SocketKey, IsConfigured, IsPaired, KeyPath, Value
+Cohesion: 0.17
+Nodes (7): AuthSignIn, ApiKeyMiddleware, SocketKey, IsConfigured, IsPaired, KeyPath, Value
 
 ### Community 16 - "Styling & Customization Rules"
-Cohesion: 0.10
-Nodes (21): Semantic CSS Variable Tokens, Dark Mode (.dark class, next-themes), DESIGN.md Role to shadcn Variable Mapping, Styling & Customization Rules, cn() Utility, No Manual z-index on Overlays, gap-* not space-x/y, size-* over w-*/h-* (+13 more)
+Cohesion: 0.12
+Nodes (19): Semantic CSS Variable Tokens, Dark Mode (.dark class, next-themes), DESIGN.md Role to shadcn Variable Mapping, Styling & Customization Rules, No Manual z-index on Overlays, gap-* not space-x/y, size-* over w-*/h-*, truncate Shorthand (+11 more)
 
 ### Community 17 - "Solution and Packages"
 Cohesion: 0.05
@@ -281,32 +265,28 @@ Cohesion: 0.05
 Nodes (39): concurrency, cancel-in-progress, group, name, needs, permissions, uses, jobs (+31 more)
 
 ### Community 19 - "SocketsPage.tsx"
-Cohesion: 0.12
-Nodes (32): Assistant activity uses Trace, createSocket(), deleteSocket(), fetchSockets(), fetchSocketStatuses(), setSocketKey(), updateSocket(), DropdownMenu() (+24 more)
-
-### Community 20 - ".CreateService"
-Cohesion: 0.27
-Nodes (4): Dome.Domain.Images, IImageVersionCacheRepository, ImageVersionCacheRepository, DeviceImageVersionCheckerTests
+Cohesion: 0.11
+Nodes (32): radix-ui, react, readApiError(), createSocket(), deleteSocket(), fetchSockets(), fetchSocketStatuses(), setSocketKey() (+24 more)
 
 ### Community 21 - ".AddDomeDomain"
-Cohesion: 0.23
-Nodes (3): DependencyInjection, SqlitePath, SqlitePathTests
+Cohesion: 0.16
+Nodes (6): DependencyInjection, SqlitePath, DockerComposeOptions, DockerCliPath, WorkingRoot, SqlitePathTests
 
 ### Community 22 - "Image Tag Versioning"
 Cohesion: 0.09
 Nodes (18): ImageTagParser, ImageTagVersion, Major, Minor, Original, Patch, Suffix, ImageVersionClassification (+10 more)
 
-### Community 23 - "InlineData"
-Cohesion: 0.17
-Nodes (4): SocketAddressValidator, ImageReferenceParser, SocketAddressValidatorTests, ImageReferenceParserTests
+### Community 23 - "DeleteDeviceStackRequest"
+Cohesion: 0.25
+Nodes (5): DeleteDeviceStackEndpoint, DeleteDeviceStackRequest, RemoveVolumes, SocketName, StackId
 
 ### Community 24 - "Docker/DependencyInjection.cs"
-Cohesion: 0.10
-Nodes (11): Dome.Socket.Contracts.Compose, Dome.Socket.Api.Endpoints.Compose, Dome.Socket.Tests.Docker.Configuration, Dome.Socket.Api.Endpoints.Health, Dome.Socket.Api.Docker.Configuration, Dome.Socket.Api.Docker.Compose, Dome.Socket.Contracts.Health, UpComposeEndpoint (+3 more)
+Cohesion: 0.20
+Nodes (5): Dome.Socket.Contracts.Compose, Dome.Socket.Api.Endpoints.Compose, Dome.Socket.Tests.Docker.Configuration, Dome.Socket.Api.Docker.Configuration, Dome.Socket.Api.Docker.Compose
 
 ### Community 25 - "Socket Container Endpoints"
-Cohesion: 0.06
-Nodes (17): Dome.Socket.Api.Endpoints.Containers, Dome.Socket.Tests.Docker.Images, Dome.Socket.Api.Docker.Clients, Dome.Socket.Contracts.Containers, DockerContainerLifecycleExceptionMapper, SystemDataUsageResponse, SystemDataUsageVolumeResponse, Name (+9 more)
+Cohesion: 0.09
+Nodes (12): Dome.Socket.Contracts, Dome.Socket.Api.Endpoints.Health, Dome.Socket.Api.Endpoints.Containers, Dome.Socket.Api.Docker.Clients, Dome.Socket.Contracts.Health, Dome.Socket.Contracts.Containers, SystemDataUsageResponse, SystemDataUsageVolumeResponse (+4 more)
 
 ### Community 26 - "EF Core Migrations"
 Cohesion: 0.11
@@ -325,35 +305,27 @@ Cohesion: 0.07
 Nodes (29): name, permissions, runs-on, steps, jobs, analysis, name, permissions (+21 more)
 
 ### Community 30 - ".AddDomeBusiness"
-Cohesion: 0.11
-Nodes (12): DeviceQueryService, DeviceStackDeployResult, Error, IsDeviceNotFound, IsFailed, IsStackNotFound, IsSuccess, DeviceStackDeployService (+4 more)
+Cohesion: 0.12
+Nodes (13): DeleteDeviceUnmanagedStackEndpoint, DeleteDeviceUnmanagedStackRequest, ProjectName, RemoveVolumes, SocketName, DeviceStackDeployResult, Error, IsDeviceNotFound (+5 more)
 
-### Community 31 - "The Design System Page"
-Cohesion: 0.15
-Nodes (13): defaultStates, previewState(), StateMatrix(), Block anatomy, Checklist, Components: Tiers and Block Anatomy, Contents, Do and Don't (+5 more)
+### Community 31 - "color-pair.tsx"
+Cohesion: 0.23
+Nodes (10): ColorPair(), contrast(), luminance(), toHex(), toRgb(), defaultStates, previewState(), StateMatrix() (+2 more)
 
-### Community 32 - "Endpoint"
-Cohesion: 0.06
-Nodes (22): Dome.Business.Stacks, Dome.Shared.Stacks, LoginEndpoint, CreateDeviceStackEndpoint, DeployDeviceStackEndpoint, GetDeviceStackEndpoint, GetDeviceStackRequest, SocketName (+14 more)
-
-### Community 33 - "Dome.Business.Devices"
-Cohesion: 0.13
-Nodes (9): Dome.Socket.Contracts, Dome.Business.Devices, Dome.Shared.Containers, Dome.Domain.Stacks, Dome.Business.Tests.Devices, Dome.Business.Tests.Stacks, Dome.Domain.Sockets, Dome.Shared.Devices (+1 more)
+### Community 33 - "Socket"
+Cohesion: 0.10
+Nodes (20): Dome.Domain.Stacks, Dome.Business.Tests.Devices, Dome.Business.Tests.Settings, Dome.Business.Tests.Stacks, Dome.Domain.Sockets, Socket, Address, CertificateFingerprint (+12 more)
 
 ### Community 34 - "Socket Service Tests"
-Cohesion: 0.11
-Nodes (15): SocketApiKeys, ISocketRepository, Socket, Address, CertificateFingerprint, CreatedAt, Id, Name (+7 more)
+Cohesion: 0.10
+Nodes (8): ISocketRepository, SocketRepository, GetHealthEndpoint, SocketHealthResponse, DockerReachable, Version, SocketServiceTests, SocketRepositoryTests
 
 ### Community 35 - "DomeSocketApiFactory.cs"
-Cohesion: 0.11
-Nodes (6): Dome.Socket.Tests.Security, Dome.Socket.Contracts.Pairing, Dome.Socket.Api.Endpoints.Pairing, Dome.Business.Tests.Sockets, Dome.Socket.Api.Security, Dome.Socket.Api.Docker
-
-### Community 37 - "Stack Deploy Service"
-Cohesion: 0.22
-Nodes (4): GetContainersResponse, Containers, IDomeSocketApi, DeviceStackDeployServiceTests
+Cohesion: 0.15
+Nodes (4): Dome.Socket.Tests.Security, Dome.Socket.Api.Security, Dome.Socket.Api.Docker, SocketCertificate
 
 ### Community 38 - "Container Command Results"
-Cohesion: 0.14
+Cohesion: 0.16
 Nodes (7): DeviceContainerCommandResult, IsContainerNotFound, IsDeviceNotFound, IsSuccess, DeviceContainerCommandService, IDeviceContainerCommandService, DeviceContainerCommandServiceTests
 
 ### Community 39 - "shadcn Composition Rules"
@@ -361,48 +333,48 @@ Cohesion: 0.15
 Nodes (10): Component Composition Rules, Alert for Callouts, Avatar Requires AvatarFallback, Button Loading via Spinner, Full Card Composition, Empty State Component, Overlay Component Selection, TabsTrigger Inside TabsList (+2 more)
 
 ### Community 40 - "Design System Verification"
-Cohesion: 0.12
-Nodes (15): --radius Border Radius, Elevation Shadow Overrides, Focus Treatment Mapping, Fonts via Fontsource Substitutes, Showcase Known Traps, Design System Verification, Contents, Design Systems from DESIGN.md (+7 more)
+Cohesion: 0.10
+Nodes (18): --radius Border Radius, Elevation Shadow Overrides, Focus Treatment Mapping, Fonts via Fontsource Substitutes, Showcase Known Traps, Design System Verification, cn() Utility, Contents (+10 more)
 
 ### Community 41 - "Compose Sample Config"
 Cohesion: 0.09
 Nodes (23): environment, image, ports, restart, volumes, depends_on, image, ports (+15 more)
 
-### Community 42 - "DeleteDeviceUnmanagedStackEndpoint"
-Cohesion: 0.25
-Nodes (5): DeleteDeviceUnmanagedStackEndpoint, DeleteDeviceUnmanagedStackRequest, ProjectName, RemoveVolumes, SocketName
+### Community 42 - "GetDeviceContainersEndpoint"
+Cohesion: 0.28
+Nodes (5): GetDeviceContainersEndpoint, GetDeviceContainersRequest, Name, GetDeviceContainersResponse, Containers
 
-### Community 43 - "EndpointWithoutRequest"
-Cohesion: 0.13
-Nodes (8): LogoutEndpoint, GetDevicesEndpoint, GetSocketsEndpoint, GetSocketStatusesEndpoint, GetDevicesResponse, Devices, GetSocketStatusesResponse, Statuses
+### Community 43 - ".GetDevicesAsync"
+Cohesion: 0.24
+Nodes (5): GetDevicesEndpoint, DeviceResponse, Name, GetDevicesResponse, Devices
 
 ### Community 44 - "fastendpoints"
-Cohesion: 0.14
-Nodes (11): Dome.Shared.Sockets, Dome.Business.Sockets, Dome.Api.Endpoints.Sockets, DeleteDeviceStackEndpoint, DeleteDeviceStackRequest, RemoveVolumes, SocketName, StackId (+3 more)
+Cohesion: 0.20
+Nodes (4): Dome.Shared.Sockets, Dome.Business.Sockets, Dome.Business.Tests.Sockets, Dome.Api.Endpoints.Sockets
 
 ### Community 45 - "Zizmor Workflow Config"
 Cohesion: 0.09
 Nodes (21): jobs, zizmor, name, permissions, actions, contents, security-events, paths (+13 more)
 
 ### Community 46 - "OCI Registry Provider"
-Cohesion: 0.14
-Nodes (7): ComposeProjectName, OciRegistryProvider, DefaultTokenRealm, DefaultTokenService, RegistryApiHost, OciTagListResponse, Tags
+Cohesion: 0.17
+Nodes (6): OciRegistryProvider, DefaultTokenRealm, DefaultTokenService, RegistryApiHost, OciTagListResponse, Tags
 
 ### Community 47 - "Base vs Radix Rules"
 Cohesion: 0.10
 Nodes (20): Accordion type and defaultValue, asChild (radix) vs render (base), nativeButton={false}, Select Base vs Radix Differences, Slider Scalar vs Array, ToggleGroup type vs multiple, Forms & Inputs Rules, Choosing Form Controls (+12 more)
 
-### Community 48 - "ISystemSettingRepository"
-Cohesion: 0.35
-Nodes (3): SystemSettingsService, ISystemSettingRepository, SystemSettingsServiceTests
+### Community 48 - "GetDeviceStacksEndpoint"
+Cohesion: 0.28
+Nodes (5): GetDeviceStacksEndpoint, GetDeviceStacksRequest, SocketName, GetDeviceStacksResponse, Stacks
 
 ### Community 49 - "TypeScript App Config"
 Cohesion: 0.10
 Nodes (20): compilerOptions, allowArbitraryExtensions, allowImportingTsExtensions, erasableSyntaxOnly, jsx, lib, module, moduleDetection (+12 more)
 
 ### Community 50 - "Dome.Api.Endpoints.Devices"
-Cohesion: 0.05
-Nodes (27): Dome.Api.Endpoints.Devices, CreateDeviceStackRequest, ProjectName, SocketName, DeviceContainerLifecycleRequest, ContainerId, Name, GetDeviceContainersEndpoint (+19 more)
+Cohesion: 0.09
+Nodes (14): Dome.Business.Images, Dome.Shared.Images, Dome.Business.Devices, Dome.Shared.Containers, Dome.Business.Tests.Images, Dome.Api.Endpoints.Devices, Dome.Shared.Devices, GetDeviceImageVersionChecksEndpoint (+6 more)
 
 ### Community 51 - "Release Documentation Skill"
 Cohesion: 0.15
@@ -412,13 +384,13 @@ Nodes (15): document-release Skill, Directory.Build.props Version, Dome.Client p
 Cohesion: 0.13
 Nodes (14): search Command, Configuring Registries in components.json, shadcn MCP Tools (search/list/view/examples/add/audit), Configuring Registries, Setup, `shadcn:get_add_command_for_items`, `shadcn:get_audit_checklist`, `shadcn:get_item_examples_from_registries` (+6 more)
 
-### Community 53 - ".SetupAsync"
-Cohesion: 0.19
-Nodes (6): AdminAccountService, AdminSetupResult, Error, IsConflict, IsSuccess, AdminAccountServiceTests
+### Community 53 - "InlineData"
+Cohesion: 0.06
+Nodes (17): AdminAccountService, AdminSetupResult, Error, IsConflict, IsSuccess, PasswordHasher, SystemSettingsService, SocketAddressValidator (+9 more)
 
 ### Community 54 - "ImageVersionCache"
-Cohesion: 0.14
-Nodes (10): TelemetryReporter, DeviceImageVersionChecker, ImageVersionCache, CheckedAt, Id, ImageReference, LastError, RemoteDigest (+2 more)
+Cohesion: 0.22
+Nodes (8): ImageVersionCache, CheckedAt, Id, ImageReference, LastError, RemoteDigest, RemoteTags, Unsupported
 
 ### Community 55 - "Cache Entity Configuration"
 Cohesion: 0.15
@@ -426,11 +398,11 @@ Nodes (7): ImageVersionCacheConfiguration, SystemSetting, Key, Value, SystemSett
 
 ### Community 56 - "Client Lint and Tooling"
 Cohesion: 0.11
-Nodes (17): clsx, cn, oxlint, shadcn, @shadcn/lint, tailwind-merge, tailwindcss, tw-animate-css (+9 more)
+Nodes (18): class-variance-authority, clsx, cn, oxlint, shadcn, @shadcn/lint, tailwind-merge, tailwindcss (+10 more)
 
 ### Community 57 - "DeleteContainerResult"
-Cohesion: 0.18
-Nodes (9): DeleteContainerResult, ContainerId, Error, Status, DeleteContainersRequest, ContainerIds, RemoveVolumes, DeleteContainersResponse (+1 more)
+Cohesion: 0.17
+Nodes (10): DeleteContainerResult, ContainerId, Error, Status, DeleteContainersResponse, Results, DeleteContainerStatus, Deleted (+2 more)
 
 ### Community 58 - "Container View Models"
 Cohesion: 0.12
@@ -441,8 +413,8 @@ Cohesion: 0.15
 Nodes (16): build Command, Registry Address Schemes, Built Registry, include Field, Registry Item Definitions, registry.json, Source Registry, Address Schemes (+8 more)
 
 ### Community 60 - "Dome.Socket.Contracts.Images"
-Cohesion: 0.18
-Nodes (7): Dome.Socket.Tests.Docker.Registries, Dome.Socket.Api.Docker.Images, Dome.Socket.Api.Endpoints.Images, Dome.Socket.Api.Docker.Registries, Dome.Socket.Contracts.Images, DependencyInjection, ImageVersionCheckServiceTests
+Cohesion: 0.12
+Nodes (13): Dome.Socket.Tests.Docker.Registries, Dome.Socket.Api.Docker.Images, Dome.Socket.Tests.Docker.Images, Dome.Socket.Api.Endpoints.Images, Dome.Socket.Api.Docker.Registries, Dome.Socket.Contracts.Images, DependencyInjection, IImageVersionCheckService (+5 more)
 
 ### Community 61 - "TypeScript Node Config"
 Cohesion: 0.12
@@ -450,11 +422,11 @@ Nodes (16): compilerOptions, allowImportingTsExtensions, erasableSyntaxOnly, lib
 
 ### Community 62 - "microsoft_extensions_configuration"
 Cohesion: 0.10
-Nodes (11): Dome.Domain.Seeding, Dome.Domain.Tests.Sockets, Dome.Domain.Tests.Settings, Dome.Domain.Tests.Seeding, Dome.Domain.Tests.Sqlite, Dome.Domain.Sqlite, DatabaseInitializer, IDatabaseInitializer (+3 more)
+Nodes (12): Dome.Domain.Seeding, Dome.Domain.Tests.Sockets, Dome.Domain.Tests.Settings, Dome.Domain.Tests.Seeding, Dome.Domain.Tests.Sqlite, Dome.Domain.Settings, Dome.Domain.Sqlite, DatabaseInitializer (+4 more)
 
-### Community 63 - "ImageReference"
-Cohesion: 0.17
-Nodes (9): IImageVersionCheckService, CheckImageVersionsEndpoint, CheckImageVersionsRequest, Images, CheckImageVersionsResponse, Results, ImageVersionCheckRequestItem, Image (+1 more)
+### Community 63 - "CheckImageVersionsRequest"
+Cohesion: 0.29
+Nodes (6): ImageVersionCheckService, CheckImageVersionsRequest, Images, ImageVersionCheckRequestItem, Image, ImageId
 
 ### Community 64 - "shadcn CLI Commands"
 Cohesion: 0.13
@@ -468,29 +440,21 @@ Nodes (3): Icons, Icons in Button use data-icon attribute, Pass icons as compone
 Cohesion: 0.12
 Nodes (16): with, build-args, context, file, images, labels, password, persist-credentials (+8 more)
 
-### Community 67 - "PairRequest"
-Cohesion: 0.24
-Nodes (6): PairEndpoint, SocketSecurity, PairRequest, Nonce, PairResponse, Proof
-
 ### Community 68 - "Oxlint Config"
 Cohesion: 0.12
 Nodes (15): categories, correctness, jsPlugins, overrides, plugins, rules, react/only-export-components, react/rules-of-hooks (+7 more)
 
-### Community 69 - "Input"
-Cohesion: 0.10
-Nodes (26): Step 5: Map Component Recipes to Variants, Composition: asChild (radix) vs render (base), Buttons inside inputs use InputGroup + InputGroupAddon, Contents, Field validation and disabled states, FieldSet + FieldLegend for grouping related fields, Forms & Inputs, Forms use FieldGroup + Field (+18 more)
-
-### Community 70 - "Dome.Domain.Settings"
-Cohesion: 0.22
-Nodes (4): Dome.Business.Tests.Settings, Dome.Domain.Settings, SystemSettingKeys, SystemSettingRepository
+### Community 69 - "GetDeviceStackRequest"
+Cohesion: 0.29
+Nodes (4): DeployDeviceStackEndpoint, GetDeviceStackRequest, SocketName, StackId
 
 ### Community 71 - "Customization & Theming"
 Cohesion: 0.11
 Nodes (18): Adding Custom Colors (Tailwind v3/v4), cva Variants, OKLCH Color Format, 1. Built-in variants, 2. Tailwind classes via `className`, 3. Add a new variant, 4. Wrapper components, Adding Custom Colors (+10 more)
 
-### Community 72 - "SystemSettingsResponse"
-Cohesion: 0.17
-Nodes (10): GetSystemSettingsEndpoint, UpdateSystemSettingsEndpoint, IApplicationVersion, Current, SystemSettingsResponse, Environment, InstallationId, OnboardingCompleted (+2 more)
+### Community 72 - "ISystemSettingsService"
+Cohesion: 0.08
+Nodes (17): GetAuthStatusEndpoint, LogoutEndpoint, GetSystemSettingsEndpoint, UpdateSystemSettingsEndpoint, IApplicationVersion, Current, ISystemSettingsService, TelemetrySettings (+9 more)
 
 ### Community 74 - "Client Dependencies"
 Cohesion: 0.14
@@ -516,13 +480,13 @@ Nodes (12): `add` — Add components, `apply` — Apply a preset to an existing 
 Cohesion: 0.17
 Nodes (12): Avatar always needs AvatarFallback, Button has no isPending or isLoading prop, Callouts use Alert, Card structure, Choosing between overlay components, Component Composition, Contents, Dialog, Sheet, and Drawer always need a Title (+4 more)
 
-### Community 81 - ".AddDomeSocket"
-Cohesion: 0.25
-Nodes (5): DockerComposeOptions, DockerCliPath, WorkingRoot, IProcessRunner, ProcessRunner
+### Community 81 - "RecordingProcessRunner"
+Cohesion: 0.13
+Nodes (14): IProcessRunner, ProcessRunner, ProcessRunResult, ExitCode, StandardError, StandardOutput, RecordingProcessRunner, Arguments (+6 more)
 
-### Community 82 - "Dome.Business.Images"
-Cohesion: 0.14
-Nodes (5): Dome.Business.Images, Dome.Shared.Images, Dome.Business.Tests.Images, IDeviceImageVersionChecker, ImageVersionKind
+### Community 82 - "ImageVersionCheckDto"
+Cohesion: 0.25
+Nodes (7): ImageVersionCheckDto, CheckedAt, ContainerId, CurrentTag, Image, Kind, NewestTag
 
 ### Community 83 - "Dependabot Config"
 Cohesion: 0.17
@@ -541,32 +505,28 @@ Cohesion: 0.20
 Nodes (11): DOME Changelog, Unreleased: Sign-in and admin account, Unreleased: Encrypted Server-to-Socket HTTPS with certificate pinning, v0.1.0 First public release (HomelabDocs), v0.3.0 Rename HomelabDocs to DOME, v0.3.1 Create/edit/deploy Compose stacks, v0.4.0 Socket version and image update icons, v0.5.0 Delete containers and stacks (+3 more)
 
 ### Community 87 - "Image Check View Model"
-Cohesion: 0.13
-Nodes (14): ContainerImageVersionCheckViewModel, CheckedAt, ContainerId, CurrentTag, Image, Kind, NewestTag, ImageVersionCheckDto (+6 more)
+Cohesion: 0.25
+Nodes (7): ContainerImageVersionCheckViewModel, CheckedAt, ContainerId, CurrentTag, Image, Kind, NewestTag
 
 ### Community 88 - "Container View Model"
 Cohesion: 0.18
 Nodes (10): ContainerViewModel, Digest, Id, Image, ImageId, Name, Stack, State (+2 more)
 
-### Community 89 - "SocketStatusResponse"
-Cohesion: 0.17
-Nodes (11): SocketState, NeedsPairing, Offline, Online, Unauthorized, SocketStatusResponse, Id, IsReachable (+3 more)
+### Community 89 - "RegistryVersionInfo"
+Cohesion: 0.50
+Nodes (3): RegistryVersionInfo, RemoteDigest, Tags
 
 ### Community 90 - "Container DTO"
-Cohesion: 0.18
+Cohesion: 0.15
 Nodes (10): ContainerDto, Digest, Id, Image, ImageId, Name, Stack, State (+2 more)
 
 ### Community 91 - "DeleteContainerStatus"
-Cohesion: 0.17
-Nodes (7): OciTokenResponse, AccessToken, Token, DeleteContainerStatus, Deleted, Failed, NotFound
-
-### Community 92 - "Pairing Proof"
-Cohesion: 0.36
-Nodes (3): Dome.Socket.Tests.Pairing, PairingProof, PairingProofTests
+Cohesion: 0.15
+Nodes (8): SocketState, NeedsPairing, Offline, Online, Unauthorized, OciTokenResponse, AccessToken, Token
 
 ### Community 93 - "Database Context"
 Cohesion: 0.18
-Nodes (6): DomeDbContext, ImageVersionCaches, Sockets, Stacks, SystemSettings, DomeDbContextFactory
+Nodes (7): Dome.Domain.Images, DomeDbContext, ImageVersionCaches, Sockets, Stacks, SystemSettings, DomeDbContextFactory
 
 ### Community 94 - "Dev Compose Services"
 Cohesion: 0.27
@@ -576,9 +536,13 @@ Nodes (10): api service (local build), client service (local build), dome-data v
 Cohesion: 0.20
 Nodes (9): concurrency, cancel-in-progress, group, jobs, name, permissions, types, True (+1 more)
 
-### Community 97 - "DeviceDiagramDto"
-Cohesion: 0.20
-Nodes (8): DiagramStackViewModel, Id, Kind, ProjectName, TotalBytes, GetDeviceDiagramResponse, Containers, Stacks
+### Community 96 - "Fact"
+Cohesion: 0.11
+Nodes (4): DockerContainerLifecycleExceptionMapperTests, ApiKeyMiddlewareTests, SocketCertificateTests, SocketKeyTests
+
+### Community 97 - "GetDeviceDiagramResponse"
+Cohesion: 0.19
+Nodes (7): GetDeviceDiagramEndpoint, GetDeviceDiagramRequest, SocketName, GetDeviceDiagramResponse, Containers, Stacks, IDeviceDiagramService
 
 ### Community 98 - "components.json"
 Cohesion: 0.14
@@ -592,10 +556,6 @@ Nodes (7): Unreleased: Socket keys, socket-data volume, socket service (ghcr ima
 Cohesion: 0.18
 Nodes (10): shadcn openai.yml Agent Interface, Icons Rules, Project iconLibrary, Pass Icons as Component Objects, shadcn Skill, Component Selection Table, Project Context Key Fields, shadcn CLI (npx shadcn@latest) (+2 more)
 
-### Community 101 - "ProcessRunResult"
-Cohesion: 0.18
-Nodes (6): Dome.Socket.Tests.Docker.Compose, Dome.Socket.Api.Docker.Processes, ProcessRunResult, ExitCode, StandardError, StandardOutput
-
 ### Community 102 - "Release Image Publishing"
 Cohesion: 0.25
 Nodes (8): Build provenance attestation, DOME_ENVIRONMENT=Release build-arg, GHCR registry ghcr.io/dome-works, publish job, Release workflow (publish images), v0.6.0 Onboarding and anonymous usage tracking, Telemetry (PostHog instance_heartbeat), Telemetry environment (Development/Test/Release)
@@ -605,8 +565,8 @@ Cohesion: 0.25
 Nodes (6): components, missing, source, [uiArg, ...roots], uiDir, walk()
 
 ### Community 104 - "AssemblyApplicationVersion"
-Cohesion: 0.20
-Nodes (5): Dome.Socket.Api, AssemblyApplicationVersion, Current, ApplicationVersion, Current
+Cohesion: 0.13
+Nodes (7): Dome.Socket.Api, TelemetryBuildInfo, Environment, AssemblyApplicationVersion, Current, ApplicationVersion, Current
 
 ### Community 105 - "README Operations"
 Cohesion: 0.25
@@ -621,8 +581,8 @@ Cohesion: 0.25
 Nodes (5): @tailwindcss/vite, vite, @vitejs/plugin-react, __dirname, { version }
 
 ### Community 108 - "DomeSocketApiFactory"
-Cohesion: 0.15
-Nodes (4): ClientKey, DomeSocketApiFactory, FakeSocketHandler, ScriptedHttpMessageHandler
+Cohesion: 0.06
+Nodes (19): Dome.Socket.Contracts.Pairing, Dome.Socket.Api.Endpoints.Pairing, Dome.Socket.Tests.Pairing, ClientKey, DomeSocketApiFactory, ISocketApiKeys, SocketApiKeys, PairEndpoint (+11 more)
 
 ### Community 109 - "CI Build Pipeline"
 Cohesion: 0.33
@@ -648,29 +608,25 @@ Nodes (9): Attachments use Attachment, Chat & Messaging, Code and tool output us
 Cohesion: 0.40
 Nodes (3): monaco-editor, @monaco-editor/react, ComposeYamlEditorProps
 
-### Community 116 - "OciAuthenticatedResponse"
-Cohesion: 0.50
-Nodes (3): OciAuthenticatedResponse, Response, Token
-
 ### Community 118 - "Client npm Scripts"
 Cohesion: 0.40
 Nodes (5): scripts, build, dev, lint, preview
 
-### Community 119 - "IDeviceQueryService"
-Cohesion: 0.17
-Nodes (5): Dome.Shared.Diagrams, DeviceDiagramService, IDeviceDiagramService, IDeviceQueryService, DiagramStackKind
+### Community 119 - ".AddDomeBusiness"
+Cohesion: 0.18
+Nodes (8): DependencyInjection, DeviceDiagramService, DeviceQueryService, IDeviceQueryService, IDomeSocketApiFactory, GetContainersResponse, Containers, DeviceQueryServiceTests
 
 ### Community 122 - ".DownAsync"
-Cohesion: 0.27
+Cohesion: 0.26
 Nodes (5): DockerComposeClient, DockerComposeResult, Error, IsInvalid, Succeeded
 
-### Community 123 - "ComposeDownRequest"
-Cohesion: 0.29
-Nodes (5): IDockerComposeClient, DownComposeEndpoint, ComposeDownRequest, ProjectName, RemoveVolumes
+### Community 123 - "IDockerComposeClient"
+Cohesion: 0.13
+Nodes (11): IDockerComposeClient, DownComposeEndpoint, UpComposeEndpoint, ComposeCommandErrorResponse, Message, ComposeDownRequest, ProjectName, RemoveVolumes (+3 more)
 
-### Community 124 - "Dome.Business.Settings"
-Cohesion: 0.24
-Nodes (4): Dome.Business.Settings, Dome.Api.Endpoints.Settings, Dome.Api.Telemetry, TelemetrySettings
+### Community 124 - "Dome.Api/Program.cs"
+Cohesion: 0.10
+Nodes (9): Dome.Business.Settings, Dome.Business, Dome.Business.Auth, Dome.Api.Endpoints.Auth, Dome.Shared.Settings, Dome.Shared.Auth, Dome.Api.Endpoints.Settings, Dome.Api.Telemetry (+1 more)
 
 ### Community 125 - "shadcn Logo Images"
 Cohesion: 0.67
@@ -688,93 +644,73 @@ Nodes (3): env, PLATFORMS, REGISTRY
 Cohesion: 0.67
 Nodes (3): dompurify, overrides, monaco-editor
 
-### Community 137 - ".Hash"
-Cohesion: 0.18
-Nodes (4): Dome.Business.Auth, Dome.Business.Tests.Auth, PasswordHasher, PasswordHasherTests
-
-### Community 138 - "UpdateSocketEndpoint"
-Cohesion: 0.25
-Nodes (5): UpdateSocketEndpoint, UpdateSocketRequest, Address, Id, Name
+### Community 138 - "Endpoint"
+Cohesion: 0.06
+Nodes (25): LoginEndpoint, DeleteDeviceContainerEndpoint, CreateSocketEndpoint, DeleteSocketEndpoint, GetSocketEndpoint, GetSocketsEndpoint, SetSocketKeyEndpoint, UpdateSocketEndpoint (+17 more)
 
 ### Community 139 - "DockerHubRegistryProvider"
 Cohesion: 0.29
 Nodes (5): DockerHubRegistryProvider, DefaultTokenRealm, DefaultTokenService, RegistryApiHost, DockerHubRegistryProviderTests
 
 ### Community 140 - "Foundations"
-Cohesion: 0.19
-Nodes (13): ColorPair(), contrast(), luminance(), toHex(), toRgb(), Color roles, Elevation, Foundations (+5 more)
+Cohesion: 0.25
+Nodes (8): Color roles, Elevation, Foundations, Motion and icons, Palette, Radius, Spacing, Typography
 
 ### Community 141 - "DeviceDiagramDto"
-Cohesion: 0.22
-Nodes (8): DeviceDiagramDto, Containers, Stacks, DiagramStackDto, Id, Kind, ProjectName, TotalBytes
+Cohesion: 0.11
+Nodes (15): Dome.Shared.Diagrams, DiagramStackViewModel, Id, Kind, ProjectName, TotalBytes, DeviceDiagramDto, Containers (+7 more)
 
-### Community 143 - "Dome.Shared.Auth"
-Cohesion: 0.15
-Nodes (8): Dome.Shared.Auth, SetupAdminEndpoint, LoginRequest, Password, Username, SetupAdminRequest, Password, Username
-
-### Community 144 - "SocketResponse"
-Cohesion: 0.22
-Nodes (7): GetSocketsResponse, Sockets, SocketResponse, Address, CreatedAt, Id, Name
+### Community 143 - "IAdminAccountService"
+Cohesion: 0.12
+Nodes (8): SetupAdminEndpoint, IAdminAccountService, LoginRequest, Password, Username, SetupAdminRequest, Password, Username
 
 ### Community 145 - "Step 4: Map Tokens to the Theme"
 Cohesion: 0.25
 Nodes (8): Dark mode, Elevation, Focus, Fonts, Radius, Role mapping, Step 4: Map Tokens to the Theme, Type scale
 
-### Community 146 - "GhcrRegistryProvider"
-Cohesion: 0.28
-Nodes (5): GhcrRegistryProvider, DefaultTokenRealm, DefaultTokenService, RegistryApiHost, GhcrRegistryProviderTests
-
 ### Community 147 - "ImageVersionCheckResponse"
-Cohesion: 0.22
-Nodes (8): ImageVersionCheckResponse, Error, Image, ImageId, LocalDigest, RemoteDigest, Tags, Unsupported
+Cohesion: 0.17
+Nodes (10): CheckImageVersionsResponse, Results, ImageVersionCheckResponse, Error, Image, ImageId, LocalDigest, RemoteDigest (+2 more)
 
-### Community 149 - "CreateSocketEndpoint"
-Cohesion: 0.21
-Nodes (7): CreateSocketEndpoint, GetSocketEndpoint, ISocketService, CreateSocketRequest, Address, Key, Name
+### Community 149 - "CreateSocketRequest"
+Cohesion: 0.40
+Nodes (4): CreateSocketRequest, Address, Key, Name
 
 ### Community 150 - "tailwind"
 Cohesion: 0.33
 Nodes (6): tailwind, baseColor, config, css, cssVariables, prefix
 
 ### Community 151 - "DeleteDeviceContainerEndpoint"
-Cohesion: 0.25
-Nodes (5): DeleteDeviceContainerEndpoint, DeleteDeviceContainerRequest, ContainerId, Name, RemoveVolumes
-
-### Community 152 - "SetSocketKeyEndpoint"
-Cohesion: 0.29
-Nodes (4): SetSocketKeyEndpoint, SetSocketKeyRequest, Id, Key
-
-### Community 155 - "UpdateSystemSettingsRequest"
-Cohesion: 0.33
-Nodes (4): Dome.Shared.Settings, UpdateSystemSettingsRequest, OnboardingCompleted, TelemetryEnabled
+Cohesion: 0.40
+Nodes (4): DeleteDeviceContainerRequest, ContainerId, Name, RemoveVolumes
 
 ### Community 156 - "DockerEndpointOptions"
 Cohesion: 0.33
 Nodes (3): DockerEndpointOptions, Endpoint, DockerEndpointOptionsTests
 
 ### Community 157 - "AuthStatusResponse"
-Cohesion: 0.40
+Cohesion: 0.33
 Nodes (5): AuthStatusResponse, Authenticated, OnboardingCompleted, SetupRequired, Username
 
 ## Knowledge Gaps
 - **407 isolated node(s):** `npm`, `cn`, `@shadcn/lint`, `@types/node`, `@types/react` (+402 more)
   These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 950 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
-- **22 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **23 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `Socket` connect `Socket Service Tests` to `IReadOnlyCollection`, `SocketService`, `Guid`, `Task`, `DomeSocketApiFactoryTests`, `.CreateService`, `EF Core Migrations`, `.AddDomeBusiness`, `Endpoint`, `Dome.Business.Devices`, `DomeSocketApiFactory.cs`, `Stack Deploy Service`, `Container Command Results`, `fastendpoints`, `Release Documentation Skill`, `ImageVersionCache`, `Cache Entity Configuration`, `Diagram Service Tests`, `SocketStatusResponse`, `Database Context`, `DomeSocketApiFactory`?**
-  _High betweenness centrality (0.041) - this node is a cross-community bridge._
+- **Why does `Socket` connect `Socket` to `SocketService`, `Guid`, `Endpoint`, `IStackRepository`, `.CreateService`, `Docker/DependencyInjection.cs`, `Socket Container Endpoints`, `EF Core Migrations`, `Dome.Business.Stacks`, `Socket Service Tests`, `DomeSocketApiFactory.cs`, `Stack Deploy Service`, `Container Command Results`, `fastendpoints`, `OCI Registry Provider`, `Dome.Api.Endpoints.Devices`, `Release Documentation Skill`, `Cache Entity Configuration`, `DeviceImageVersionChecker`, `Diagram Service Tests`, `Database Context`, `DomeSocketApiFactory`, `.AddDomeBusiness`?**
+  _High betweenness centrality (0.040) - this node is a cross-community bridge._
 - **Are the 4 inferred relationships involving `cn()` (e.g. with `Helpers` and `Type scale`) actually correct?**
   _`cn()` has 4 INFERRED edges - model-reasoned connections that need verification._
 - **What connects `npm`, `cn`, `@shadcn/lint` to the rest of the system?**
   _407 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `shadcn Skill Overview` be split into smaller, more focused modules?**
-  _Cohesion score 0.06846846846846846 - nodes in this community are weakly interconnected._
-- **Why does `shadcn Skill` connect `shadcn Skill` to `shadcn CLI Commands`, `components.json`, `Input`, `shadcn Composition Rules`, `Customization & Theming`, `Design System Verification`, `Design System Page`, `Chat Component Mapping`, `Base vs Radix Rules`, `Styling & Customization Rules`, `shadcn Registry`?**
-  _High betweenness centrality (0.023) - this node is a cross-community bridge._
-- **Are the 3 inferred relationships involving `Socket` (e.g. with `CHANGELOG.md` and `.CreateHttpClient()`) actually correct?**
-  _`Socket` has 3 INFERRED edges - model-reasoned connections that need verification._
+  _Cohesion score 0.05824561403508772 - nodes in this community are weakly interconnected._
+- **Why does `shadcn Skill` connect `shadcn Skill` to `shadcn CLI Commands`, `shadcn Skill Overview`, `components.json`, `shadcn Composition Rules`, `Customization & Theming`, `Design System Verification`, `Design System Page`, `Chat Component Mapping`, `Base vs Radix Rules`, `Styling & Customization Rules`, `shadcn Registry`?**
+  _High betweenness centrality (0.022) - this node is a cross-community bridge._
+- **Are the 4 inferred relationships involving `Socket` (e.g. with `CHANGELOG.md` and `.CreateHttpClient()`) actually correct?**
+  _`Socket` has 4 INFERRED edges - model-reasoned connections that need verification._
 - **Should `ImageReference` be split into smaller, more focused modules?**
-  _Cohesion score 0.13725490196078433 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.12105263157894737 - nodes in this community are weakly interconnected._

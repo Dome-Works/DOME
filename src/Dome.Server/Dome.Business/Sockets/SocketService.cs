@@ -150,7 +150,12 @@ public sealed class SocketService : ISocketService
 
         foreach (var socket in unpinned.Where(socket => socket.CertificateFingerprint is not null))
         {
-            await _socketRepository.UpdateAsync(socket, cancellationToken);
+            await _socketRepository.TryPinCertificateAsync(
+                socket.Id,
+                socket.Address,
+                socket.ProtectedApiKey,
+                socket.CertificateFingerprint!,
+                cancellationToken);
         }
 
         return statuses;

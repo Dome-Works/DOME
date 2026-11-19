@@ -59,6 +59,26 @@ internal sealed class SocketRepository : ISocketRepository
         return _db.SaveChangesAsync(cancellationToken);
     }
 
+    public async Task<bool> TryPinCertificateAsync(
+        Guid id,
+        string pairedAddress,
+        string pairedProtectedApiKey,
+        string fingerprint,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(fingerprint);
+
+        var updated = await _db.Sockets
+            .Where(socket => socket.Id == id
+                && socket.Address == pairedAddress
+                && socket.ProtectedApiKey == pairedProtectedApiKey
+                && socket.CertificateFingerprint == null)
+            .ExecuteUpdateAsync(
+                setters => setters.SetProperty(socket => socket.CertificateFingerprint, fingerprint),
+                cancellationToken);
+        return updated == 1;
+    }
+
     public async Task DeleteAsync(Socket socket, CancellationToken cancellationToken = default)
     {
         _db.Sockets.Remove(socket);
