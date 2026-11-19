@@ -313,7 +313,8 @@ the Socket's address, starts pairing again.
 
 **Browser to Server traffic** uses plain HTTP unless you put DOME behind a
 reverse proxy with TLS, such as Caddy or Traefik, in front of the Client on
-port 5200. Behind HTTPS the session cookie is marked `Secure` automatically.
+port 5200. The proxy must send `X-Forwarded-Proto: https` (Caddy and Traefik
+do this by default); the session cookie is then marked `Secure` automatically.
 
 **Forgot the password?** Start the Server once with `DOME_RESET_ADMIN=true`.
 DOME then asks you to create the admin account again. Remove the variable
