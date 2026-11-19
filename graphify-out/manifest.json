@@ -1644,9 +1644,9 @@
     "semantic_hash": "9b31786b637be3c13978bec4c2330752"
   },
   "CHANGELOG.md": {
-    "mtime": 1795018430.1231518,
-    "seen": 1795018890.80142,
-    "ast_hash": "ce7d40bba7b4c8e0ea030a8687f8fce1",
+    "mtime": 1795082731.314096,
+    "seen": 1795083231.567809,
+    "ast_hash": "59f935380bfd546a014564b092000dda",
     "semantic_hash": ""
   },
   "CLAUDE.md": {
@@ -1944,10 +1944,10 @@
     "semantic_hash": "81ba2844c5d2e1ca4f2f862af3f1b75d"
   },
   "src/Dome.Server/Dome.Domain/Settings/ISystemSettingRepository.cs": {
-    "mtime": 1793204818.7136905,
-    "seen": 1795016719.30497,
-    "ast_hash": "cf39ce8e6508ddfda60b8e3f9577a5e4",
-    "semantic_hash": "cf39ce8e6508ddfda60b8e3f9577a5e4"
+    "mtime": 1795083160.826876,
+    "seen": 1795083231.567633,
+    "ast_hash": "fd4a5a1fbcda607d97410f17be7744f0",
+    "semantic_hash": ""
   },
   "src/Dome.Server/Dome.Domain/Settings/SystemSetting.cs": {
     "mtime": 1793204818.716916,
@@ -1968,10 +1968,10 @@
     "semantic_hash": ""
   },
   "src/Dome.Server/Dome.Domain/Settings/SystemSettingRepository.cs": {
-    "mtime": 1793204818.7265387,
-    "seen": 1795016719.304974,
-    "ast_hash": "aa21342c739cf8233e3a6a85ee109103",
-    "semantic_hash": "aa21342c739cf8233e3a6a85ee109103"
+    "mtime": 1795083217.3596923,
+    "seen": 1795083231.567637,
+    "ast_hash": "da84eda72be41a0f35d15f754c5cb4a2",
+    "semantic_hash": ""
   },
   "tests/Dome.Business.Tests/Settings/SystemSettingsServiceTests.cs": {
     "mtime": 1793204818.7421257,
@@ -2130,9 +2130,9 @@
     "semantic_hash": "6090a8a86e197c0dd6e8adee9167ed6c"
   },
   "src/Dome.Server/Dome.Business/Auth/AdminAccountService.cs": {
-    "mtime": 1795082675.0380836,
-    "seen": 1795082726.337895,
-    "ast_hash": "f71303c7e14d6ebe74432ed006c48f2f",
+    "mtime": 1795083160.827933,
+    "seen": 1795083231.567571,
+    "ast_hash": "1b65b5718080bf94634fce0406dc635b",
     "semantic_hash": ""
   },
   "src/Dome.Server/Dome.Business/Auth/AdminSetupResult.cs": {
@@ -2256,9 +2256,9 @@
     "semantic_hash": "78e960d600226cca4af2de9970dfeaf4"
   },
   "tests/Dome.Business.Tests/Auth/AdminAccountServiceTests.cs": {
-    "mtime": 1795082675.0404453,
-    "seen": 1795082726.3380742,
-    "ast_hash": "0e96ecdf91044fc413725fc9970b5a3f",
+    "mtime": 1795083160.828243,
+    "seen": 1795083231.567741,
+    "ast_hash": "b76065c8c2cd24401d90b589d17802f9",
     "semantic_hash": ""
   },
   "tests/Dome.Business.Tests/Auth/PasswordHasherTests.cs": {
@@ -2307,6 +2307,12 @@
     "mtime": 1795018819.443636,
     "seen": 1795018890.801373,
     "ast_hash": "c9677dbc8f633ee91f8e35058a1a8ba5",
+    "semantic_hash": ""
+  },
+  "tests/Dome.Domain.Tests/Settings/SystemSettingRepositoryTests.cs": {
+    "mtime": 1795083175.7945366,
+    "seen": 1795083231.567758,
+    "ast_hash": "75b1f2160ec94889c2f866c834b0866a",
     "semantic_hash": ""
   }
 }

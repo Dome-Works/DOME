@@ -16,6 +16,15 @@ public sealed class AdminAccountServiceTests
             .ReturnsLazily((string key, CancellationToken _) => store.GetValueOrDefault(key));
         A.CallTo(() => repository.SetAsync(A<string>._, A<string>._, A<CancellationToken>._))
             .Invokes((string key, string value, CancellationToken _) => store[key] = value);
+        A.CallTo(() => repository.SetAllIfEmptyAsync(A<string>._, A<IReadOnlyDictionary<string, string>>._, A<CancellationToken>._))
+            .ReturnsLazily((string guardKey, IReadOnlyDictionary<string, string> values, CancellationToken _) =>
+            {
+                if (!string.IsNullOrEmpty(store.GetValueOrDefault(guardKey)))
+                    return false;
+                foreach (var (key, value) in values)
+                    store[key] = value;
+                return true;
+            });
         return new AdminAccountService(repository);
     }
 

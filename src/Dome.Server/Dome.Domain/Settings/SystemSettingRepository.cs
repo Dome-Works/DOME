@@ -27,6 +27,36 @@ internal sealed class SystemSettingRepository : ISystemSettingRepository
         ArgumentException.ThrowIfNullOrWhiteSpace(key);
         ArgumentNullException.ThrowIfNull(value);
 
+        await StageAsync(key, value, cancellationToken);
+        await _db.SaveChangesAsync(cancellationToken);
+    }
+
+    public async Task<bool> SetAllIfEmptyAsync(string guardKey, IReadOnlyDictionary<string, string> values, CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(guardKey);
+        ArgumentNullException.ThrowIfNull(values);
+        foreach (var (key, value) in values)
+        {
+            ArgumentException.ThrowIfNullOrWhiteSpace(key);
+            ArgumentNullException.ThrowIfNull(value);
+        }
+
+        await using var transaction = await _db.Database.BeginTransactionAsync(cancellationToken);
+
+        var guard = await _db.SystemSettings.FindAsync([guardKey], cancellationToken);
+        if (!string.IsNullOrEmpty(guard?.Value))
+            return false;
+
+        foreach (var (key, value) in values)
+            await StageAsync(key, value, cancellationToken);
+
+        await _db.SaveChangesAsync(cancellationToken);
+        await transaction.CommitAsync(cancellationToken);
+        return true;
+    }
+
+    private async Task StageAsync(string key, string value, CancellationToken cancellationToken)
+    {
         var existing = await _db.SystemSettings.FindAsync([key], cancellationToken);
         if (existing is null)
         {
@@ -36,7 +66,5 @@ internal sealed class SystemSettingRepository : ISystemSettingRepository
         {
             existing.Value = value;
         }
-
-        await _db.SaveChangesAsync(cancellationToken);
     }
 }

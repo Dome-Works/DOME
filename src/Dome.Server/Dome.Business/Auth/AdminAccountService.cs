@@ -31,9 +31,15 @@ internal sealed class AdminAccountService : IAdminAccountService
         if (password is null || password.Length < MinPasswordLength)
             return AdminSetupResult.Invalid($"Password must be at least {MinPasswordLength} characters.");
 
-        await _repository.SetAsync(SystemSettingKeys.AdminUsername, trimmed, cancellationToken);
-        await _repository.SetAsync(SystemSettingKeys.AdminPasswordHash, PasswordHasher.Hash(password), cancellationToken);
-        return AdminSetupResult.Success();
+        var created = await _repository.SetAllIfEmptyAsync(
+            SystemSettingKeys.AdminPasswordHash,
+            new Dictionary<string, string>
+            {
+                [SystemSettingKeys.AdminUsername] = trimmed,
+                [SystemSettingKeys.AdminPasswordHash] = PasswordHasher.Hash(password)
+            },
+            cancellationToken);
+        return created ? AdminSetupResult.Success() : AdminSetupResult.Conflict("An admin account already exists.");
     }
 
     public async Task<string?> ValidateAsync(string username, string password, CancellationToken cancellationToken = default)
