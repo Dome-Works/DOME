@@ -636,9 +636,9 @@
     "semantic_hash": "3cab3dfe00a91c7639dd2ee508fe060b"
   },
   "src/Dome.Server/Dome.Api/Program.cs": {
-    "mtime": 1795509887.9436924,
-    "seen": 1795509914.131979,
-    "ast_hash": "25c0fcfd78346ef282f0cdc134651021",
+    "mtime": 1795511249.9947515,
+    "seen": 1795511424.1841972,
+    "ast_hash": "8e5f71f0108833136e7e500ad3ab6939",
     "semantic_hash": ""
   },
   "src/Dome.Server/Dome.Api/Properties/launchSettings.json": {
@@ -1356,9 +1356,9 @@
     "semantic_hash": "6f893fac60eb4cb871e353abd609a670"
   },
   "src/Dome.Socket/Dome.Socket.Api/Program.cs": {
-    "mtime": 1795507409.1910837,
-    "seen": 1795508556.612679,
-    "ast_hash": "51bba2efdeee454ee5995a687e4dec2f",
+    "mtime": 1795511260.6759505,
+    "seen": 1795511424.184336,
+    "ast_hash": "643b1f00a31899fc49a92b848cfac99d",
     "semantic_hash": ""
   },
   "src/Dome.Socket/Dome.Socket.Api/Properties/launchSettings.json": {
@@ -2319,6 +2319,18 @@
     "mtime": 1795507071.8464088,
     "seen": 1795507147.917202,
     "ast_hash": "940e197795b1c5d1dda7179f3db9ff33",
+    "semantic_hash": ""
+  },
+  "src/Dome.Server/Dome.Api/Auth/DependencyInjection.cs": {
+    "mtime": 1795511241.8593752,
+    "seen": 1795511424.184146,
+    "ast_hash": "73dac4c06e912b0eda5034fa9b29f21c",
+    "semantic_hash": ""
+  },
+  "src/Dome.Socket/Dome.Socket.Api/Security/DependencyInjection.cs": {
+    "mtime": 1795511260.5567663,
+    "seen": 1795511424.1843379,
+    "ast_hash": "a5c56e6514abbd68e52dd6136ea73ce4",
     "semantic_hash": ""
   }
 }
