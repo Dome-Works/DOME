@@ -66,9 +66,9 @@
     "semantic_hash": ""
   },
   "docker-compose.yml": {
-    "mtime": 1795509142.713116,
-    "seen": 1795509161.040967,
-    "ast_hash": "b40fc8bf4e6f8689eb47c846812af798",
+    "mtime": 1795509939.8022723,
+    "seen": 1795510797.6043599,
+    "ast_hash": "5f77dd9bd19d352a4dae9a797f6fb151",
     "semantic_hash": ""
   },
   "global.json": {
@@ -2220,9 +2220,9 @@
     "semantic_hash": ""
   },
   "src/Dome.Socket/Dome.Socket.Api/Security/SocketCertificate.cs": {
-    "mtime": 1795508433.6291964,
-    "seen": 1795508556.612683,
-    "ast_hash": "8c53fc78bdeaceb15f923b81a47f28ad",
+    "mtime": 1795510767.972195,
+    "seen": 1795510797.604258,
+    "ast_hash": "a6967c8fb0f4ea1d274c385152304231",
     "semantic_hash": ""
   },
   "src/Dome.Socket/Dome.Socket.Api/Security/SocketKey.cs": {

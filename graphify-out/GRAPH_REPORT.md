@@ -1,7 +1,7 @@
 # Graph Report - DOME  (2026-11-24)
 
 ## Corpus Check
-- 372 files · ~71,011 words
+- 372 files · ~71,015 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 21 file(s) not represented in the graph (top: (none) 8, .xml 6, .css 3)
 
@@ -11,7 +11,7 @@
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `6d8857ce`
+- Built from commit: `84153fe9`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -747,14 +747,14 @@ Nodes (3): dompurify, overrides, monaco-editor
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `Socket` connect `Socket` to `Task`, `DomeSocketApiFactory.cs`, `.AddDomeBusiness`, `.CreateService`, `Container Command Results`, `Stack Deploy Service`, `DomeSocketApiFactory`, `Guid`, `SocketService`, `Diagram Service Tests`, `fastendpoints`, `DomeSocketApiFactoryTests`, `Dome.Business.Images`, `Release Documentation Skill`, `ImageVersionCheckResponse`, `Cache Entity Configuration`, `EF Core Migrations`, `DomeDbContext`?**
-  _High betweenness centrality (0.043) - this node is a cross-community bridge._
+  _High betweenness centrality (0.035) - this node is a cross-community bridge._
 - **Are the 4 inferred relationships involving `cn()` (e.g. with `Helpers` and `Type scale`) actually correct?**
   _`cn()` has 4 INFERRED edges - model-reasoned connections that need verification._
 - **What connects `npm`, `cn`, `@shadcn/lint` to the rest of the system?**
   _408 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `shadcn Skill Overview` be split into smaller, more focused modules?**
   _Cohesion score 0.06329113924050633 - nodes in this community are weakly interconnected._
-- **Why does `shadcn Skill` connect `shadcn Skill` to `shadcn CLI Commands`, `shadcn Skill Overview`, `components.json`, `Customization & Theming`, `Styling & Customization Rules`, `shadcn Composition Rules`, `Design System Verification`, `Design System Page`, `Chat Component Mapping`, `Base vs Radix Rules`, `shadcn Registry`?**
+- **Why does `Stack` connect `Guid` to `Socket`, `Stack Deploy Service`, `Diagram Service Tests`, `Dome.Business.Images`, `Cache Entity Configuration`, `.DeleteUnmanagedAsync`, `EF Core Migrations`, `DomeDbContext`?**
   _High betweenness centrality (0.020) - this node is a cross-community bridge._
 - **Are the 4 inferred relationships involving `Socket` (e.g. with `CHANGELOG.md` and `.CreateHttpClient()`) actually correct?**
   _`Socket` has 4 INFERRED edges - model-reasoned connections that need verification._

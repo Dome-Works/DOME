@@ -11,6 +11,7 @@ public static class SocketCertificate
     {
         Directory.CreateDirectory(directory);
         var path = Path.Combine(directory, FileName);
+        var pairedPath = Path.Combine(directory, SocketKey.PairedFileName);
 
         if (File.Exists(path))
         {
@@ -28,7 +29,7 @@ public static class SocketCertificate
         using var certificate = request.CreateSelfSigned(now.AddDays(-1), now.AddYears(10));
         var pfx = certificate.Export(X509ContentType.Pfx);
         PrivateFile.Write(path, pfx);
-        File.Delete(Path.Combine(directory, SocketKey.PairedFileName));
+        File.Delete(pairedPath);
 
         return X509CertificateLoader.LoadPkcs12(pfx, null);
     }
