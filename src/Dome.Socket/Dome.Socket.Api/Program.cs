@@ -30,9 +30,8 @@ var app = builder.Build();
 
 if (socketKey.IsPaired)
 {
-    app.Logger.LogInformation(
-        "Paired with DOME. The socket key is read from {KeySource}.",
-        socketKey.IsConfigured ? "DOME_SOCKET_KEY" : socketKey.KeyPath);
+    var keySource = socketKey.IsConfigured ? "DOME_SOCKET_KEY" : socketKey.KeyPath;
+    app.Logger.LogInformation("Paired with DOME. The socket key is read from {KeySource}.", keySource);
 }
 else
 {
