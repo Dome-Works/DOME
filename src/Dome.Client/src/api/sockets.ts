@@ -2,6 +2,7 @@ import type {
   CreateSocketRequest,
   GetSocketsResponse,
   GetSocketStatusesResponse,
+  SetSocketKeyRequest,
   SocketRecord,
   UpdateSocketRequest,
 } from '../types/sockets'
@@ -55,6 +56,30 @@ export async function createSocket(
       await readApiError(
         response,
         `Failed to register socket (${response.status})`,
+      ),
+    )
+  }
+
+  return (await response.json()) as SocketRecord
+}
+
+export async function setSocketKey(
+  request: SetSocketKeyRequest,
+): Promise<SocketRecord> {
+  const response = await fetch(
+    `/api/sockets/${encodeURIComponent(request.id)}/key`,
+    {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(request),
+    },
+  )
+
+  if (!response.ok) {
+    throw new Error(
+      await readApiError(
+        response,
+        `Failed to change socket key (${response.status})`,
       ),
     )
   }

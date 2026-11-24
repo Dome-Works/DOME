@@ -17,5 +17,12 @@ public interface ISocketRepository
 
     Task UpdateAsync(Socket socket, CancellationToken cancellationToken = default);
 
+    Task<bool> TryPinCertificateAsync(
+        Guid id,
+        string pairedAddress,
+        string pairedProtectedApiKey,
+        string fingerprint,
+        CancellationToken cancellationToken = default);
+
     Task DeleteAsync(Socket socket, CancellationToken cancellationToken = default);
 }

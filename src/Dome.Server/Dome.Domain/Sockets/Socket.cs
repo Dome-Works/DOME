@@ -8,5 +8,9 @@ public sealed class Socket
 
     public string Address { get; set; } = string.Empty;
 
+    public string ProtectedApiKey { get; set; } = string.Empty;
+
+    public string? CertificateFingerprint { get; set; }
+
     public DateTimeOffset CreatedAt { get; set; }
 }

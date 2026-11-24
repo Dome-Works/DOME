@@ -16,7 +16,6 @@ public sealed class GetDeviceStacksEndpoint
     public override void Configure()
     {
         Get("/api/devices/{SocketName}/stacks");
-        AllowAnonymous();
     }
 
     public override async Task HandleAsync(GetDeviceStacksRequest req, CancellationToken ct)

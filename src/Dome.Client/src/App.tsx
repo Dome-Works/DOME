@@ -4,6 +4,7 @@ import { AppLayout } from '@/components/layout/AppLayout'
 import { Toaster } from '@/components/ui/sonner'
 import { DiagramsPage } from '@/pages/DiagramsPage'
 import { HomePage } from '@/pages/HomePage'
+import { LoginPage } from '@/pages/LoginPage'
 import { OnboardingPage } from '@/pages/OnboardingPage'
 import { SettingsPage } from '@/pages/SettingsPage'
 import { SocketsPage } from '@/pages/SocketsPage'
@@ -13,6 +14,7 @@ export default function App() {
     <BrowserRouter>
       <Routes>
         <Route path="onboarding" element={<OnboardingPage />} />
+        <Route path="login" element={<LoginPage />} />
         <Route element={<AppLayout />}>
           <Route index element={<HomePage />} />
           <Route path="diagrams" element={<DiagramsPage />} />

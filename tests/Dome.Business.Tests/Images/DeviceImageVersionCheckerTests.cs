@@ -143,7 +143,7 @@ public sealed class DeviceImageVersionCheckerTests
         {
             A.CallTo(() => deviceQueryService.GetContainersAsync("local", A<CancellationToken>._))
                 .Returns(containers.ToList());
-            A.CallTo(() => socketApiFactory.Create(socket.Address))
+            A.CallTo(() => socketApiFactory.Create(socket))
                 .Returns(socketApi);
         }
 

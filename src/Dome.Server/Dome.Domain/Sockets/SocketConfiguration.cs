@@ -17,6 +17,12 @@ internal sealed class SocketConfiguration : IEntityTypeConfiguration<Socket>
         builder.Property(socket => socket.Address)
             .HasMaxLength(2048)
             .IsRequired();
+        builder.Property(socket => socket.ProtectedApiKey)
+            .HasMaxLength(1024)
+            .IsRequired()
+            .HasDefaultValue(string.Empty);
+        builder.Property(socket => socket.CertificateFingerprint)
+            .HasMaxLength(64);
         builder.Property(socket => socket.CreatedAt)
             .IsRequired();
     }

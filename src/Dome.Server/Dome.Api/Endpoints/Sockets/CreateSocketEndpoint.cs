@@ -16,12 +16,11 @@ public sealed class CreateSocketEndpoint : Endpoint<CreateSocketRequest, SocketR
     public override void Configure()
     {
         Post("/api/sockets");
-        AllowAnonymous();
     }
 
     public override async Task HandleAsync(CreateSocketRequest req, CancellationToken ct)
     {
-        var result = await _socketService.CreateAsync(req.Name, req.Address, ct);
+        var result = await _socketService.CreateAsync(req.Name, req.Address, req.Key, ct);
         if (result.IsConflict)
         {
             AddError(result.Error!);
@@ -38,7 +37,7 @@ public sealed class CreateSocketEndpoint : Endpoint<CreateSocketRequest, SocketR
 
         await Send.CreatedAtAsync<GetSocketEndpoint>(
             new { result.Socket!.Id },
-            result.Socket,
+            result.Socket!,
             cancellation: ct);
     }
 }

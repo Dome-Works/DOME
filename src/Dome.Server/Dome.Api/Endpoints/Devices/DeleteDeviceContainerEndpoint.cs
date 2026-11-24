@@ -15,7 +15,6 @@ public sealed class DeleteDeviceContainerEndpoint : Endpoint<DeleteDeviceContain
     public override void Configure()
     {
         Delete("/api/devices/{Name}/containers/{ContainerId}");
-        AllowAnonymous();
     }
 
     public override async Task HandleAsync(

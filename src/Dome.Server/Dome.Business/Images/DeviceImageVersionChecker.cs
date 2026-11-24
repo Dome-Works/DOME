@@ -91,7 +91,7 @@ public sealed class DeviceImageVersionChecker : IDeviceImageVersionChecker
     {
         try
         {
-            var api = _socketApiFactory.Create(socket.Address);
+            var api = _socketApiFactory.Create(socket);
             var response = await api.CheckImageVersionsAsync(
                 new CheckImageVersionsRequest
                 {

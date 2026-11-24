@@ -1,9 +1,11 @@
 using FastEndpoints;
 using FastEndpoints.Swagger;
+using Dome.Api.Auth;
 using Dome.Api.Telemetry;
 using Dome.Business;
 using Dome.Domain;
 using Dome.Domain.Seeding;
+using Microsoft.AspNetCore.Diagnostics;
 using PostHog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -18,6 +20,7 @@ builder.Services.AddCors(options =>
             .AllowAnyMethod());
 });
 
+builder.Services.AddDomeAuthentication(builder.Configuration);
 builder.Services.AddFastEndpoints();
 builder.Services.SwaggerDocument();
 builder.Services.AddDomeBusiness();
@@ -42,7 +45,25 @@ await using (var scope = app.Services.CreateAsyncScope())
     await initializer.InitializeAsync();
 }
 
+await app.ResetAdminIfRequestedAsync();
+
+app.UseExceptionHandler(errorApp => errorApp.Run(async context =>
+{
+    var error = context.Features.Get<IExceptionHandlerFeature>()?.Error;
+    for (var ex = error; ex is not null; ex = ex.InnerException)
+    {
+        if (ex is HttpRequestException)
+        {
+            context.Response.StatusCode = StatusCodes.Status502BadGateway;
+            await context.Response.WriteAsJsonAsync(new { message = "The socket could not be reached. Check its status on the Sockets page." });
+            return;
+        }
+    }
+
+    context.Response.StatusCode = StatusCodes.Status500InternalServerError;
+}));
 app.UseCors();
+app.UseDomeAuthentication();
 app.UseFastEndpoints(c =>
 {
     c.Serializer.Options.PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase;

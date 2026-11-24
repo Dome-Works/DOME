@@ -15,7 +15,6 @@ public sealed class StopDeviceContainerEndpoint : Endpoint<DeviceContainerLifecy
     public override void Configure()
     {
         Post("/api/devices/{Name}/containers/{ContainerId}/stop");
-        AllowAnonymous();
     }
 
     public override async Task HandleAsync(
