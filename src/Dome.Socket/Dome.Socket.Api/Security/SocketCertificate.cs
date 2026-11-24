@@ -28,6 +28,7 @@ public static class SocketCertificate
         using var certificate = request.CreateSelfSigned(now.AddDays(-1), now.AddYears(10));
         var pfx = certificate.Export(X509ContentType.Pfx);
         PrivateFile.Write(path, pfx);
+        File.Delete(Path.Combine(directory, SocketKey.PairedFileName));
 
         return X509CertificateLoader.LoadPkcs12(pfx, null);
     }

@@ -6,7 +6,7 @@ namespace Dome.Socket.Api.Security;
 public sealed class SocketKey
 {
     public const string KeyFileName = "socket.key";
-    private const string PairedFileName = "paired";
+    internal const string PairedFileName = "paired";
 
     private readonly string _pairedPath;
     private readonly string _keyHash;

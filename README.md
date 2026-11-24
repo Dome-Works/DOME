@@ -191,7 +191,7 @@ The stack exposes:
 | Service | URL |
 | --- | --- |
 | Client | `http://localhost:5200` |
-| Server API and Swagger | `http://localhost:5100` |
+| Server API and Swagger | `http://localhost:5100` (only from the Docker host) |
 | Socket API and Swagger | `https://localhost:5110` (self-signed, needs the key) |
 
 Open [http://localhost:5200/sockets](http://localhost:5200/sockets), register a
@@ -290,8 +290,14 @@ Server has paired with the Socket and can reach its health endpoint.
 
 DOME has a single admin account. Onboarding asks you to create it on the first
 visit; after that every page and API call requires signing in. The session is
-an HttpOnly cookie that stays valid for 7 days of use. Login attempts are
-limited to 5 per minute.
+an HttpOnly cookie that stays valid for 7 days of use. Logging out ends every
+session, on all devices. Login attempts are limited to 5 per minute per client
+address, as seen through the Client on port 5200. Docker Desktop shows every
+client with the same address, so there the limit is shared.
+
+Requests that change something (POST, PUT, PATCH and DELETE under `/api/`) must
+carry the header `X-DOME-Request`. The DOME Client sends it automatically. If
+you call the API from a script or from Swagger, add the header yourself.
 
 Until the admin account exists, anyone who can open DOME can create it, so
 finish onboarding right after installing.
@@ -308,7 +314,9 @@ serves HTTPS with a self-signed certificate
 that it creates on first start and keeps in the `socket-data` volume. When the
 Server first connects, it checks that the Socket holds the right key without
 sending the key, then pins that certificate. Later connections to a different
-certificate are refused. Entering a new key with **Change key**, or changing
+certificate are refused, and the Sockets page shows **Certificate changed**.
+That happens when the Socket's `socket-data` volume was recreated; the Socket
+then prints its key again. Entering the key with **Change key**, or changing
 the Socket's address, starts pairing again.
 
 **Browser to Server traffic** uses plain HTTP unless you put DOME behind a
@@ -316,9 +324,18 @@ reverse proxy with TLS, such as Caddy or Traefik, in front of the Client on
 port 5200. The proxy must send `X-Forwarded-Proto: https` (Caddy and Traefik
 do this by default); the session cookie is then marked `Secure` automatically.
 
-**Forgot the password?** Start the Server once with `DOME_RESET_ADMIN=true`.
-DOME then asks you to create the admin account again. Remove the variable
-afterwards. Sockets, stacks and settings are kept.
+**Forgot the password?** Reset the admin account. Sockets, stacks and settings
+are kept.
+
+1. Set `DOME_RESET_ADMIN: "true"` in the Server's `environment` in your
+   Compose file.
+2. Start the app: `docker compose up -d`.
+3. Open DOME and create the admin account with a new password.
+4. Remove `DOME_RESET_ADMIN` from the Compose file.
+5. Restart the app: `docker compose up -d`.
+
+Do not skip steps 4 and 5. While the variable is set, every restart clears the
+admin account again and anyone who can open DOME can create a new one.
 
 ### Upgrading from a version without authentication
 
@@ -336,7 +353,7 @@ environment variables.
 | Component | Setting | Environment variable | Default |
 | --- | --- | --- | --- |
 | Server | `ConnectionStrings:Dome` | `ConnectionStrings__Dome` | Local app-data path in Development; `/var/lib/dome/dome.db` otherwise |
-| Server | `DOME_RESET_ADMIN` | `DOME_RESET_ADMIN` | Unset. `true` clears the admin account at startup |
+| Server | `DOME_RESET_ADMIN` | `DOME_RESET_ADMIN` | Unset. `true` clears the admin account at every startup; remove it after creating the new account |
 | Socket | `DOME_SOCKET_KEY` | `DOME_SOCKET_KEY` | Unset, so the Socket generates a key and stores it as `socket.key` |
 | Socket | `Socket:CertificateDirectory` | `Socket__CertificateDirectory` | `/var/lib/dome-socket` in Docker; local app-data path otherwise |
 | Socket | `Docker:Endpoint` | `Docker__Endpoint` | `unix:///var/run/docker.sock` |

@@ -10,5 +10,7 @@ public interface IAdminAccountService
 
     Task<string> GetSessionVersionAsync(CancellationToken cancellationToken = default);
 
+    Task RevokeSessionsAsync(CancellationToken cancellationToken = default);
+
     Task ResetAsync(CancellationToken cancellationToken = default);
 }

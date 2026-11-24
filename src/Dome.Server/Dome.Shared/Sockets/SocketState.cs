@@ -8,5 +8,6 @@ public enum SocketState
     Online,
     Offline,
     NeedsPairing,
-    Unauthorized
+    Unauthorized,
+    CertificateChanged
 }

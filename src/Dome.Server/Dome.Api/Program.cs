@@ -9,8 +9,10 @@ using Dome.Domain.Seeding;
 using Dome.Domain.Sqlite;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.DataProtection;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.RateLimiting;
+using System.Threading.RateLimiting;
 using PostHog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -61,12 +63,14 @@ builder.Services.Configure<ForwardedHeadersOptions>(options =>
 builder.Services.AddRateLimiter(options =>
 {
     options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
-    options.AddFixedWindowLimiter("auth", limiter =>
-    {
-        limiter.PermitLimit = 5;
-        limiter.Window = TimeSpan.FromMinutes(1);
-        limiter.QueueLimit = 0;
-    });
+    options.AddPolicy("auth", context => RateLimitPartition.GetFixedWindowLimiter(
+        context.Connection.RemoteIpAddress?.ToString() ?? "unknown",
+        _ => new FixedWindowRateLimiterOptions
+        {
+            PermitLimit = 5,
+            Window = TimeSpan.FromMinutes(1),
+            QueueLimit = 0
+        }));
 });
 
 builder.Services.AddFastEndpoints();
@@ -95,12 +99,42 @@ await using (var scope = app.Services.CreateAsyncScope())
     if (string.Equals(app.Configuration["DOME_RESET_ADMIN"], "true", StringComparison.OrdinalIgnoreCase))
     {
         await scope.ServiceProvider.GetRequiredService<IAdminAccountService>().ResetAsync();
-        app.Logger.LogWarning("DOME_RESET_ADMIN is set: the admin account was reset and setup is open again.");
+        app.Logger.LogWarning("DOME_RESET_ADMIN is set: the admin account was reset and setup is open again. Remove the variable and restart after creating the new account.");
     }
 }
 
+app.UseExceptionHandler(errorApp => errorApp.Run(async context =>
+{
+    var error = context.Features.Get<IExceptionHandlerFeature>()?.Error;
+    for (var ex = error; ex is not null; ex = ex.InnerException)
+    {
+        if (ex is HttpRequestException)
+        {
+            context.Response.StatusCode = StatusCodes.Status502BadGateway;
+            await context.Response.WriteAsJsonAsync(new { message = "The socket could not be reached. Check its status on the Sockets page." });
+            return;
+        }
+    }
+
+    context.Response.StatusCode = StatusCodes.Status500InternalServerError;
+}));
 app.UseForwardedHeaders();
 app.UseCors();
+app.Use(async (context, next) =>
+{
+    var request = context.Request;
+    if (request.Path.StartsWithSegments("/api")
+        && !HttpMethods.IsGet(request.Method)
+        && !HttpMethods.IsHead(request.Method)
+        && !HttpMethods.IsOptions(request.Method)
+        && !request.Headers.ContainsKey("X-DOME-Request"))
+    {
+        context.Response.StatusCode = StatusCodes.Status403Forbidden;
+        return;
+    }
+
+    await next();
+});
 app.UseRateLimiter();
 app.UseAuthentication();
 app.UseAuthorization();

@@ -57,6 +57,20 @@ public sealed class SocketKeyTests : IDisposable
     }
 
     [Fact]
+    public void Regenerating_the_certificate_resets_pairing()
+    {
+        SocketCertificate.LoadOrCreate(_directory).Dispose();
+        SocketKey.LoadOrCreate(_directory, null).MarkPaired();
+        SocketCertificate.LoadOrCreate(_directory).Dispose();
+        Assert.True(SocketKey.LoadOrCreate(_directory, null).IsPaired);
+
+        File.Delete(Path.Combine(_directory, "socket.pfx"));
+        SocketCertificate.LoadOrCreate(_directory).Dispose();
+
+        Assert.False(SocketKey.LoadOrCreate(_directory, null).IsPaired);
+    }
+
+    [Fact]
     public void Changing_the_key_resets_pairing()
     {
         SocketKey.LoadOrCreate(_directory, "old").MarkPaired();

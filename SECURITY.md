@@ -42,6 +42,32 @@ Out of scope (unless they cause an unexpected security impact beyond the documen
 - Issues only present in third-party dependencies that are not exploitable through DOME (report those upstream when appropriate)
 - Social engineering, physical access, or compromised host/Docker environments
 
+## Authentication model
+
+DOME has three trust boundaries: browser to Server, Server to Socket, and Socket to Docker Engine.
+
+**Browser to Server**
+
+- DOME has a single admin account, created during onboarding. Until it exists, anyone who can reach DOME can create it.
+- Passwords are stored only as salted, slow hashes (PBKDF2). Wrong usernames and wrong passwords get the same answer.
+- A successful login sets an HttpOnly, SameSite=Strict session cookie. The cookie is marked `Secure` when DOME is served over HTTPS.
+- Every API call except login, setup and the status check requires that cookie.
+- Requests that change state must also carry a custom request header. A browser does not let another site add that header, so pages on other sites, ports or subdomains cannot act with the admin's cookie (CSRF).
+- Login and setup are rate limited per client address, as seen by the Client's proxy. The Compose files publish the Server port on the host's loopback address only, so other machines reach DOME through the Client. Do not publish the Server port to the network: callers that reach it directly can choose the address that is counted.
+- Each session is tied to a server-side session version. Logging out or resetting the admin account changes that version, which ends every existing session, including copied cookies.
+- Resetting a forgotten password requires access to the Server's configuration (`DOME_RESET_ADMIN`). The reset runs at every start while the variable is set, so remove it as soon as the new admin account exists (see the README).
+
+**Server to Socket**
+
+- Each Socket has a random key and serves HTTPS with its own self-signed certificate.
+- On first contact, the Socket proves it knows the key, bound to its certificate, without the key being sent. The Server then pins that certificate.
+- After pairing, every request carries the key and is refused unless the pinned certificate is presented. A changed certificate is reported as such and requires pairing again; it is never trusted silently.
+- The Server stores Socket keys encrypted, with an encryption key kept in the Server's data volume. Protect that volume as a whole.
+
+**Socket to Docker Engine**
+
+- The Socket has full control of its local Docker Engine. Its key is therefore equivalent to root on that host, and is stored with owner-only file permissions.
+
 ## Deployment guidance
 
 DOME is intended for trusted homelab or private networks.

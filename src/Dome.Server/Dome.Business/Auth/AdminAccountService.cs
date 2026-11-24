@@ -57,9 +57,12 @@ internal sealed class AdminAccountService : IAdminAccountService
     public async Task<string> GetSessionVersionAsync(CancellationToken cancellationToken = default)
         => await _repository.GetAsync(SystemSettingKeys.AdminSessionVersion, cancellationToken) ?? string.Empty;
 
+    public Task RevokeSessionsAsync(CancellationToken cancellationToken = default)
+        => _repository.SetAsync(SystemSettingKeys.AdminSessionVersion, Guid.NewGuid().ToString("N"), cancellationToken);
+
     public async Task ResetAsync(CancellationToken cancellationToken = default)
     {
-        await _repository.SetAsync(SystemSettingKeys.AdminSessionVersion, Guid.NewGuid().ToString("N"), cancellationToken);
+        await RevokeSessionsAsync(cancellationToken);
         await _repository.SetAsync(SystemSettingKeys.AdminPasswordHash, string.Empty, cancellationToken);
         await _repository.SetAsync(SystemSettingKeys.AdminUsername, string.Empty, cancellationToken);
     }

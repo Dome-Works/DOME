@@ -1,4 +1,5 @@
 using System.Net;
+using System.Security.Authentication;
 using Dome.Domain.Sockets;
 using Dome.Shared.Sockets;
 using Microsoft.Extensions.Logging;
@@ -241,6 +242,15 @@ public sealed class SocketService : ISocketService
 
             return UnavailableStatus(socket, SocketState.Unauthorized);
         }
+        catch (Exception ex) when (IsCertificateRejected(ex))
+        {
+            _logger.LogWarning(
+                "Socket '{SocketName}' at '{Address}' presented a different certificate than the pinned one.",
+                socket.Name,
+                socket.Address);
+
+            return UnavailableStatus(socket, SocketState.CertificateChanged);
+        }
         catch (Exception ex) when (ex is not OperationCanceledException)
         {
             _logger.LogWarning(
@@ -251,6 +261,19 @@ public sealed class SocketService : ISocketService
 
             return UnavailableStatus(socket, SocketState.Offline);
         }
+    }
+
+    private static bool IsCertificateRejected(Exception? ex)
+    {
+        for (; ex is not null; ex = ex.InnerException)
+        {
+            if (ex is AuthenticationException)
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private static SocketStatusResponse UnavailableStatus(SocketEntity socket, SocketState state)

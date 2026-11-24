@@ -119,4 +119,17 @@ public sealed class AdminAccountServiceTests
         Assert.NotEqual(before, afterFirst);
         Assert.NotEqual(afterFirst, await service.GetSessionVersionAsync(ct));
     }
-}
+
+    [Fact]
+    public async Task RevokeSessions_rotates_session_version_and_keeps_admin()
+    {
+        var service = CreateService();
+        var ct = TestContext.Current.CancellationToken;
+        await service.SetupAsync("admin", Password, ct);
+        var before = await service.GetSessionVersionAsync(ct);
+
+        await service.RevokeSessionsAsync(ct);
+
+        Assert.NotEqual(before, await service.GetSessionVersionAsync(ct));
+        Assert.Equal("admin", await service.ValidateAsync("admin", Password, ct));
+    }}

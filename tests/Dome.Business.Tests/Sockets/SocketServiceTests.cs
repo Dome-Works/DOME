@@ -206,6 +206,23 @@ public sealed class SocketServiceTests
     }
 
     [Fact]
+    public async Task GetStatusesAsync_reports_certificate_changed_when_pin_rejects_certificate()
+    {
+        var socketApi = A.Fake<IDomeSocketApi>();
+        A.CallTo(() => socketApi.GetHealthAsync(A<CancellationToken>._))
+            .Throws(new HttpRequestException(
+                "The SSL connection could not be established.",
+                new System.Security.Authentication.AuthenticationException("The remote certificate was rejected.")));
+        var service = CreateService(CreateSocket(), socketApi, "0.3.2");
+
+        var status = Assert.Single(
+            await service.GetStatusesAsync(TestContext.Current.CancellationToken));
+
+        Assert.Equal(SocketState.CertificateChanged, status.State);
+        Assert.False(status.IsReachable);
+    }
+
+    [Fact]
     public async Task GetStatusesAsync_does_not_need_update_when_versions_match()
     {
         var socketApi = A.Fake<IDomeSocketApi>();

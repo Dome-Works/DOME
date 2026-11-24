@@ -5,7 +5,12 @@ export type SocketRecord = {
   createdAt: string
 }
 
-export type SocketState = 'Online' | 'Offline' | 'NeedsPairing' | 'Unauthorized'
+export type SocketState =
+  | 'Online'
+  | 'Offline'
+  | 'NeedsPairing'
+  | 'Unauthorized'
+  | 'CertificateChanged'
 
 export type SocketStatusRecord = {
   id: string

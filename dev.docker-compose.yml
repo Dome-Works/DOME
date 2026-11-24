@@ -9,7 +9,7 @@ services:
     image: dome/server:local
     container_name: dome-server
     ports:
-      - "5100:8080"
+      - "127.0.0.1:5100:8080"
     volumes:
       - dome-data:/var/lib/dome
     environment:

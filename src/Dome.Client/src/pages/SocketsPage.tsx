@@ -78,6 +78,11 @@ const keyStateBadges: Partial<
     tooltip:
       "The socket refuses this key. Use Change key with the key from the socket's logs.",
   },
+  CertificateChanged: {
+    label: 'Certificate changed',
+    tooltip:
+      "The socket presents a new certificate, for example after its data volume was recreated. If you expected this, use Change key with the key from the socket's logs to pair again.",
+  },
 }
 
 function keyStateBadge(status: SocketStatusRecord | undefined) {

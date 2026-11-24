@@ -12,5 +12,4 @@ public static class SystemSettingKeys
 
     public const string AdminPasswordHash = "AdminPasswordHash";
 
-    public const string AdminSessionVersion = "AdminSessionVersion";
-}
+    public const string AdminSessionVersion = "AdminSessionVersion";}
