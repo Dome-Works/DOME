@@ -25,6 +25,31 @@ public sealed class SocketCertificateTests : IDisposable
     }
 
     [Fact]
+    public void Key_and_pfx_are_owner_only_and_existing_files_are_restricted()
+    {
+        if (OperatingSystem.IsWindows())
+        {
+            return;
+        }
+
+        const UnixFileMode ownerOnly = UnixFileMode.UserRead | UnixFileMode.UserWrite;
+        var pfx = Path.Combine(_directory, "socket.pfx");
+        var key = Path.Combine(_directory, SocketKey.KeyFileName);
+
+        SocketCertificate.LoadOrCreate(_directory).Dispose();
+        SocketKey.LoadOrCreate(_directory, null);
+        Assert.Equal(ownerOnly, File.GetUnixFileMode(pfx));
+        Assert.Equal(ownerOnly, File.GetUnixFileMode(key));
+
+        File.SetUnixFileMode(pfx, (UnixFileMode)0b110_100_100);
+        File.SetUnixFileMode(key, (UnixFileMode)0b110_100_100);
+        SocketCertificate.LoadOrCreate(_directory).Dispose();
+        SocketKey.LoadOrCreate(_directory, null);
+        Assert.Equal(ownerOnly, File.GetUnixFileMode(pfx));
+        Assert.Equal(ownerOnly, File.GetUnixFileMode(key));
+    }
+
+    [Fact]
     public void LoadOrCreate_returns_same_certificate_on_second_call()
     {
         using var first = SocketCertificate.LoadOrCreate(_directory);

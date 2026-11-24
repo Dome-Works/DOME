@@ -2208,28 +2208,28 @@
     "semantic_hash": "dffa7c0fbd23a68b839ff3ebcd841f82"
   },
   "src/Dome.Socket/Dome.Socket.Api/Endpoints/Pairing/PairEndpoint.cs": {
-    "mtime": 1795014108.5386436,
-    "seen": 1795016719.305046,
-    "ast_hash": "211690bbb02a000d4553d534c30f1a2b",
-    "semantic_hash": "211690bbb02a000d4553d534c30f1a2b"
+    "mtime": 1795507116.586303,
+    "seen": 1795507147.9171982,
+    "ast_hash": "16724adad1bd7568a23e5e9a71d2db13",
+    "semantic_hash": ""
   },
   "src/Dome.Socket/Dome.Socket.Api/Security/ApiKeyMiddleware.cs": {
-    "mtime": 1795014514.7306693,
-    "seen": 1795016719.305048,
-    "ast_hash": "8804c67ad6e0de850abd24166f8be93b",
-    "semantic_hash": "8804c67ad6e0de850abd24166f8be93b"
+    "mtime": 1795507116.588991,
+    "seen": 1795507147.9172008,
+    "ast_hash": "90f707ed1dded66274232c2305c8ab00",
+    "semantic_hash": ""
   },
   "src/Dome.Socket/Dome.Socket.Api/Security/SocketCertificate.cs": {
-    "mtime": 1795014108.550293,
-    "seen": 1795016719.3050492,
-    "ast_hash": "88c4df9aec33af19b923450dd914249e",
-    "semantic_hash": "88c4df9aec33af19b923450dd914249e"
+    "mtime": 1795507072.0737033,
+    "seen": 1795507147.917203,
+    "ast_hash": "55a2ab0e48a4e6deb3d5db99bb612453",
+    "semantic_hash": ""
   },
   "src/Dome.Socket/Dome.Socket.Api/Security/SocketKey.cs": {
-    "mtime": 1795014514.5468507,
-    "seen": 1795016719.3050501,
-    "ast_hash": "c8360e190202e5091c300d8a8ff2de61",
-    "semantic_hash": "c8360e190202e5091c300d8a8ff2de61"
+    "mtime": 1795507072.2927625,
+    "seen": 1795507147.917204,
+    "ast_hash": "46202d9da1c7cc3f0b7ffb439851648a",
+    "semantic_hash": ""
   },
   "src/Dome.Socket/Dome.Socket.Api/Security/SocketSecurity.cs": {
     "mtime": 1795014108.553703,
@@ -2292,10 +2292,10 @@
     "semantic_hash": "5dde60713c4fb32ef0b60cec24a2fe2e"
   },
   "tests/Dome.Socket.Tests/Security/SocketCertificateTests.cs": {
-    "mtime": 1795014108.6363463,
-    "seen": 1795016719.305102,
-    "ast_hash": "3dc5e153446db4815d2dfe2dadc79602",
-    "semantic_hash": "3dc5e153446db4815d2dfe2dadc79602"
+    "mtime": 1795507077.49961,
+    "seen": 1795507147.917266,
+    "ast_hash": "ba8112dcf83ab1c08c2fce70a9031f07",
+    "semantic_hash": ""
   },
   "tests/Dome.Socket.Tests/Security/SocketKeyTests.cs": {
     "mtime": 1795014538.1375809,
@@ -2313,6 +2313,12 @@
     "mtime": 1795083463.7721963,
     "seen": 1795083712.3337421,
     "ast_hash": "b6e9bae6d716e3f17897ebf44ae40b78",
+    "semantic_hash": ""
+  },
+  "src/Dome.Socket/Dome.Socket.Api/Security/PrivateFile.cs": {
+    "mtime": 1795507071.8464088,
+    "seen": 1795507147.917202,
+    "ast_hash": "940e197795b1c5d1dda7179f3db9ff33",
     "semantic_hash": ""
   }
 }

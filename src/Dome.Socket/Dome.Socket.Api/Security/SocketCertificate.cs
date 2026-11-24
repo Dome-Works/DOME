@@ -14,6 +14,7 @@ public static class SocketCertificate
 
         if (File.Exists(path))
         {
+            PrivateFile.Restrict(path);
             return X509CertificateLoader.LoadPkcs12FromFile(path, null);
         }
 
@@ -26,7 +27,7 @@ public static class SocketCertificate
         var now = DateTimeOffset.UtcNow;
         using var certificate = request.CreateSelfSigned(now.AddDays(-1), now.AddYears(10));
         var pfx = certificate.Export(X509ContentType.Pfx);
-        File.WriteAllBytes(path, pfx);
+        PrivateFile.Write(path, pfx);
 
         return X509CertificateLoader.LoadPkcs12(pfx, null);
     }

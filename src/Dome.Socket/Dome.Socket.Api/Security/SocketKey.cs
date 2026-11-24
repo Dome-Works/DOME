@@ -40,14 +40,20 @@ public sealed class SocketKey
         }
 
         var path = Path.Combine(directory, KeyFileName);
-        var stored = File.Exists(path) ? File.ReadAllText(path).Trim() : string.Empty;
+        var exists = File.Exists(path);
+        var stored = exists ? File.ReadAllText(path).Trim() : string.Empty;
+        if (exists)
+        {
+            PrivateFile.Restrict(path);
+        }
+
         if (stored.Length == 0)
         {
             stored = Convert.ToBase64String(RandomNumberGenerator.GetBytes(32))
                 .TrimEnd('=')
                 .Replace('+', '-')
                 .Replace('/', '_');
-            File.WriteAllText(path, stored);
+            PrivateFile.Write(path, Encoding.UTF8.GetBytes(stored));
         }
 
         return new SocketKey(stored, false, directory);
