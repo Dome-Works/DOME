@@ -56,7 +56,7 @@ public sealed class ApiKeyMiddleware
         }
 
         var header = request.Headers.Authorization.ToString();
-        if (!header.StartsWith(BearerPrefix, StringComparison.Ordinal))
+        if (!header.StartsWith(BearerPrefix, StringComparison.OrdinalIgnoreCase))
         {
             return false;
         }
