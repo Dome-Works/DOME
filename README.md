@@ -23,12 +23,14 @@ create, edit, and deploy Compose stacks.
 > version 1.0. Breaking changes may occur.
 
 > [!CAUTION]
-> There is currently no authentication. Dome.Socket has privileged
-> access to the Docker Engine. Deploy it only on a trusted private network and
-> do not expose the Server or Socket APIs directly to the internet.
+> Dome.Socket has privileged access to the Docker Engine. DOME is intended for
+> trusted homelab or private networks; do not expose the Server, Socket or UI
+> to the public internet without additional access controls.
 
 ## Features
 
+- Single-admin sign-in with onboarding, rate-limited logins and session
+  management
 - Dashboard with registered Socket, container, running-container and
   unreachable-Socket counts
 - Registration, editing and deletion of Docker hosts from the Sockets page
@@ -289,11 +291,11 @@ Server has paired with the Socket and can reach its health endpoint.
 ## Authentication
 
 DOME has a single admin account. Onboarding asks you to create it on the first
-visit; after that every page and API call requires signing in. The session is
-an HttpOnly cookie that stays valid for 7 days of use. Logging out ends every
-session, on all devices. Login attempts are limited to 5 per minute per client
-address, as seen through the Client on port 5200. Docker Desktop shows every
-client with the same address, so there the limit is shared.
+visit; after that, sign in to use DOME. The session is an HttpOnly cookie that
+stays valid for 7 days of use. Logging out ends every session, on all devices.
+Login attempts are limited to 5 per minute per client address, as seen through
+the Client on port 5200. Docker Desktop shows every client with the same
+address, so there the limit is shared.
 
 Requests that change something (POST, PUT, PATCH and DELETE under `/api/`) must
 carry the header `X-DOME-Request`. The DOME Client sends it automatically. If
