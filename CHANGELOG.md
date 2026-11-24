@@ -5,13 +5,15 @@ application. Changes are grouped by release.
 
 ## [Unreleased]
 
+## [v0.7.0] - 2026-11-24
+
 ### Added
 
-- Sign-in for DOME. Onboarding asks you to create an admin account, and every
-  page and API call now requires signing in. Sessions last 7 days of use, and
-  login attempts are limited to 5 per minute. To reset a forgotten password,
-  start the Server with `DOME_RESET_ADMIN=true`; this also signs out every
-  existing session.
+- Sign-in for DOME. Onboarding asks you to create the single admin account;
+  after that, sign in to use DOME. Sessions last 7 days of use, and login
+  attempts are limited to 5 per minute. To reset a forgotten password, start
+  the Server with `DOME_RESET_ADMIN=true`; this also signs out every existing
+  session.
 - Socket keys. Each Socket generates its own key and prints it in its logs at
   every start until DOME has paired with it. Enter the key when you register
   the Socket; **How to get the socket key?** explains where to find it. Sockets
@@ -21,16 +23,19 @@ application. Changes are grouped by release.
   certificate, which the Server pins during automatic pairing. The key is
   never sent before the certificate is verified.
 
-### Changed
+### Improved
 
-- **Breaking:** update the Server, Client and every Socket together. After
-  updating, create the admin account, then use **Change key** on the Sockets
-  page to enter the key from each Socket's logs. Socket
-  addresses now use `https://`; existing addresses are switched automatically.
 - The Compose files name the containers `dome-server`, `dome-socket` and
   `dome-client`, so `docker logs dome-socket` shows the Socket's key.
-- The Socket stores its certificate and key in a new `socket-data` volume. Add it to
-  your Compose file if you do not use the one from this repository.
+
+### Breaking Changes
+
+- Update the Server, Client and every Socket together. After updating, create
+  the admin account, then use **Change key** on the Sockets page to enter the
+  key from each Socket's logs. Socket addresses now use `https://`; existing
+  addresses are switched automatically.
+- The Socket stores its certificate and key in a new `socket-data` volume. Add
+  it to your Compose file if you do not use the one from this repository.
 
 ## [v0.6.1] - 2026-10-29
 
