@@ -22,7 +22,7 @@ public sealed class PairEndpoint : Endpoint<PairRequest, PairResponse>
     public override async Task HandleAsync(PairRequest req, CancellationToken ct)
     {
         var nonce = new byte[64];
-        if (!Convert.TryFromBase64String(req.Nonce, nonce, out var length) || length < 16)
+        if (string.IsNullOrEmpty(req.Nonce) || !Convert.TryFromBase64String(req.Nonce, nonce, out var length) || length < 16)
         {
             await Send.ResultAsync(TypedResults.BadRequest());
             return;
